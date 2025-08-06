@@ -1,0 +1,169 @@
+/* CSS cho giao diện AdminDashboard */
+.admin-dashboard-root {
+  display: flex;
+  min-height: 100vh;
+  background: #18412b; /* Nền xanh đậm giống login */
+}
+.admin-dashboard-sidebar {
+  width: 220px;
+  background: #18412b; /* Sidebar xanh đậm */
+  color: #fff;
+  flex-direction: column;
+  padding: 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  box-shadow: 2px 0 8px 0 rgba(0,0,0,0.08);
+}
+.admin-dashboard-logo {
+  font-weight: bold;
+  font-size: 24px;
+  text-align: center;
+  margin-bottom: 32px;
+  color: #FFA827;
+  letter-spacing: 1px;
+}
+.admin-dashboard-sidebar-item {
+  padding: 10px 32px;
+  cursor: pointer;
+  border-radius: 6px;
+  color: #fff;
+  font-weight: 500;
+  background: none;
+  transition: background 0.2s, color 0.2s;
+}
+.admin-dashboard-sidebar-item.active {
+  background: #FFA827;
+  color: #18412b;
+  font-weight: bold;
+}
+.admin-dashboard-main {
+  flex: 1;
+}
+.admin-dashboard-header {
+  background: rgba(255,255,255,0.50);
+  transition: all 0.2s;
+  display: flex;
+.admin-dashboard-sidebar.collapsed {
+  width: 64px !important;
+  min-width: 64px;
+  max-width: 64px;
+  align-items: center;
+}
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1.5px solid #FFA827;
+  backdrop-filter: blur(1px);
+  position: sticky;
+  top: 0;
+  left: 0;
+  transition: all 0.2s;
+}
+.admin-dashboard-user {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.admin-dashboard-user-badge {
+  width: 32px;
+  height: 32px;
+  transition: all 0.2s;
+  background: #FFA827;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #18412b;
+  font-weight: bold;
+.sidebar-toggle-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.08);
+  color: #FFA827;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px auto;
+  font-size: 22px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+@media (max-width: 900px) {
+  .admin-dashboard-sidebar {
+    width: 56px !important;
+    min-width: 56px;
+    max-width: 56px;
+  }
+  .admin-dashboard-main {
+    margin-left: 56px !important;
+  }
+}
+}
+.admin-dashboard-content {
+  background: rgba(255,255,255,0.13);
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(24,65,43,0.08);
+  padding: 24px;
+  margin-top: 24px;
+  color: #fff;
+  backdrop-filter: blur(1px);
+}
+.admin-dashboard-content-title {
+  font-weight: bold;
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+.admin-dashboard-content-row {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.admin-dashboard-content-box {
+  background: #fff;
+  border-radius: 8px;
+  padding: 16px;
+  flex: 1;
+  text-align: center;
+  color: #18412b;
+  border: 2px solid #FFA827;
+  box-shadow: 0 2px 8px rgba(24,65,43,0.06);
+  transition: box-shadow 0.2s;
+}
+.admin-dashboard-content-box.gray {
+  background: #fff7e6;
+  color: #FFA827;
+  border: 2px solid #FFA827;
+}
+.admin-dashboard-content-box.white {
+  background: #fff;
+  border: 2px solid #FFA827;
+  color: #18412b;
+}
+.admin-dashboard-content-box-title {
+  font-size: 16px;
+  color: #FFA827;
+  font-weight: bold;
+  margin-bottom: 4px;
+}
+.admin-dashboard-content-box-title.gray {
+  color: #FFA827;
+  opacity: 1;
+}
+.admin-dashboard-content-box-value {
+  font-weight: bold;
+  font-size: 22px;
+  color: #18412b;
+}
+.admin-dashboard-content-box-value.small {
+  font-size: 18px;
+}
+@media (max-width: 900px) {
+  .admin-dashboard-content-row {
+    flex-direction: column;
+    gap: 12px;
+  }
+}
+
+/* Thêm selector hợp lệ cho đoạn CSS này, ví dụ: căn giữa nội dung chính */
+

@@ -1,0 +1,56 @@
+.setting-root {
+  max-width: 90%;
+  margin: 0 auto;
+  padding: 24px;
+}
+.setting-main-title {
+  margin-bottom: 24px;
+  margin-top: 0;
+  font-weight: 700;
+  font-size: 24px;
+  color: #222;
+}
+.setting-section {
+  background: #ebeaea;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px #ffa82711;
+  margin-bottom: 32px;
+  padding: 32px;
+}
+.setting-section-title {
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 24px;
+  color: #222;
+}
+.setting-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 28px;
+}
+.setting-item {
+  background: #f8f8f8;
+  border-radius: 12px;
+  box-shadow: 0 1px 4px #eee;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-height: 120px;
+  border: 1px solid #f0f0f0;
+  transition: box-shadow 0.2s, border 0.2s, background 0.2s;
+  cursor: pointer;
+}
+.setting-item-icon {
+  margin-bottom: 12px;
+}
+.setting-item-title {
+  font-weight: 600;
+  font-size: 16px;
+  color: #FFA827;
+  margin-bottom: 4px;
+}
+.setting-item-desc {
+  color: #888;
+  font-size: 14px;
+}

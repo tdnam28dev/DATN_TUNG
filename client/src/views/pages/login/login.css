@@ -1,0 +1,156 @@
+/* Checkbox admin đẹp */
+.login-checkbox-admin {
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.custom-checkbox {
+  width: 20px;
+  height: 20px;
+  border-radius: 5px;
+  border: 2px solid #FFA827;
+  appearance: none;
+  outline: none;
+  background: #fff;
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.custom-checkbox:checked {
+  background: #FFA827;
+  border-color: #FFA827;
+}
+.custom-checkbox:checked::after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 4px;
+  bottom: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid #fff;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg);
+}
+.checkbox-label {
+  margin: 0;
+  cursor: pointer;
+  user-select: none;
+  font-size: 15px;
+  color: #FFA827;
+  font-weight: 500;
+}
+/*
+  Giao diện nền xanh đậm, màu cam chủ đạo, căn giữa form đăng nhập, tối ưu cho desktop/mobile
+*/
+.login-bg {
+  min-height: 100vh;
+  background-image: url("../../../../public/bg-pattern.jpg");
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.login-container {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 18px;
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+  padding: 40px 32px 32px 32px;
+  min-width: 340px;
+  max-width: 360px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+
+.td-logo-login {
+  display: block;
+  margin: 0 auto 10px auto;
+}
+
+.login-title {
+  color: #FFA827;
+  font-size: 1.6rem;
+  font-weight: bold;
+  margin-bottom: 28px;
+  text-align: center;
+  letter-spacing: 1px;
+}
+
+.login-form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.login-field label {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.login-field input {
+  padding: 10px 12px;
+  border-radius: 6px;
+  border: 1px solid #FFA827;
+  background: #fff;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+
+.login-field input:focus {
+  border: 1.5px solid #ffb84d;
+}
+
+.login-error {
+  color: #ff5252;
+  background: #fff3e0;
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-size: 0.98rem;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.login-btn {
+  background: #FFA827;
+  color: #18412b;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  padding: 12px 0;
+  font-size: 1.1rem;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.login-btn:hover {
+  background: #ffb84d;
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    min-width: 90vw;
+    padding: 24px 8vw 24px 8vw;
+  }
+  .td-logo svg {
+    width: 160px !important;
+    height: 32px !important;
+  }
+}
