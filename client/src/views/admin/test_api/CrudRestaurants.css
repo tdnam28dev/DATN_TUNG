@@ -1,0 +1,222 @@
+/* =============================
+   CRUD RESTAURANTS - CSS BEM
+   ============================= */
+
+.containerCrud {
+  padding: 32px 0 0 0;
+  /* min-height: 80vh; */
+}
+
+.listCrud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  padding: 0;
+  margin: 0 auto 32px auto;
+  width: 100%;
+  max-width: 100%;
+  justify-content: center;
+}
+
+/* @media (max-width: 1200px) {
+  .listCrud {
+    max-width: 900px;
+    gap: 20px;
+  }
+  .cardRestaurant {
+    min-width: 220px;
+    max-width: 300px;
+    width: calc(33.333% - 20px);
+    flex: 1 1 calc(33.333% - 20px);
+  }
+}
+
+@media (max-width: 900px) {
+  .listCrud {
+    max-width: 700px;
+    gap: 16px;
+  }
+  .cardRestaurant {
+    min-width: 180px;
+    max-width: 340px;
+    width: calc(50% - 16px); 
+    flex: 1 1 calc(50% - 16px);
+  }
+}
+@media (max-width: 600px) {
+  .listCrud {
+    max-width: 99vw;
+    gap: 10px;
+  }
+  .cardRestaurant {
+    min-width: 98vw;
+    max-width: 99vw;
+    width: 99vw;
+    flex: 1 1 99vw;
+    padding: 16px 8px 12px 8px;
+  }
+} */
+.cardRestaurant {
+  border: #52c41a 1px solid;
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+  padding: 24px 18px 18px 18px;
+  min-width: 260px;
+  max-width: 340px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  list-style: none;
+  margin: 0 auto;
+  position: relative;
+  transition: box-shadow 0.2s;
+}
+.cardRestaurant:hover {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.16);
+}
+
+.cardHeader {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #20503a;
+  margin-bottom: 4px;
+  text-align: left;
+}
+
+.cardTitle {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #20503a;
+}
+
+.cardDesc {
+  color: #444;
+  font-size: 1.05rem;
+  margin-bottom: 8px;
+  min-height: 32px;
+}
+
+.cardStatusRow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+
+.cardStatus {
+  font-size: 0.75rem;
+  font-weight: 600;
+  border-radius: 16px;
+  padding: 2px 12px;
+  background: #ff4d4f;
+  color: #fff;
+  display: inline-block;
+}
+.statusActive {
+  background: #52c41a;
+}
+.statusInactive {
+  background: #ff4d4f;
+}
+.cardTime {
+  color: #888;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.cardInfoRow {
+  display: flex;
+  gap: 24px;
+  margin-bottom: 14px;
+  justify-content: flex-start;
+}
+.cardInfoLabel {
+  color: #888;
+  font-size: 0.95rem;
+}
+.cardInfoValue {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #20503a;
+}
+
+.btnGroup {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.btnEdit {
+  background: #fffbe6;
+  color: #d48806;
+  border: 1px solid #ffe58f;
+  border-radius: 6px;
+  padding: 4px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 4px;
+  transition: background 0.2s;
+}
+.btnEdit:hover {
+  background: #fff1b8;
+}
+
+.btnDelete {
+  background: #fff1f0;
+  color: #cf1322;
+  border: 1px solid #ffa39e;
+  border-radius: 6px;
+  padding: 4px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btnDelete:hover {
+  background: #ffa39e;
+  color: #fff;
+}
+
+.btnSubmit {
+  background: #389e0d;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 20px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btnSubmit:hover {
+  background: #52c41a;
+}
+
+.messageCrud {
+  color: #cf1322;
+  font-size: 1rem;
+  margin-top: 10px;
+  min-height: 24px;
+  text-align: center;
+}
+
+/* Form nhập thông tin */
+.formCrud {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.inputCrud, .selectCrud {
+  border: 1px solid #bdbdbd;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  outline: none;
+  transition: border 0.2s;
+}
+.inputCrud:focus, .selectCrud:focus {
+  border: 1.5px solid #1976d2;
+}

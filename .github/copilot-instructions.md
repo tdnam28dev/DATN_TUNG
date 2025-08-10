@@ -6,4 +6,4 @@ Hãy viết code rõ ràng, dễ hiểu và tuân thủ các best practices tron
 Luôn trả lời bằng tiếng Việt. Tránh sử dụng tiếng Anh trong câu trả lời.
 Luôn comment code bằng tiếng Việt.
 Thêm thư viện bằng `npm install` và ghi chú lại trong README.md.
-
+Không được dùng style trong className, phải đặt tên class theo quy tắc BEM và sử dụng file CSS riêng biệt.
