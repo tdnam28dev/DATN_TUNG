@@ -62,7 +62,17 @@ exports.getById = async (req, res) => {
 // Cập nhật người dùng
 exports.update = async (req, res) => {
   try {
-    const user = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updateData = { ...req.body };
+
+    // Nếu có trường password và không rỗng thì mới mã hóa và cập nhật
+    if (updateData.password) {
+      updateData.password = await bcrypt.hash(updateData.password, 10);
+    } else {
+      // Nếu không có password mới thì xóa trường này để không ghi đè mật khẩu cũ
+      delete updateData.password;
+    }
+
+    const user = await User.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (!user) return res.status(404).json({ error: 'Không tìm thấy người dùng' });
     res.json(user);
   } catch (err) {

@@ -30,3 +30,10 @@ export async function getRestaurants(token) {
   });
   return res.json();
 }
+// Lấy thông tin nhà hàng theo id
+export async function getRestaurantById(id, token) {
+  const res = await fetch(`${API_URL}/restaurants/${id}`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return res.json();
+}

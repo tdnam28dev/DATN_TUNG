@@ -1,14 +1,19 @@
 // Controller quản lý món ăn
 const MenuItem = require('../models/menuItem');
 
-// Lấy danh sách món ăn, lọc theo nhà hàng nếu là nhân viên/manager
+// Lấy danh sách món ăn, lọc theo menu thuộc nhà hàng nếu là nhân viên/manager
 exports.getAll = async (req, res) => {
   try {
     let query = {};
+    // Nếu là nhân viên/manager thì chỉ lấy món ăn thuộc menu của nhà hàng đó
     if (req.user && req.user.role !== 'admin' && req.user.restaurant) {
-      query.restaurant = req.user.restaurant;
+      const Menu = require('../models/menu');
+      // Lấy danh sách menu thuộc nhà hàng
+      const menus = await Menu.find({ restaurant: req.user.restaurant }, '_id');
+      const menuIds = menus.map(m => m._id);
+      query.menu = { $in: menuIds };
     }
-  const items = await MenuItem.find(query).populate('restaurant');
+    const items = await MenuItem.find(query).populate('menu');
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: 'Lỗi server' });
