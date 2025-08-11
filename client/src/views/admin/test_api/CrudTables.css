@@ -1,0 +1,182 @@
+/* Giao diện quản lý bàn - BEM */
+.tableCrud {
+    padding: 32px 0;
+    max-width: 90%;
+    margin: 0 auto;
+}
+
+.tableCrud__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.tableCrud__title {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.tableCrud__add {
+    background: #22c55e;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 18px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: background 0.2s;
+}
+
+.tableCrud__add:hover {
+    background: #16a34a;
+}
+
+.tableCrud__tableWrap {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.06);
+    padding: 0 0 8px 0;
+    margin-bottom: 20px;
+}
+
+.tableCrud__table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 15px;
+}
+
+.tableCrud__th {
+    background: #f3f4f6;
+    font-weight: 600;
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.tableCrud__td {
+    padding: 10px 10px;
+    border-bottom: 1px solid #f1f1f1;
+    vertical-align: middle;
+}
+
+.tableCrud__tr:last-child .tableCrud__td {
+    border-bottom: none;
+}
+
+.tableCrud__td--action {
+    display: flex;
+    text-align: right;
+    white-space: nowrap;
+}
+
+.tableCrud__edit {
+    background: #fbbf24;
+    color: #222;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: background 0.2s;
+}
+
+.tableCrud__edit:hover {
+    background: #f59e1b;
+}
+
+.tableCrud__editIcon {
+    font-size: 15px;
+}
+
+.tableCrud__seatSelect,
+.tableCrud__typeSelect {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+.tableCrud__seatOption,
+.tableCrud__typeOption {
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 8px 12px;
+    cursor: pointer;
+    text-align: center;
+    transition: border 0.2s, box-shadow 0.2s;
+    background: #fafafa;
+}
+
+.tableCrud__seatOption--active,
+.tableCrud__typeOption--active {
+    border: 2px solid #2563eb;
+    box-shadow: 0 2px 8px #2563eb22;
+    background: #e0e7ff;
+}
+
+.tableCrud__seatOption img,
+.tableCrud__typeOption img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+    margin-bottom: 4px;
+}
+
+.tableCrud__popupForm {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.tableCrud__popupActions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 18px;
+}
+
+.tableCrud__popupBtn {
+    padding: 7px 16px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.tableCrud__popupBtn.btnSubmit {
+    background: #2563eb;
+    color: #fff;
+}
+
+.tableCrud__popupBtn.btnSubmit:hover {
+    background: #1d4ed8;
+}
+
+.tableCrud__popupBtn.btnDelete {
+    background: #ef4444;
+    color: #fff;
+}
+
+.tableCrud__popupBtn.btnDelete:hover {
+    background: #dc2626;
+}
+
+.tableCrud__msg {
+    margin-top: 10px;
+    color: #2563eb;
+    font-size: 15px;
+    text-align: center;
+}

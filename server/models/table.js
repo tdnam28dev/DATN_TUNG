@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const TableSchema = new mongoose.Schema({
   number: { type: Number, required: true }, // Số hiệu bàn
   seats: { type: Number, required: true }, // Số ghế của bàn
+  type: { type: String, enum: ['round', 'square', 'family'], default: 'round' }, // Kiểu bàn: tròn, vuông, gia đình
   status: { type: String, enum: ['available', 'reserved', 'occupied'], default: 'available' }, // Trạng thái bàn
   restaurant: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' } // Tham chiếu đến nhà hàng
 });

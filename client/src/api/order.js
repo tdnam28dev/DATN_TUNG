@@ -1,3 +1,29 @@
+// Tạm lưu hóa đơn (pending)
+export async function savePendingOrder(id, token) {
+  const res = await fetch(`${API_URL}/orders/${id}/save-pending`, {
+    method: 'PATCH',
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return res.json();
+}
+
+// Hủy hóa đơn (cancelled)
+export async function cancelOrder(id, token) {
+  const res = await fetch(`${API_URL}/orders/${id}/cancel`, {
+    method: 'PATCH',
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return res.json();
+}
+
+// Thanh toán hóa đơn (completed)
+export async function payOrder(id, token) {
+  const res = await fetch(`${API_URL}/orders/${id}/pay`, {
+    method: 'PATCH',
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return res.json();
+}
 const API_URL = 'http://localhost:8080/api';
 
 export async function createOrder(data, token) {

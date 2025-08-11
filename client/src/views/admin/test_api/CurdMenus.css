@@ -1,0 +1,326 @@
+/* Bộ lọc menu */
+.menuCrud__filterRow {
+    display: flex;
+    gap: 16px;
+    margin: 16px 0 12px 0;
+    align-items: center;
+}
+
+.menuCrud__filterSelect {
+    padding: 6px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 15px;
+    background: #fff;
+    min-width: 140px;
+    transition: border 0.2s;
+}
+
+.menuCrud__filterSelect:focus {
+    border: 1.5px solid #4f46e5;
+    outline: none;
+}
+
+/* Bảng thực đơn */
+.menuCrud__tableWrap {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.06);
+    padding: 0 0 8px 0;
+    margin-bottom: 20px;
+}
+
+.menuCrud__table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 15px;
+}
+
+.menuCrud__th {
+    background: #f3f4f6;
+    font-weight: 600;
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.menuCrud__td {
+    padding: 10px 10px;
+    border-bottom: 1px solid #f1f1f1;
+    vertical-align: middle;
+}
+
+.menuCrud__tr:last-child .menuCrud__td {
+    border-bottom: none;
+}
+
+.menuCrud__td--action {
+    display: flex;
+
+    text-align: right;
+
+}
+
+/* Nút thêm, sửa, popup */
+.menuCrud__add {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #22c55e;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 18px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.menuCrud__add:hover {
+    background: #16a34a;
+}
+
+.menuCrud__addIcon {
+    font-size: 18px;
+    margin-right: 2px;
+}
+
+.menuCrud__edit {
+    background: #fbbf24;
+    color: #222;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: background 0.2s;
+}
+
+.menuCrud__edit:hover {
+    background: #f59e1b;
+}
+
+.menuCrud__editIcon {
+    font-size: 15px;
+}
+
+/* Popup */
+.menuCrud__popupBox {
+    min-width: 350px;
+    max-width: 420px;
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 6px 32px 0 rgba(0, 0, 0, 0.13);
+    padding: 28px 28px 18px 28px;
+    margin: 0 auto;
+}
+
+.menuCrud__popupTitle {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    text-align: center;
+}
+
+.menuCrud__popupSub {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 18px;
+    text-align: center;
+}
+
+.menuCrud__popupForm {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.menuCrud__popupRow {
+    display: flex;
+    gap: 10px;
+}
+
+.menuCrud__input {
+    font-size: 15px;
+}
+
+.menuCrud__popupActions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 8px;
+}
+
+.menuCrud__popupBtn {
+    padding: 7px 16px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.menuCrud__popupBtn.btnSubmit {
+    background: #2563eb;
+    color: #fff;
+}
+
+.menuCrud__popupBtn.btnSubmit:hover {
+    background: #1d4ed8;
+}
+
+.menuCrud__popupBtn.btnDelete {
+    background: #ef4444;
+    color: #fff;
+}
+
+.menuCrud__popupBtn.btnDelete:hover {
+    background: #dc2626;
+}
+
+/* Thông báo */
+.menuCrud__msg,
+.menuCrud__popupMsg {
+    margin-top: 10px;
+    color: #2563eb;
+    font-size: 15px;
+    text-align: center;
+}
+
+/* =============================
+   CRUD MENUS - CSS BEM
+   ============================= */
+
+.menuCrud {
+    padding: 32px 0;
+    max-width: 90%;
+    margin: 0 auto;
+}
+
+.menuCrud__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.menuCrud__filters {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.menuCrud__select {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #bdbdbd;
+    font-size: 1rem;
+}
+
+.menuCrud__table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    margin-bottom: 24px;
+}
+
+.menuCrud__table th,
+.menuCrud__table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid #eee;
+    text-align: left;
+}
+
+.menuCrud__table th {
+    background: #f5f5f5;
+    font-weight: 700;
+}
+
+.menuCrud__table tr:hover {
+    background: #f0f9f5;
+    cursor: pointer;
+}
+
+.btnEdit,
+.btnDelete,
+.btnSubmit {
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-weight: 600;
+    border: none;
+    margin-right: 6px;
+    cursor: pointer;
+}
+
+.btnEdit {
+    background: #fffbe6;
+    color: #d48806;
+    border: 1px solid #ffe58f;
+}
+
+.btnEdit:hover {
+    background: #fff1b8;
+}
+
+.btnDelete {
+    background: #fff1f0;
+    color: #cf1322;
+    border: 1px solid #ffa39e;
+}
+
+.btnDelete:hover {
+    background: #ffa39e;
+    color: #fff;
+}
+
+.btnSubmit {
+    background: #389e0d;
+    color: #fff;
+    border: none;
+}
+
+.btnSubmit:hover {
+    background: #52c41a;
+}
+
+@media (max-width: 900px) {
+    .menuCrud {
+        padding: 16px 0;
+    }
+
+    .menuCrud__table th,
+    .menuCrud__table td {
+        padding: 8px 6px;
+    }
+}
+
+.menuCrud__form {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.menuCrud__form input,
+.menuCrud__form select {
+    padding: 8px 12px;
+    border-radius: 4px;
+    border: 1px solid #bdbdbd;
+    font-size: 1rem;
+}
+
+.menuCrud__form button {
+    min-width: 100px;
+}

@@ -34,7 +34,7 @@ const Login = ({ setToken }) => {
       if (role === 'admin') {
         navigate("/admin-dashboard");
       } else {
-        navigate("/");
+        navigate("/order");
       }
     } else {
       setError(res.error || "Đăng nhập thất bại");

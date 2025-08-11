@@ -1,10 +1,14 @@
 // Controller quản lý thực đơn
 const Menu = require('../models/menu');
 
-// Lấy danh sách thực đơn
+// Lấy danh sách thực đơn, lọc theo nhà hàng nếu là nhân viên/manager, trả về đầy đủ thông tin nhà hàng
 exports.getAll = async (req, res) => {
   try {
-    const menus = await Menu.find();
+    let query = {};
+    if (req.user && req.user.role !== 'admin' && req.user.restaurant) {
+      query.restaurant = req.user.restaurant;
+    }
+    const menus = await Menu.find(query).populate('restaurant');
     res.json(menus);
   } catch (err) {
     res.status(500).json({ error: 'Lỗi server' });

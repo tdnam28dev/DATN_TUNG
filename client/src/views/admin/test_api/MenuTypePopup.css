@@ -1,0 +1,106 @@
+/* Popup quản lý loại menu - BEM */
+.menuTypePopup__overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.18);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.menuTypePopup__box {
+  background: #fff;
+  border-radius: 16px;
+  min-width: 350px;
+  max-width: 480px;
+  box-shadow: 0 6px 32px 0 rgba(0,0,0,0.13);
+  padding: 28px 28px 18px 28px;
+}
+.menuTypePopup__title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.menuTypePopup__table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-bottom: 12px;
+}
+.menuTypePopup__th {
+  background: #f3f4f6;
+  font-weight: 600;
+  padding: 8px 8px;
+  text-align: left;
+  border-bottom: 2px solid #e5e7eb;
+}
+.menuTypePopup__td {
+  padding: 8px 8px;
+  border-bottom: 1px solid #f1f1f1;
+  vertical-align: middle;
+}
+.menuTypePopup__tr:last-child .menuTypePopup__td {
+  border-bottom: none;
+}
+.menuTypePopup__actions {
+  display: flex;
+  gap: 8px;
+}
+.menuTypePopup__btn {
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.menuTypePopup__btn--edit {
+  background: #fbbf24;
+  color: #222;
+}
+.menuTypePopup__btn--edit:hover {
+  background: #f59e1b;
+}
+.menuTypePopup__btn--delete {
+  background: #ef4444;
+  color: #fff;
+}
+.menuTypePopup__btn--delete:hover {
+  background: #dc2626;
+}
+.menuTypePopup__btn--save {
+  background: #2563eb;
+  color: #fff;
+}
+.menuTypePopup__btn--save:hover {
+  background: #1d4ed8;
+}
+.menuTypePopup__input {
+  width: 100%;
+  padding: 6px 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 15px;
+  margin-bottom: 8px;
+}
+.menuTypePopup__msg {
+  color: #2563eb;
+  font-size: 15px;
+  text-align: center;
+  margin-top: 8px;
+}
+.menuTypePopup__close {
+  position: absolute;
+  top: 12px;
+  right: 18px;
+  background: none;
+  border: none;
+  font-size: 22px;
+  color: #888;
+  cursor: pointer;
+}
+.menuTypePopup__close:hover {
+  color: #ef4444;
+}

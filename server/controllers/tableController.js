@@ -1,10 +1,14 @@
 // Controller quản lý bàn
 const Table = require('../models/table');
 
-// Lấy danh sách bàn
+// Lấy danh sách bàn, lọc theo nhà hàng nếu là nhân viên/manager
 exports.getAll = async (req, res) => {
   try {
-    const tables = await Table.find();
+    let query = {};
+    if (req.user && req.user.role !== 'admin' && req.user.restaurant) {
+      query.restaurant = req.user.restaurant;
+    }
+  const tables = await Table.find(query).populate('restaurant');
     res.json(tables);
   } catch (err) {
     res.status(500).json({ error: 'Lỗi server' });

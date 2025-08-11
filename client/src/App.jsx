@@ -7,6 +7,7 @@ import CrudMenus from './views/admin/test_api/CrudMenus';
 import CrudMenuItems from './views/admin/test_api/CrudMenuItems';
 import CrudOrders from './views/admin/test_api/CrudOrders';
 import CrudUsers from './views/admin/test_api/CrudUsers';
+import OrderStaff from './views/staff/order';
 // import AuthPage from './views/admin/test_api/AuthPage';
 import AdminDashboard from './views/admin/AdminDashboard';
 import Login from './views/pages/login/login';
@@ -36,6 +37,7 @@ function App() {
         <Route path="/crud-orders" element={token ? <CrudOrders token={token} /> : <Login setToken={setToken} />} />
         <Route path="/crud-users" element={token ? <CrudUsers token={token} /> : <Login setToken={setToken} />} />
         <Route path="/admin-dashboard" element={token ? <AdminDashboard token={token} userId={userId} /> : <Login setToken={setToken} setUserId={setUserId} />} />
+        <Route path="/order" element={token ? <OrderStaff token={token} /> : <Login setToken={setToken} />} />
       </Routes>
     </BrowserRouter>
   );

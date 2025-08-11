@@ -1,0 +1,249 @@
+/* Nút thanh toán trong box order */
+.orderStaff__orderPayBtn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  margin-right: 12px;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.orderStaff__orderPayBtn:hover {
+  background: #1d4ed8;
+}
+
+/* Nút hủy hóa đơn cạnh nút thanh toán trong box order */
+.orderStaff__orderCancelBtn {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 8px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.orderStaff__orderCancelBtn:hover {
+  background: #dc2626;
+}
+/* Style cho giao diện order mới dạng thẻ bàn và hóa đơn */
+.orderStaff__tableList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+.orderStaff__tableCard {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px #0001;
+  padding: 18px 22px;
+  min-width: 180px;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border 0.2s, box-shadow 0.2s;
+  position: relative;
+}
+.orderStaff__tableCard--active {
+  border: 2px solid #2563eb;
+  box-shadow: 0 4px 16px #2563eb22;
+}
+.orderStaff__tableStatus {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+  color: #fff;
+  background: #22c55e;
+  border-radius: 4px;
+  padding: 2px 8px;
+  display: inline-block;
+}
+.orderStaff__tableStatus.reserved {
+  background: #fbbf24;
+  color: #222;
+}
+.orderStaff__tableStatus.occupied {
+  background: #ef4444;
+}
+.orderStaff__tableInfo {
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+.orderStaff__tableType {
+  font-size: 13px;
+  color: #2563eb;
+  margin-bottom: 2px;
+}
+.orderStaff__tableCard__payBtn {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.orderStaff__tableCard__payBtn:hover {
+  background: #1d4ed8;
+}
+.orderStaff__tableCard__orderBtn {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  background: #22c55e;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 14px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.orderStaff__tableCard__orderBtn:hover {
+  background: #16a34a;
+}
+.orderStaff__orderBox {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px #0001;
+  padding: 18px 20px;
+  margin-top: 18px;
+}
+.orderStaff__orderTitle {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+.orderStaff__orderMenuList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18px;
+  margin-bottom: 18px;
+}
+.orderStaff__orderMenuItem {
+  background: #f9fafb;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px #0001;
+  padding: 12px 14px;
+  width: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: box-shadow 0.2s;
+}
+.orderStaff__orderMenuItem:hover {
+  box-shadow: 0 4px 16px #0002;
+}
+.orderStaff__orderMenuImg {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 6px;
+}
+.orderStaff__orderMenuName {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 2px;
+}
+.orderStaff__orderMenuPrice {
+  color: #2563eb;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+.orderStaff__orderAddBtn {
+  background: #22c55e;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 5px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.2s;
+}
+.orderStaff__orderAddBtn:hover {
+  background: #16a34a;
+}
+.orderStaff__orderCartTable {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 15px;
+}
+.orderStaff__orderCartTh {
+  background: #f3f4f6;
+  font-weight: 600;
+  padding: 10px 8px;
+  text-align: left;
+  border-bottom: 2px solid #e5e7eb;
+}
+.orderStaff__orderCartTd {
+  padding: 8px 8px;
+  border-bottom: 1px solid #f1f1f1;
+  vertical-align: middle;
+}
+.orderStaff__orderCartTr:last-child .orderStaff__orderCartTd {
+  border-bottom: none;
+}
+.orderStaff__orderCartActionBtn {
+  background: #ef4444;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 4px 12px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.orderStaff__orderCartActionBtn:hover {
+  background: #dc2626;
+}
+.orderStaff__orderCartTotal {
+  text-align: right;
+  font-size: 17px;
+  font-weight: 700;
+  margin-top: 12px;
+  color: #2563eb;
+}
+.orderStaff__orderSubmitBtn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 28px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 18px;
+  float: right;
+  transition: background 0.2s;
+}
+.orderStaff__orderSubmitBtn:hover {
+  background: #1d4ed8;
+}
+.orderStaff__orderMsg {
+  margin-top: 10px;
+  color: #2563eb;
+  font-size: 15px;
+  text-align: center;
+}

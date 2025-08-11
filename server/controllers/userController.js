@@ -36,7 +36,12 @@ exports.login = async (req, res) => {
     if (role === 'admin' && user.role !== 'admin') {
       return res.status(403).json({ error: 'Bạn không có quyền admin' });
     }
-    const token = jwt.sign({ id: user._id, username: user.username, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({
+      id: user._id,
+      username: user.username,
+      role: user.role,
+      restaurant: user.restaurant // thêm trường restaurant vào token
+    }, process.env.JWT_SECRET, { expiresIn: '1h' });
     res.json({ token, id: user._id });
   } catch (err) {
     res.status(500).json({ error: 'Lỗi server' });

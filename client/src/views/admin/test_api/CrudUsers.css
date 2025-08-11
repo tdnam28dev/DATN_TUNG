@@ -1,0 +1,173 @@
+/* Giao diện quản lý người dùng - BEM */
+.userCrud {
+    padding: 32px 0;
+    max-width: 90%;
+    margin: 0 auto;
+}
+
+.userCrud__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.userCrud__title {
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.userCrud__add {
+    background: #22c55e;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 7px 18px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: background 0.2s;
+}
+
+.userCrud__add:hover {
+    background: #16a34a;
+}
+
+.userCrud__tableWrap {
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.06);
+    padding: 0 0 8px 0;
+    margin-bottom: 20px;
+}
+
+.userCrud__table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 15px;
+}
+
+.userCrud__th {
+    background: #f3f4f6;
+    font-weight: 600;
+    padding: 12px 10px;
+    text-align: left;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+/* Bộ lọc người dùng */
+.userCrud__filterRow {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 18px;
+    align-items: center;
+}
+
+.userCrud__filterSelect {
+    padding: 7px 14px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background: #f9fafb;
+    font-size: 15px;
+    color: #222;
+    outline: none;
+    transition: border 0.2s;
+}
+.userCrud__filterSelect:focus {
+    border: 1.5px solid #22c55e;
+}
+
+
+.userCrud__td {
+    padding: 10px 10px;
+    border-bottom: 1px solid #f1f1f1;
+    vertical-align: middle;
+}
+
+.userCrud__tr:last-child .userCrud__td {
+    border-bottom: none;
+}
+
+.userCrud__td--action {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.userCrud__edit {
+    background: #fbbf24;
+    color: #222;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 14px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    margin-right: 2px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: background 0.2s;
+}
+
+.userCrud__edit:hover {
+    background: #f59e1b;
+}
+
+.userCrud__editIcon {
+    font-size: 15px;
+}
+
+.userCrud__popupForm {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.userCrud__popupActions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 18px;
+}
+
+.userCrud__popupBtn {
+    padding: 7px 16px;
+    border-radius: 6px;
+    font-size: 15px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.userCrud__popupBtn.btnSubmit {
+    background: #2563eb;
+    color: #fff;
+}
+
+.userCrud__popupBtn.btnSubmit:hover {
+    background: #1d4ed8;
+}
+
+.userCrud__popupBtn.btnDelete {
+    background: #ef4444;
+    color: #fff;
+}
+
+.userCrud__popupBtn.btnDelete:hover {
+    background: #dc2626;
+}
+
+.userCrud__msg {
+    margin-top: 10px;
+    color: #2563eb;
+    font-size: 15px;
+    text-align: center;
+}
+
+/* Popup overlay và box dùng chung class với các phần khác */

@@ -1,0 +1,173 @@
+/* Quản lý món ăn - CSS riêng, BEM */
+.menuItemCrud {
+  padding: 32px 0;
+    max-width: 90%;
+    margin: 0 auto;
+}
+.menuItemCrud__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.menuItemCrud__title {
+  font-size: 20px;
+  font-weight: 700;
+}
+.menuItemCrud__add {
+  background: #22c55e;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 7px 18px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.2s;
+}
+.menuItemCrud__add:hover {
+  background: #16a34a;
+}
+.menuItemCrud__addIcon {
+  font-size: 18px;
+  margin-right: 2px;
+}
+.menuItemCrud__filterRow {
+  display: flex;
+  gap: 16px;
+  margin: 16px 0 12px 0;
+  align-items: center;
+}
+.menuItemCrud__filterSelect {
+  padding: 6px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 15px;
+  background: #fff;
+  min-width: 140px;
+  transition: border 0.2s;
+}
+.menuItemCrud__filterSelect:focus {
+  border: 1.5px solid #4f46e5;
+  outline: none;
+}
+.menuItemCrud__tableWrap {
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 2px 12px 0 rgba(0,0,0,0.06);
+  padding: 0 0 8px 0;
+  margin-bottom: 20px;
+}
+.menuItemCrud__table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 15px;
+}
+.menuItemCrud__th {
+  background: #f3f4f6;
+  font-weight: 600;
+  padding: 12px 10px;
+  text-align: left;
+  border-bottom: 2px solid #e5e7eb;
+}
+.menuItemCrud__td {
+  padding: 10px 10px;
+  border-bottom: 1px solid #f1f1f1;
+  vertical-align: middle;
+}
+.menuItemCrud__tr:last-child .menuItemCrud__td {
+  border-bottom: none;
+}
+.menuItemCrud__td--action {
+  text-align: right;
+  white-space: nowrap;
+}
+.menuItemCrud__edit {
+  background: #fbbf24;
+  color: #222;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-right: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  transition: background 0.2s;
+}
+.menuItemCrud__edit:hover {
+  background: #f59e1b;
+}
+.menuItemCrud__editIcon {
+  font-size: 15px;
+}
+.menuItemCrud__popupBox {
+  min-width: 350px;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 6px 32px 0 rgba(0,0,0,0.13);
+  padding: 28px 28px 18px 28px;
+  margin: 0 auto;
+}
+.menuItemCrud__popupTitle {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  text-align: center;
+}
+.menuItemCrud__popupSub {
+  font-size: 15px;
+  color: #666;
+  margin-bottom: 18px;
+  text-align: center;
+}
+.menuItemCrud__popupForm {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.menuItemCrud__input {
+  font-size: 15px;
+}
+.menuItemCrud__popupActions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+.menuItemCrud__popupBtn {
+  padding: 7px 16px;
+  border-radius: 6px;
+  font-size: 15px;
+  font-weight: 500;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.menuItemCrud__popupBtn.btnSubmit {
+  background: #2563eb;
+  color: #fff;
+}
+.menuItemCrud__popupBtn.btnSubmit:hover {
+  background: #1d4ed8;
+}
+.menuItemCrud__popupBtn.btnDelete {
+  background: #ef4444;
+  color: #fff;
+}
+.menuItemCrud__popupBtn.btnDelete:hover {
+  background: #dc2626;
+}
+.menuItemCrud__msg, .menuItemCrud__popupMsg {
+  margin-top: 10px;
+  color: #2563eb;
+  font-size: 15px;
+  text-align: center;
+}

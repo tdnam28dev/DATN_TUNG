@@ -9,8 +9,15 @@ router.get('/', roleMiddleware(['admin', 'staff']), orderController.getAll);
 router.post('/', roleMiddleware(['admin', 'staff']), orderController.create);
 // Lấy thông tin đơn hàng theo id (nhân viên và admin)
 router.get('/:id', roleMiddleware(['admin', 'staff']), orderController.getById);
-// Cập nhật đơn hàng (chỉ admin)
+
+// Cập nhật đơn hàng (admin)
 router.put('/:id', roleMiddleware(['admin']), orderController.update);
+// Tạm lưu hóa đơn (staff, admin)
+router.patch('/:id/save-pending', roleMiddleware(['admin', 'staff']), orderController.savePending);
+// Hủy hóa đơn (staff, admin)
+router.patch('/:id/cancel', roleMiddleware(['admin', 'staff']), orderController.cancelOrder);
+// Thanh toán hóa đơn (staff, admin)
+router.patch('/:id/pay', roleMiddleware(['admin', 'staff']), orderController.payOrder);
 // Xóa đơn hàng (chỉ admin)
 router.delete('/:id', roleMiddleware(['admin']), orderController.delete);
 

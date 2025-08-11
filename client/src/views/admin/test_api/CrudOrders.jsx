@@ -7,7 +7,7 @@ import { getMenuItems } from '../../../api/menuitem';
 function CrudOrders({ token }) {
   const [orders, setOrders] = useState([]);
   // Form gồm bàn, danh sách món (mỗi món gồm id và số lượng), trạng thái, tổng tiền
-  const [form, setForm] = useState({ table: '', items: [], status: 'pending', total: '' });
+  const [form, setForm] = useState({ table: '', items: [{ menuItem: '', quantity: 1 }], status: 'pending', total: '' });
   const [editId, setEditId] = useState('');
   const [message, setMessage] = useState('');
   const [tables, setTables] = useState([]);
@@ -106,30 +106,48 @@ function CrudOrders({ token }) {
         </select>
         <div style={{ marginTop: 10 }}>
           <b>Chọn món và số lượng:</b>
-          {Array.isArray(menuItems) && menuItems.map(mi => {
-            const item = form.items.find(i => i.menuItem === mi._id) || { quantity: 0 };
-            return (
-              <div key={mi._id} style={{ marginBottom: 5 }}>
-                <span>{mi.name}</span>
-                <input
-                  type="number"
-                  min={0}
-                  value={item.quantity}
-                  style={{ width: 60, marginLeft: 10 }}
-                  onChange={e => {
-                    const qty = Number(e.target.value);
-                    setForm(prev => {
-                      const items = prev.items.filter(i => i.menuItem !== mi._id);
-                      return {
-                        ...prev,
-                        items: qty > 0 ? [...items, { menuItem: mi._id, quantity: qty }] : items
-                      };
-                    });
-                  }}
-                />
-              </div>
-            );
-          })}
+          {form.items.map((item, idx) => (
+            <div key={idx} style={{ display: 'flex', alignItems: 'center', marginBottom: 5, gap: 8 }}>
+              <select
+                value={item.menuItem}
+                onChange={e => {
+                  const value = e.target.value;
+                  setForm(prev => {
+                    const items = [...prev.items];
+                    items[idx].menuItem = value;
+                    return { ...prev, items };
+                  });
+                }}
+                style={{ minWidth: 120 }}
+              >
+                <option value="">Chọn món</option>
+                {menuItems.map(mi => (
+                  <option key={mi._id} value={mi._id}>{mi.name}</option>
+                ))}
+              </select>
+              <input
+                type="number"
+                min={1}
+                value={item.quantity}
+                style={{ width: 60 }}
+                onChange={e => {
+                  const qty = Number(e.target.value);
+                  setForm(prev => {
+                    const items = [...prev.items];
+                    items[idx].quantity = qty;
+                    return { ...prev, items };
+                  });
+                }}
+              />
+              {/* Nút xóa dòng món */}
+              {form.items.length > 1 && (
+                <button type="button" onClick={() => {
+                  setForm(prev => ({ ...prev, items: prev.items.filter((_, i) => i !== idx) }));
+                }} style={{ color: 'red', border: 'none', background: 'none', cursor: 'pointer' }}>Xóa</button>
+              )}
+            </div>
+          ))}
+          <button type="button" onClick={() => setForm(prev => ({ ...prev, items: [...prev.items, { menuItem: '', quantity: 1 }] }))} style={{ marginTop: 5 }}>+ Thêm món</button>
         </div>
         <input
           type="number"

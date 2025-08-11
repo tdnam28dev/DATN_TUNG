@@ -11,6 +11,7 @@ const menuItemRoutes = require('./routes/menuItem');
 const orderRoutes = require('./routes/order');
 const userRoutes = require('./routes/user');
 const authRoutes = require('./routes/auth');
+const menuTypeRoutes = require('./routes/menuType');
 const authMiddleware = require('./middlewares/auth');
 
 // Kết nối MongoDB sử dụng biến môi trường
@@ -36,6 +37,7 @@ app.use('/api/tables', authMiddleware, tableRoutes); // API quản lý bàn
 app.use('/api/menus', authMiddleware, menuRoutes); // API quản lý thực đơn
 app.use('/api/menu-items', authMiddleware, menuItemRoutes); // API quản lý món ăn
 app.use('/api/orders', authMiddleware, orderRoutes); // API quản lý đơn hàng
+app.use('/api/menutype', authMiddleware, menuTypeRoutes); // API loại menu
 app.use('/api/auth', authRoutes); // API đăng ký, đăng nhập
 app.use('/api/users', authMiddleware, userRoutes); // API quản lý người dùng (cần xác thực)
 
