@@ -13,7 +13,7 @@ exports.getAll = async (req, res) => {
       const menuIds = menus.map(m => m._id);
       query.menu = { $in: menuIds };
     }
-    const items = await MenuItem.find(query).populate('menu');
+    const items = await MenuItem.find(query);
     res.json(items);
   } catch (err) {
     res.status(500).json({ error: 'Lỗi server' });

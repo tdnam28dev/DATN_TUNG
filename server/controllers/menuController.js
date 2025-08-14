@@ -8,7 +8,7 @@ exports.getAll = async (req, res) => {
     if (req.user && req.user.role !== 'admin' && req.user.restaurant) {
       query.restaurant = req.user.restaurant;
     }
-    const menus = await Menu.find(query).populate('restaurant');
+    const menus = await Menu.find(query);
     res.json(menus);
   } catch (err) {
     res.status(500).json({ error: 'Lỗi server' });
