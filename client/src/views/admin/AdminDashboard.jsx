@@ -137,7 +137,7 @@ function AdminDashboard({ token, userId }) {
       <div className="admin-dashboard-main">
         {/* Header */}
         <header className={"admin-dashboard-header" + (collapsed ? " collapsed" : "")}>
-          <div style={{ fontWeight: 'bold', fontSize: 18 }}>{userInfo
+          <div style={{ fontWeight: 'bold', fontSize: 18, color: '#ffffffff' }}>{userInfo
             ? `Xin chào, ${userInfo.name || userInfo.username}`
             : 'Xin chào'}</div>
           <div className="admin-dashboard-user" ref={userMenuRef}>
@@ -171,7 +171,7 @@ function AdminDashboard({ token, userId }) {
         <div className="admin-dashboard-content">
           {activeItem === 'Tổng quan' && <Overview />}
           {activeItem === 'Báo cáo' && <Report />}
-          {activeItem === 'Hóa đơn' && <Bill />}
+          {activeItem === 'Hóa đơn' && <Bill token={token} />}
           {activeItem === 'Mặt hàng' && <Product />}
           {activeItem === 'Đặt lịch' && <Schedule />}
           {activeItem === 'Nhân viên' && <Staff />}

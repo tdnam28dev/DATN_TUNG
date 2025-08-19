@@ -32,3 +32,10 @@ export async function getTables(token) {
   });
   return res.json();
 }
+
+export async function getTableById(id, token) {
+  const res = await fetch(`${API_URL}/tables/${id}`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return res.json();
+}

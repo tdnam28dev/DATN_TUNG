@@ -1,18 +1,22 @@
 /* Header cho order staff, style riêng biệt */
 .orderStaff__headerBar {
-  background: linear-gradient(90deg, #fffde4 0%, #ffe9a7 100%);
+  background-image: url("../../../public/bg-pattern.jpg");
   padding: 14px 32px 14px 32px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   border-bottom: 1.5px solid #FFA827;
-  position: sticky;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   height: 64px;
   z-index: 100;
   box-sizing: border-box;
+}
+.orderStaff__logo {
+  width: 120px;
+  height: 40px;
 }
 .orderStaff__user {
   position: relative;

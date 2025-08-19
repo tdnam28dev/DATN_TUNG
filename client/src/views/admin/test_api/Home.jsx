@@ -11,7 +11,8 @@ function Home() {
   // Hàm xử lý đăng xuất
   const handleLogout = () => {
     localStorage.removeItem('accessToken');
-    navigate('/login');
+    localStorage.removeItem('userId');
+    window.location.href = '/login';
   };
 
   return (

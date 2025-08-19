@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
 import './order_header.css';
-import './order_staff_card.css';
+import './order_staff_content.css';
+import LogoTudo from '../../components/Logo_td';
 import { getTables } from '../../api/table';
 import { getMenus } from '../../api/menu';
 import { getMenuItems } from '../../api/menuitem';
 import { getRestaurantById } from '../../api/restaurant';
 import { createOrder, getOrders, updateOrder, payOrder, cancelOrder } from '../../api/order';
-    
+
 
 // Giao diện order cho nhân viên quầy
 function OrderStaff({ token, userId }) {
@@ -17,18 +18,21 @@ function OrderStaff({ token, userId }) {
     const [showUserMenu, setShowUserMenu] = useState(false);
     const userMenuRef = useRef(null);
     const realUserId = userId || localStorage.getItem('userId');
+    // bộ lọc
+    const [filterStatus, setFilterStatus] = useState('');
+    const [filterSeats, setFilterSeats] = useState('');
+    const [filterTypeTable, setFilterTypeTable] = useState('');
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
                 const res = await import('../../api/user');
                 const data = await res.getUserById(realUserId, token);
                 setUserInfo(data);
-                // Nếu user có trường restaurant là id, lấy thông tin nhà hàng
                 if (data && data.restaurant && typeof data.restaurant === 'string') {
                     try {
                         const res = await getRestaurantById(data.restaurant, token);
                         if (res && res.name) setRestaurantName(res.name);
-                    } catch {}
+                    } catch { }
                 } else if (data && data.restaurant && typeof data.restaurant === 'object' && data.restaurant.name) {
                     setRestaurantName(data.restaurant.name);
                 } else {
@@ -156,7 +160,6 @@ function OrderStaff({ token, userId }) {
                 items: cart.map(i => ({ menuItem: i.menuItem._id, quantity: i.quantity })),
                 total,
                 status: 'pending',
-                // Thêm trường nhà hàng cho hóa đơn
                 restaurant: (userInfo && userInfo.restaurant) ? (typeof userInfo.restaurant === 'object' ? userInfo.restaurant._id : userInfo.restaurant) : (selectedTable.restaurant || '')
             }, token);
         } else {
@@ -165,7 +168,6 @@ function OrderStaff({ token, userId }) {
                 items: cart.map(i => ({ menuItem: i.menuItem._id, quantity: i.quantity })),
                 total,
                 status: 'pending',
-                // Thêm trường nhà hàng cho hóa đơn
                 restaurant: (userInfo && userInfo.restaurant) ? (typeof userInfo.restaurant === 'object' ? userInfo.restaurant._id : userInfo.restaurant) : (selectedTable.restaurant || '')
             }, token);
         }
@@ -220,10 +222,11 @@ function OrderStaff({ token, userId }) {
         <div className="orderStaff">
             {/* Header riêng cho order staff */}
             <header className="orderStaff__headerBar">
+                <div className="orderStaff__logo"><a href="/order"><LogoTudo height={45} /></a></div>
                 <div className="orderStaff__headerBarTitle">
                     {userInfo ? (
                         <>
-                            <span>Xin chào, <b>{userInfo.name || userInfo.username}</b></span>
+                            <span style={{ color: '#ffffffff' }}><b>{userInfo.name || userInfo.username}</b></span>
                             <span style={{ marginLeft: 16, fontSize: 14, color: '#2563eb' }}>
                                 ({userInfo.role === 'admin' ? 'Quản trị viên' : 'Nhân viên'})
                             </span>
@@ -232,11 +235,7 @@ function OrderStaff({ token, userId }) {
                                     Nhà hàng: <b>{restaurantName}</b>
                                 </span>
                             )}
-                            {userInfo.phone && (
-                                <span style={{ marginLeft: 16, fontSize: 14, color: '#888' }}>
-                                    SĐT: {userInfo.phone}
-                                </span>
-                            )}
+
                         </>
                     ) : 'Xin chào'}
                 </div>
@@ -267,140 +266,178 @@ function OrderStaff({ token, userId }) {
                     )}
                 </div>
             </header>
-            {/* Danh sách bàn dạng thẻ */}
-            <div className="orderStaff__tableList">
-                {tables.map(tb => {
-                    // Chỉ lấy order trạng thái pending cho mỗi bàn
-                    const order = orders.find(o => o.table === tb._id && o.status === 'pending');
-                    const isPending = !!order;
-                    return (
-                        <div
-                            key={tb._id}
-                            className={`orderStaff__tableCard${selectedTable && selectedTable._id === tb._id ? ' orderStaff__tableCard--active' : ''}`}
-                            onClick={() => handleSelectTable(tb)}
-                        >
-                            <div className={`orderStaff__tableStatus ${tb.status}`}>{tb.status === 'available' ? 'Trống' : tb.status === 'reserved' ? 'Đã đặt' : 'Đang sử dụng'}</div>
-                            <div className="orderStaff__tableInfo">Bàn {tb.number} - {tb.seats} ghế</div>
-                            <div className="orderStaff__tableType">{tb.type === 'round' ? 'Tròn' : tb.type === 'square' ? 'Vuông' : 'Gia đình'}</div>
-                            {isPending && (
-                                <button className="orderStaff__tableCard__payBtn" type="button" disabled={loading} onClick={e => { e.stopPropagation(); setSelectedTable(tb); if (window.confirm('Xác nhận thanh toán hóa đơn?')) handlePayOrder(); }}>Thanh toán</button>
-                            )}
-                        </div>
-                    );
-                })}
-            </div>
-            {/* Box order cho bàn đã chọn */}
-            {selectedTable && (
-                <div className="orderStaff__orderBox">
-                    <div className="orderStaff__orderTitle">Order cho bàn {selectedTable.number}</div>
-                    {/* Thông tin hóa đơn hiện tại nếu có */}
-                    {(() => {
-                        // Chỉ lấy order trạng thái pending cho box order
-                        const order = orders.find(o => o.table === selectedTable._id && o.status === 'pending');
-                        if (!order) return null;
-                        return (
-                            <div style={{ marginBottom: 8, color: '#2563eb' }}>
-                                Trạng thái hóa đơn: <b>Chờ thanh toán</b>
-                                {/* Nút thanh toán và hủy hóa đơn nếu hóa đơn đang pending */}
-                                <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
-                                    <button
-                                        className="orderStaff__orderPayBtn"
-                                        type="button"
-                                        disabled={loading}
-                                        onClick={() => {
-                                            if (window.confirm('Xác nhận thanh toán hóa đơn này?')) handlePayOrder();
-                                        }}
-                                    >
-                                        {loading ? 'Đang thanh toán...' : 'Thanh toán'}
-                                    </button>
-                                    <button
-                                        className="orderStaff__orderCancelBtn"
-                                        type="button"
-                                        disabled={loading}
-                                        onClick={() => {
-                                            if (window.confirm('Xác nhận hủy hóa đơn này?')) handleCancelOrder();
-                                        }}
-                                    >
-                                        {loading ? 'Đang hủy...' : 'Hủy hóa đơn'}
-                                    </button>
-                                </div>
-                            </div>
-                        );
-                    })()}
-                    {/* Bộ lọc loại món ăn */}
-                    <div style={{ marginBottom: 12 }}>
-                        <select
-                            style={{ padding: 7, borderRadius: 6, border: '1px solid #d1d5db', minWidth: 160 }}
-                            value={filterType}
-                            onChange={e => setFilterType(e.target.value)}
-                        >
-                            <option value="">Tất cả loại món</option>
-                            {menuTypeList.map(type => (
-                                <option key={type.menuId} value={type.menuId}>{type.type}</option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="orderStaff__orderMenuList">
-                        {(() => {
-                            let filtered = menus;
-                            if (filterType) {
-                                filtered = menus.filter(item => item.menuId === filterType);
-                            }
-                            if (filtered.length === 0) {
-                                return <div style={{color:'#888',padding:'16px 0'}}>Không có món nào thuộc loại này.</div>;
-                            }
-                            return filtered.map(item => (
-                                <div className="orderStaff__orderMenuItem" key={item._id} onClick={() => addToCart(item)}>
-                                    <img className="orderStaff__orderMenuImg" src={item.image || '/images/default-food.png'} alt={item.name} />
-                                    <div className="orderStaff__orderMenuName">{item.name}</div>
-                                    <div className="orderStaff__orderMenuPrice">{item.price?.toLocaleString()} đ</div>
-                                    <div style={{ fontSize: 13, color: '#888' }}>Menu: {item.menuName}</div>
-                                    <button className="orderStaff__orderAddBtn" type="button" disabled={loading}>Thêm</button>
-                                </div>
-                            ));
-                        })()}
-                    </div>
-                    {/* Giỏ hàng cho bàn này */}
-                    <table className="orderStaff__orderCartTable">
-                        <thead>
-                            <tr>
-                                <th className="orderStaff__orderCartTh">Tên món</th>
-                                <th className="orderStaff__orderCartTh">Đơn giá</th>
-                                <th className="orderStaff__orderCartTh">Số lượng</th>
-                                <th className="orderStaff__orderCartTh">Thành tiền</th>
-                                <th className="orderStaff__orderCartTh">Hành động</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {cart.map(i => (
-                                <tr key={i.menuItem._id} className="orderStaff__orderCartTr">
-                                    <td className="orderStaff__orderCartTd">{i.menuItem.name}</td>
-                                    <td className="orderStaff__orderCartTd">{i.menuItem.price?.toLocaleString()} đ</td>
-                                    <td className="orderStaff__orderCartTd">
-                                        <input
-                                            type="number"
-                                            min={1}
-                                            value={i.quantity}
-                                            style={{ width: 50, textAlign: 'center' }}
-                                            onChange={e => changeQuantity(i.menuItem._id, Number(e.target.value))}
-                                            disabled={loading}
-                                        />
-                                    </td>
-                                    <td className="orderStaff__orderCartTd">{(i.menuItem.price * i.quantity).toLocaleString()} đ</td>
-                                    <td className="orderStaff__orderCartTd">
-                                        <button className="orderStaff__orderCartActionBtn" type="button" onClick={() => removeFromCart(i.menuItem._id)} disabled={loading}>Xóa</button>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
-                    <div className="orderStaff__orderCartTotal">Tổng cộng: {total.toLocaleString()} đ</div>
-                    <button className="orderStaff__orderSubmitBtn" type="button" onClick={handleSaveOrder} disabled={loading}>
-                        {loading ? 'Đang lưu...' : 'Lưu hóa đơn'}
-                    </button>
-                    <div className="orderStaff__orderMsg">{message}</div>
+
+            <div className="orderStaff_content">
+                {/* Bộ lọc bàn */}
+                <div className="orderStaff__tableFilter" style={{ display: 'flex', gap: 16, marginBottom: 16 }}>
+                    <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={{ padding: 6, borderRadius: 6 }}>
+                        <option value="">Tất cả trạng thái</option>
+                        <option value="available">Trống</option>
+                        <option value="reserved">Đã đặt</option>
+                        <option value="occupied">Đang sử dụng</option>
+                    </select>
+                    <select value={filterSeats} onChange={e => setFilterSeats(e.target.value)} style={{ padding: 6, borderRadius: 6 }}>
+                        <option value="">Tất cả số ghế</option>
+                        {[...new Set(tables.map(tb => tb.seats))].sort((a, b) => a - b).map(seat => (
+                            <option key={seat} value={seat}>{seat} ghế</option>
+                        ))}
+                    </select>
+                    <select value={filterTypeTable} onChange={e => setFilterTypeTable(e.target.value)} style={{ padding: 6, borderRadius: 6 }}>
+                        <option value="">Tất cả kiểu bàn</option>
+                        <option value="round">Tròn</option>
+                        <option value="square">Vuông</option>
+                        <option value="family">Gia đình</option>
+                    </select>
                 </div>
-            )}
+                {/* Danh sách bàn dạng thẻ */}
+                <div className="orderStaff__tableList">
+                    {(() => {
+                        // Lọc bàn theo trạng thái, số ghế, kiểu bàn
+                        let filtered = tables;
+                        if (filterStatus) {
+                            filtered = filtered.filter(item => item.status === filterStatus);
+                        }
+                        if (filterSeats) {
+                            filtered = filtered.filter(item => String(item.seats) === String(filterSeats));
+                        }
+                        if (filterTypeTable) {
+                            filtered = filtered.filter(item => item.type === filterTypeTable);
+                        }
+                        if (filtered.length === 0) {
+                            return <div style={{ color: '#888', padding: '16px 0' }}>Không có bàn nào phù hợp bộ lọc.</div>;
+                        }
+                        // Trả về kết quả map
+                        return filtered.map(tb => {
+                            // const order = orders.find(o => o.table === tb._id && o.status === 'pending');
+                            // const isPending = !!order;
+                            return (
+                                <div
+                                    key={tb._id}
+                                    className={`orderStaff__tableCard${selectedTable && selectedTable._id === tb._id ? ' orderStaff__tableCard--active' : ''}`}
+                                    onClick={() => handleSelectTable(tb)}
+                                >
+                                    <div className={`orderStaff__tableStatus ${tb.status}`}>{tb.status === 'available' ? 'Trống' : tb.status === 'reserved' ? 'Đã đặt' : 'Đang sử dụng'}</div>
+                                    <div className="orderStaff__tableInfo">Bàn {tb.number} - {tb.seats} ghế</div>
+                                    <div className="orderStaff__tableType">{tb.type === 'round' ? 'Tròn' : tb.type === 'square' ? 'Vuông' : 'Gia đình'}</div>
+                                    
+                                </div>
+                            );
+                        });
+                    })()}
+                </div>
+                {/* Box order cho bàn đã chọn */}
+                {selectedTable && (
+                    <div className="orderStaff__orderBox">
+                        <div className="orderStaff__orderTitle">Order cho bàn {selectedTable.number}</div>
+                        {/* Thông tin hóa đơn hiện tại nếu có */}
+                        {(() => {
+                            // Chỉ lấy order trạng thái pending cho box order
+                            const order = orders.find(o => o.table === selectedTable._id && o.status === 'pending');
+                            if (!order) return null;
+                            return (
+                                <div style={{ marginBottom: 8, color: '#2563eb' }}>
+                                    Trạng thái hóa đơn: <b>Chờ thanh toán</b>
+                                    {/* Nút thanh toán và hủy hóa đơn nếu hóa đơn đang pending */}
+                                    <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
+                                        <button
+                                            className="orderStaff__orderPayBtn"
+                                            type="button"
+                                            disabled={loading}
+                                            onClick={() => {
+                                                if (window.confirm('Xác nhận thanh toán hóa đơn này?')) handlePayOrder();
+                                            }}
+                                        >
+                                            {loading ? 'Đang thanh toán...' : 'Thanh toán'}
+                                        </button>
+                                        <button
+                                            className="orderStaff__orderCancelBtn"
+                                            type="button"
+                                            disabled={loading}
+                                            onClick={() => {
+                                                if (window.confirm('Xác nhận hủy hóa đơn này?')) handleCancelOrder();
+                                            }}
+                                        >
+                                            {loading ? 'Đang hủy...' : 'Hủy hóa đơn'}
+                                        </button>
+                                    </div>
+                                </div>
+                            );
+                        })()}
+                        {/* Bộ lọc loại món ăn */}
+                        <div style={{ marginBottom: 12 }}>
+                            <select
+                                style={{ padding: 7, borderRadius: 6, border: '1px solid #d1d5db', minWidth: 160 }}
+                                value={filterType}
+                                onChange={e => setFilterType(e.target.value)}
+                            >
+                                <option value="">Tất cả loại món</option>
+                                {menuTypeList.map(type => (
+                                    <option key={type.menuId} value={type.menuId}>{type.type}</option>
+                                ))}
+                            </select>
+                        </div>
+                        <div className="orderStaff__orderMenuList">
+                            {(() => {
+                                let filtered = menus;
+                                if (filterType) {
+                                    filtered = menus.filter(item => item.menuId === filterType);
+                                }
+                                if (filtered.length === 0) {
+                                    return <div style={{ color: '#888', padding: '16px 0' }}>Không có món nào thuộc loại này.</div>;
+                                }
+                                return filtered.map(item => (
+                                    <div className="orderStaff__orderMenuItem" key={item._id} onClick={() => addToCart(item)}>
+                                        <img className="orderStaff__orderMenuImg" src={item.image || '/images/default-food.png'} alt={item.name} />
+                                        <div className="orderStaff__orderMenuName">{item.name}</div>
+                                        <div className="orderStaff__orderMenuPrice">{item.price?.toLocaleString()} đ</div>
+                                        <div style={{ fontSize: 13, color: '#888' }}>Menu: {item.menuName}</div>
+                                        <button className="orderStaff__orderAddBtn" type="button" disabled={loading}>Thêm</button>
+                                    </div>
+                                ));
+                            })()}
+                        </div>
+                        {/* Giỏ hàng cho bàn này */}
+                        <table className="orderStaff__orderCartTable">
+                            <thead>
+                                <tr>
+                                    <th className="orderStaff__orderCartTh">Tên món</th>
+                                    <th className="orderStaff__orderCartTh">Đơn giá</th>
+                                    <th className="orderStaff__orderCartTh">Số lượng</th>
+                                    <th className="orderStaff__orderCartTh">Thành tiền</th>
+                                    <th className="orderStaff__orderCartTh">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {cart.map(i => (
+                                    <tr key={i.menuItem._id} className="orderStaff__orderCartTr">
+                                        <td className="orderStaff__orderCartTd">{i.menuItem.name}</td>
+                                        <td className="orderStaff__orderCartTd">{i.menuItem.price?.toLocaleString()} đ</td>
+                                        <td className="orderStaff__orderCartTd">
+                                            <input
+                                                type="number"
+                                                min={1}
+                                                value={i.quantity}
+                                                style={{ width: 50, textAlign: 'center' }}
+                                                onChange={e => changeQuantity(i.menuItem._id, Number(e.target.value))}
+                                                disabled={loading}
+                                            />
+                                        </td>
+                                        <td className="orderStaff__orderCartTd">{(i.menuItem.price * i.quantity).toLocaleString()} đ</td>
+                                        <td className="orderStaff__orderCartTd">
+                                            <button className="orderStaff__orderCartActionBtn" type="button" onClick={() => removeFromCart(i.menuItem._id)} disabled={loading}>Xóa</button>
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                        <div className="orderStaff__orderCartTotal">Tổng cộng: {total.toLocaleString()} đ</div>
+                        <button className="orderStaff__orderSubmitBtn" type="button" onClick={handleSaveOrder} disabled={loading}>
+                            {loading ? 'Đang lưu...' : 'Lưu hóa đơn'}
+                        </button>
+                        <div className="orderStaff__orderMsg">{message}</div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 }

@@ -1,3 +1,25 @@
+.orderStaff{
+  display: flex;
+  height: 100vh;
+  flex: 1 1;
+}
+.orderStaff_content{
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  top: 64px;
+  bottom: 0;
+  height: calc(100vh - 92px);
+  width: 100%;
+  padding: 14px;
+  /* background: #fbbf24; */
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.orderStaff_content::-webkit-scrollbar {
+  display: none;
+}
+
 /* Nút thanh toán trong box order */
 .orderStaff__orderPayBtn {
   background: #2563eb;
