@@ -266,6 +266,7 @@ function Bill({ token }) {
               </div>
               <div className="billManager__popupInfoRow"><span>Tổng tiền:</span> <b style={{ color: '#2563eb' }}>{isEditOrder ? (editOrderDetail?.total?.toLocaleString() || '0') : (orderDetail.total?.toLocaleString() || '0')} đ</b></div>
               <div className="billManager__popupInfoRow"><span>Ngày tạo:</span> <b>{new Date(orderDetail.createdAt).toLocaleString()}</b></div>
+              <div className="billManager__popupInfoRow"><span>Cập nhật gần nhất:</span> <b>{orderDetail.updatedAt ? new Date(orderDetail.updatedAt).toLocaleString() : '--'}</b></div>
             </div>
             <div className="billManager__popupListTitle">Danh sách món ăn</div>
             <table className="billManager__popupTableFood">

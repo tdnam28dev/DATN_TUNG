@@ -50,11 +50,11 @@
 
 .td-logo-admin {
   display: block;
-  height: 58px;
+  height: 59px;
   background-image: url("../../../public/bg-pattern.jpg");
   margin: 0;
   padding: 10px 10px 0 10px;
-  /* border-bottom: 1.5px solid #FFA827; */
+  border-bottom: 1.5px solid #FFA827;
   position: sticky;
   top: 0;
   z-index: 5;
@@ -159,7 +159,7 @@
   align-items: center;
   justify-content: space-between;
   border-bottom: 1.5px solid #ffa827;
-  border-left: 1.5px solid #ffa827;
+  /* border-left: 1.5px solid #ffa827; */
   backdrop-filter: blur(1px);
   position: fixed;
   top: 0;

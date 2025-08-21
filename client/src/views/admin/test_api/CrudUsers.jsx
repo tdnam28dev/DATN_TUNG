@@ -1,17 +1,16 @@
 
+
 import React, { useState, useEffect } from 'react';
 import { getUsers, createUser, updateUser, deleteUser } from '../../../api/user';
 import { getRestaurants } from '../../../api/restaurant';
-import './CrudUsers.css'; // Style riêng cho quản lý người dùng
-
+import './CrudUsers.css';
 
 function CrudUsers({ token }) {
   const [users, setUsers] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
-  // Tách filter thành 2 state riêng như CrudMenus
   const [filterRole, setFilterRole] = useState('');
   const [filterRestaurant, setFilterRestaurant] = useState('');
-  const [form, setForm] = useState({ username: '', password: '', role: 'staff', name: '', phone: '', restaurant: '' });
+  const [form, setForm] = useState({ username: '', password: '', role: 'staff', name: '', phone: '', restaurant: '', isActive: true });
   const [editId, setEditId] = useState('');
   const [message, setMessage] = useState('');
   const [showPopup, setShowPopup] = useState(false);
@@ -22,7 +21,6 @@ function CrudUsers({ token }) {
     // eslint-disable-next-line
   }, [token]);
 
-  // Lấy toàn bộ users, filter trên client như CrudMenus
   const fetchData = async () => {
     const res = await getUsers(token);
     setUsers(Array.isArray(res) ? res : []);
@@ -34,12 +32,12 @@ function CrudUsers({ token }) {
 
   const openPopup = () => {
     setEditId('');
-    setForm({ username: '', password: '', role: 'staff', name: '', phone: '', restaurant: '' });
+    setForm({ username: '', password: '', role: 'staff', name: '', phone: '', restaurant: '', isActive: true });
     setShowPopup(true);
   };
   const closePopup = () => {
     setEditId('');
-    setForm({ username: '', password: '', role: 'staff', name: '', phone: '', restaurant: '' });
+    setForm({ username: '', password: '', role: 'staff', name: '', phone: '', restaurant: '', isActive: true });
     setShowPopup(false);
   };
 
@@ -61,7 +59,8 @@ function CrudUsers({ token }) {
       role: u.role,
       name: u.name || '',
       phone: u.phone || '',
-      restaurant: u.restaurant || ''
+      restaurant: u.restaurant || '',
+      isActive: typeof u.isActive === 'boolean' ? u.isActive : true
     });
     setShowPopup(true);
   };
@@ -74,7 +73,7 @@ function CrudUsers({ token }) {
     const res = await updateUser(editId, submitForm, token);
     setMessage(res._id ? 'Cập nhật thành công!' : res.error || 'Lỗi');
     setEditId('');
-    setForm({ username: '', password: '', role: 'staff', name: '', phone: '', restaurant: '' });
+    setForm({ username: '', password: '', role: 'staff', name: '', phone: '', restaurant: '', isActive: true });
     setShowPopup(false);
     fetchData();
   };
@@ -86,7 +85,7 @@ function CrudUsers({ token }) {
     fetchData();
   };
 
-  // Lọc users trên client như CrudMenus
+  // Lọc users trên client
   const filteredUsers = users.filter(u => {
     let matchRole = true;
     let matchRes = true;
@@ -100,13 +99,7 @@ function CrudUsers({ token }) {
 
   return (
     <div className="userCrud">
-      <div className="userCrud__header">
-        <h3 className="userCrud__title">Quản lý người dùng</h3>
-        <button className="userCrud__add btnSubmit" onClick={openPopup}>
-          <span className="userCrud__addIcon">＋</span> Thêm người dùng
-        </button>
-      </div>
-      {/* Bộ lọc giống CrudMenus */}
+      <h2 className="userCrud__title">Quản lý người dùng</h2>
       <div className="userCrud__filterRow">
         <select
           className="userCrud__filterSelect"
@@ -128,6 +121,7 @@ function CrudUsers({ token }) {
             <option key={r._id} value={r._id}>{r.name}</option>
           ))}
         </select>
+        <button className="userCrud__addBtn" onClick={openPopup}>Thêm người dùng</button>
       </div>
       <div className="userCrud__tableWrap">
         <table className="userCrud__table">
@@ -138,6 +132,8 @@ function CrudUsers({ token }) {
               <th className="userCrud__th">Số điện thoại</th>
               <th className="userCrud__th">Vai trò</th>
               <th className="userCrud__th">Nhà hàng</th>
+              <th className="userCrud__th">Trạng thái</th>
+              <th className="userCrud__th">Ngày tạo</th>
               <th className="userCrud__th">Hành động</th>
             </tr>
           </thead>
@@ -151,93 +147,52 @@ function CrudUsers({ token }) {
                 <td className="userCrud__td">{
                   (() => {
                     if (!u.restaurant) return '-';
-                    // Nếu đã populate thì lấy tên, nếu chỉ là id thì tra trong danh sách restaurants
                     if (typeof u.restaurant === 'object' && u.restaurant.name) return u.restaurant.name;
                     const found = restaurants.find(r => r._id === u.restaurant);
                     return found ? found.name : u.restaurant;
                   })()
                 }</td>
+                <td className={"userCrud__td userCrud__td--status " + (u.isActive ? 'userCrud__td--active' : 'userCrud__td--inactive')}>
+                  {u.isActive ? 'Đang hoạt động' : 'Đã khóa'}
+                </td>
+                <td className="userCrud__td">{u.createdAt ? new Date(u.createdAt).toLocaleString('vi-VN') : '-'}</td>
                 <td className="userCrud__td userCrud__td--action">
-                  <button className="userCrud__edit btnEdit" onClick={() => handleEdit(u)} title="Sửa">
-                    <span className="userCrud__editIcon">✎</span> Sửa
-                  </button>
-                  <button className="userCrud__popupBtn btnDelete" style={{ marginLeft: 6 }} onClick={() => handleDelete(u._id)}>Xóa</button>
+                  <button className="userCrud__detailBtn" onClick={() => handleEdit(u)} title="Chi tiết">Chi tiết</button>
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      {/* Popup thêm/sửa người dùng */}
+      {/* Popup chi tiết/sửa/xóa người dùng */}
       {showPopup && (
-        <div className="popup-restaurant-overlay">
-          <div className="popup-restaurant-box userCrud__popupBox">
-            <div className="userCrud__popupTitle">{editId ? 'Cập nhật người dùng' : 'Thêm mới người dùng'}</div>
-            <form className="userCrud__popupForm" onSubmit={editId ? handleUpdate : handleCreate}>
-              <input
-                className="inputCrud userCrud__input"
-                type="text"
-                placeholder="Tên đăng nhập"
-                value={form.username}
-                onChange={e => setForm({ ...form, username: e.target.value })}
-                required
-              />
-              <input
-                className="inputCrud userCrud__input"
-                type="password"
-                placeholder="Mật khẩu"
-                value={form.password}
-                onChange={e => setForm({ ...form, password: e.target.value })}
-                required={!editId}
-              />
-              <input
-                className="inputCrud userCrud__input"
-                type="text"
-                placeholder="Họ tên người dùng"
-                value={form.name}
-                onChange={e => setForm({ ...form, name: e.target.value })}
-              />
-              <input
-                className="inputCrud userCrud__input"
-                type="text"
-                placeholder="Số điện thoại"
-                value={form.phone}
-                onChange={e => setForm({ ...form, phone: e.target.value })}
-              />
-              <select
-                className="selectCrud userCrud__input"
-                value={form.role}
-                onChange={e => setForm({ ...form, role: e.target.value })}
-                required
-              >
-                <option value="staff">Nhân viên</option>
-                <option value="manager">Quản lý</option>
-                <option value="admin">Admin</option>
-              </select>
-              {/* Chọn nhà hàng nếu không phải admin */}
-              {form.role !== 'admin' && (
-                <select
-                  className="selectCrud userCrud__input"
-                  value={form.restaurant}
-                  onChange={e => setForm({ ...form, restaurant: e.target.value })}
-                  required
-                >
-                  <option value="">-- Chọn nhà hàng --</option>
-                  {restaurants.map(r => (
-                    <option key={r._id} value={r._id}>{r.name}</option>
-                  ))}
-                </select>
-              )}
-              <div className="userCrud__popupActions">
-                <button className="userCrud__popupBtn btnSubmit" type="submit">{editId ? 'Cập nhật' : 'Lưu'}</button>
-                <button className="userCrud__popupBtn btnDelete" type="button" onClick={closePopup}>Hủy</button>
-              </div>
-            </form>
-            <div className="userCrud__msg">{message}</div>
+        <div className="userCrud__popupOverlay">
+          <div className="userCrud__popupBox">
+            <div className="userCrud__popupTitle">Chi tiết người dùng</div>
+            <div className="userCrud__popupDetail">
+              <div><b>Tên đăng nhập:</b> {form.username}</div>
+              <div><b>Họ tên:</b> {form.name || '-'}</div>
+              <div><b>Số điện thoại:</b> {form.phone || '-'}</div>
+              <div><b>Vai trò:</b> {form.role === 'admin' ? 'Admin' : form.role === 'manager' ? 'Quản lý' : 'Nhân viên'}</div>
+              <div><b>Nhà hàng:</b> {
+                form.role === 'admin' ? '-' : (() => {
+                  if (!form.restaurant) return '-';
+                  const found = restaurants.find(r => r._id === form.restaurant || (typeof form.restaurant === 'object' && r._id === form.restaurant._id));
+                  return found ? found.name : form.restaurant;
+                })()
+              }</div>
+              <div><b>Trạng thái:</b> {form.isActive ? 'Đang hoạt động' : 'Đã khóa'}</div>
+            </div>
+            <div className="userCrud__popupActions">
+              <button className="userCrud__popupBtn userCrud__popupBtn--edit" type="button" onClick={() => setShowPopup('edit')}>Sửa</button>
+              <button className="userCrud__popupBtn userCrud__popupBtn--delete" type="button" onClick={() => handleDelete(editId)}>Xóa</button>
+              <button className="userCrud__popupBtn userCrud__popupBtn--cancel" type="button" onClick={closePopup}>Đóng</button>
+            </div>
+            <div className="userCrud__msgPopup">{message}</div>
           </div>
         </div>
       )}
-      <div className="userCrud__msg">{message}</div>
+      <div className="userCrud__msgMain">{message}</div>
     </div>
   );
 }

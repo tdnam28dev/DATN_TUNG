@@ -1,173 +1,197 @@
-/* Giao diện quản lý người dùng - BEM */
+/* Giao diện quản lý người dùng - đồng bộ style hóa đơn */
 .userCrud {
     padding: 32px 0;
-    max-width: 90%;
+    max-width: 95%;
     margin: 0 auto;
 }
 
-.userCrud__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
 .userCrud__title {
-    font-size: 20px;
+    font-size: 28px;
     font-weight: 700;
+    color: #f59e1b;
+    margin-bottom: 18px;
 }
 
-.userCrud__add {
+.userCrud__filterRow {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 18px;
+    align-items: center;
+}
+
+.userCrud__filterSelect {
+    padding: 8px 16px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    background: #f9fafb;
+    font-size: 16px;
+    color: #222;
+    outline: none;
+    transition: border 0.2s;
+}
+.userCrud__filterSelect:focus {
+    border: 1.5px solid #f59e1b;
+}
+
+.userCrud__addBtn {
     background: #22c55e;
     color: #fff;
     border: none;
-    border-radius: 6px;
-    padding: 7px 18px;
-    font-size: 15px;
+    border-radius: 8px;
+    padding: 8px 22px;
+    font-size: 16px;
     font-weight: 500;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 4px;
     transition: background 0.2s;
 }
-
-.userCrud__add:hover {
+.userCrud__addBtn:hover {
     background: #16a34a;
 }
 
 .userCrud__tableWrap {
     background: #fff;
-    border-radius: 14px;
-    box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.06);
-    padding: 0 0 8px 0;
-    margin-bottom: 20px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px 0 rgba(0,0,0,0.07);
+    padding: 0 0 10px 0;
+    margin-bottom: 24px;
 }
 
 .userCrud__table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    font-size: 15px;
+    font-size: 16px;
 }
 
 .userCrud__th {
     background: #f3f4f6;
     font-weight: 600;
-    padding: 12px 10px;
+    padding: 14px 12px;
     text-align: left;
     border-bottom: 2px solid #e5e7eb;
 }
 
-/* Bộ lọc người dùng */
-.userCrud__filterRow {
-    display: flex;
-    gap: 14px;
-    margin-bottom: 18px;
-    align-items: center;
-}
-
-.userCrud__filterSelect {
-    padding: 7px 14px;
-    border-radius: 6px;
-    border: 1px solid #d1d5db;
-    background: #f9fafb;
-    font-size: 15px;
-    color: #222;
-    outline: none;
-    transition: border 0.2s;
-}
-.userCrud__filterSelect:focus {
-    border: 1.5px solid #22c55e;
-}
-
-
 .userCrud__td {
-    padding: 10px 10px;
+    padding: 12px 12px;
     border-bottom: 1px solid #f1f1f1;
     vertical-align: middle;
 }
-
 .userCrud__tr:last-child .userCrud__td {
     border-bottom: none;
 }
-
 .userCrud__td--action {
     text-align: right;
     white-space: nowrap;
 }
-
-.userCrud__edit {
-    background: #fbbf24;
-    color: #222;
-    border: none;
-    border-radius: 6px;
-    padding: 6px 14px;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-    margin-right: 2px;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    transition: background 0.2s;
-}
-
-.userCrud__edit:hover {
-    background: #f59e1b;
-}
-
-.userCrud__editIcon {
-    font-size: 15px;
-}
-
-.userCrud__popupForm {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 20px;
-}
-
-.userCrud__popupActions {
-    display: flex;
-    gap: 12px;
-    justify-content: center;
-    margin-top: 18px;
-}
-
-.userCrud__popupBtn {
-    padding: 7px 16px;
-    border-radius: 6px;
-    font-size: 15px;
-    font-weight: 500;
-    border: none;
-    cursor: pointer;
-    transition: background 0.2s;
-}
-
-.userCrud__popupBtn.btnSubmit {
+.userCrud__detailBtn {
     background: #2563eb;
     color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 7px 18px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s;
 }
-
-.userCrud__popupBtn.btnSubmit:hover {
+.userCrud__detailBtn:hover {
     background: #1d4ed8;
 }
 
-.userCrud__popupBtn.btnDelete {
+/* Trạng thái */
+.userCrud__td--status.userCrud__td--active {
+    color: #22c55e;
+    font-weight: 600;
+}
+.userCrud__td--status.userCrud__td--inactive {
+    color: #ef4444;
+    font-weight: 600;
+}
+
+/* Popup overlay */
+.userCrud__popupOverlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.18);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.userCrud__popupBox {
+    background: #fff;
+    border-radius: 18px;
+    box-shadow: 0 4px 32px 0 rgba(0,0,0,0.13);
+    min-width: 380px;
+    max-width: 95vw;
+    padding: 32px 32px 24px 32px;
+    position: relative;
+    animation: popupIn 0.18s;
+}
+@keyframes popupIn {
+    from { transform: scale(0.95); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+.userCrud__popupTitle {
+    font-size: 22px;
+    font-weight: 700;
+    color: #f59e1b;
+    margin-bottom: 18px;
+    text-align: center;
+}
+.userCrud__popupDetail {
+    font-size: 16px;
+    color: #222;
+    margin-bottom: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+.userCrud__popupActions {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    margin-top: 10px;
+}
+.userCrud__popupBtn {
+    padding: 8px 20px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 500;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.userCrud__popupBtn--edit {
+    background: #2563eb;
+    color: #fff;
+}
+.userCrud__popupBtn--edit:hover {
+    background: #1d4ed8;
+}
+.userCrud__popupBtn--delete {
     background: #ef4444;
     color: #fff;
 }
-
-.userCrud__popupBtn.btnDelete:hover {
+.userCrud__popupBtn--delete:hover {
     background: #dc2626;
 }
-
-.userCrud__msg {
+.userCrud__popupBtn--cancel {
+    background: #e5e7eb;
+    color: #222;
+}
+.userCrud__popupBtn--cancel:hover {
+    background: #cbd5e1;
+}
+.userCrud__msgPopup {
     margin-top: 10px;
     color: #2563eb;
     font-size: 15px;
     text-align: center;
 }
-
-/* Popup overlay và box dùng chung class với các phần khác */
+.userCrud__msgMain {
+    margin-top: 10px;
+    color: #2563eb;
+    font-size: 15px;
+    text-align: center;
+}

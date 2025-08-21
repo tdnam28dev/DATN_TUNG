@@ -1,3 +1,5 @@
+const API_URL = 'http://localhost:8080/api';
+
 // Tạm lưu hóa đơn (pending)
 export async function savePendingOrder(id, token) {
   const res = await fetch(`${API_URL}/orders/${id}/save-pending`, {
@@ -24,7 +26,6 @@ export async function payOrder(id, token) {
   });
   return res.json();
 }
-const API_URL = 'http://localhost:8080/api';
 
 export async function createOrder(data, token) {
   const res = await fetch(`${API_URL}/orders`, {

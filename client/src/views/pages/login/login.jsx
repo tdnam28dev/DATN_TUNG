@@ -27,13 +27,18 @@ const Login = ({ setToken }) => {
     const res = await loginApi(username, password, role);
     if (res.token) {
       setMessage("Đăng nhập thành công!");
-      setToken(res.token); // Lưu access token vào App
-      localStorage.setItem("accessToken", res.token); // Lưu vào localStorage
+      setToken(res.token);
+      localStorage.setItem("accessToken", res.token);
       localStorage.setItem("userId", res.id);
-      // Nếu chọn quyền admin thì chuyển đến trang admin, không thì về home
+      // Nếu chọn đăng nhập vào trang quản trị (tích checkbox)
       if (role === 'admin') {
-        navigate("/admin-dashboard");
+        if (res.role === 'admin' || (Array.isArray(res.roles) && res.roles.includes('admin')) || res.role === 'manager' || (Array.isArray(res.roles) && res.roles.includes('manager'))) {
+          navigate("/admin-dashboard");
+        } else {
+          setError("Tài khoản của bạn không có quyền truy cập trang quản trị!");
+        }
       } else {
+        // Nếu không chọn quản trị viên thì luôn cho vào trang order
         navigate("/order");
       }
     } else {
@@ -78,8 +83,9 @@ const Login = ({ setToken }) => {
             />
             <label htmlFor="admin-checkbox" className="checkbox-label">Quản trị viên</label>
           </div>
-          {error && <div className="login-error">{error}</div>}
-          {message && <div className="login-success">{message}</div>}
+          {error
+            ? <div className="login-error">{error}</div>
+            : (message && <div className="login-success">{message}</div>)}
           <button className="login-btn" type="submit">Đăng nhập</button>
         </form>
       </div>
