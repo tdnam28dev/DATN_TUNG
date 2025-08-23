@@ -5,24 +5,22 @@ import Icon from '../../../../components/Icon';
 import './AdminDashboard.css';
 import { getUserById } from '../../../../api/user';
 // Import các giao diện sidebar
-import Overview from '../../pages/Overview';
-import Report from '../../pages/Report';
+import Overview from '../overview/Overview';
+import Report from '../report/Report';
 import Bill from '../../pages/bill/Bill';
-import Product from '../../pages/Product';
-import Schedule from '../../pages/Schedule';
-import Staff from '../../pages/Staff';
-import Customer from '../../pages/Customer';
-import StaffChain from '../../pages/StaffChain';
-import Promotion from '../../pages/Promotion';
-import Warehouse from '../../pages/Warehouse';
-import RevenueExpense from '../../pages/RevenueExpense';
-import Timekeeping from '../../pages/Timekeeping';
+import Product from '../product/Product';
+import Schedule from '../schedule/Schedule';
+import Customer from '../customer/Customer';
+import Promotion from '../promotion/Promotion';
+import Warehouse from '../warehouse/Warehouse';
+import RevenueExpense from '../revenueexpense/RevenueExpense';
+import Timekeeping from '../timekeeping/Timekeeping';
 import Settings from '../../pages/setting/Setting';
 
 
 // Dữ liệu sidebar mẫu
 const sidebarItems = [
-  'Tổng quan', 'Báo cáo', 'Hóa đơn', 'Mặt hàng', 'Đặt lịch', 'Nhân viên', 'Khách hàng', 'Nhân viên chuỗi', 'Khuyến mại', 'Kho hàng', 'Thu chi', 'Chấm công', 'Cấu hình'
+  'Tổng quan', 'Báo cáo', 'Hóa đơn', 'Mặt hàng', 'Đặt lịch', 'Khách hàng', 'Khuyến mại', 'Kho hàng', 'Thu chi', 'Chấm công', 'Cấu hình'
 ];
 
 function AdminDashboard({ token, userId }) {
@@ -62,9 +60,7 @@ function AdminDashboard({ token, userId }) {
     'Hóa đơn': '/admin-dashboard/bill',
     'Mặt hàng': '/admin-dashboard/product',
     'Đặt lịch': '/admin-dashboard/schedule',
-    'Nhân viên': '/admin-dashboard/staff',
     'Khách hàng': '/admin-dashboard/customer',
-    'Nhân viên chuỗi': '/admin-dashboard/staff-chain',
     'Khuyến mại': '/admin-dashboard/promotion',
     'Kho hàng': '/admin-dashboard/warehouse',
     'Thu chi': '/admin-dashboard/revenue-expense',
@@ -114,9 +110,7 @@ function AdminDashboard({ token, userId }) {
               'Hóa đơn': 'bill',
               'Mặt hàng': 'product',
               'Đặt lịch': 'calendar',
-              'Nhân viên': 'user',
               'Khách hàng': 'customer',
-              'Nhân viên chuỗi': 'user-group',
               'Khuyến mại': 'discount',
               'Kho hàng': 'warehouse',
               'Thu chi': 'money',
@@ -206,9 +200,7 @@ function AdminDashboard({ token, userId }) {
           {location.pathname === '/admin-dashboard/bill' && <Bill token={token} />}
           {location.pathname === '/admin-dashboard/product' && <Product />}
           {location.pathname === '/admin-dashboard/schedule' && <Schedule />}
-          {location.pathname === '/admin-dashboard/staff' && <Staff />}
           {location.pathname === '/admin-dashboard/customer' && <Customer />}
-          {location.pathname === '/admin-dashboard/staff-chain' && <StaffChain />}
           {location.pathname === '/admin-dashboard/promotion' && <Promotion />}
           {location.pathname === '/admin-dashboard/warehouse' && <Warehouse />}
           {location.pathname === '/admin-dashboard/revenue-expense' && <RevenueExpense />}
