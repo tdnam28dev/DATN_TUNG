@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { getOrders, updateOrder, deleteOrder } from '../../../api/order';
-import { getTables } from '../../../api/table';
-import { getRestaurants } from '../../../api/restaurant';
+import { getOrders, updateOrder, deleteOrder } from '../../../../api/order';
+import { getTables } from '../../../../api/table';
+import { getRestaurants } from '../../../../api/restaurant';
 import './Bill.css';
 
 function Bill({ token }) {
@@ -53,7 +53,7 @@ function Bill({ token }) {
   useEffect(() => {
     const fetchMenuItems = async () => {
       try {
-        const { getMenuItems } = await import('../../../api/menuitem');
+        const { getMenuItems } = await import('../../../../api/menuitem');
         const res = await getMenuItems(token);
         if (Array.isArray(res)) setMenuItems(res);
       } catch { }

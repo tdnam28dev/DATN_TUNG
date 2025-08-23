@@ -1,7 +1,7 @@
 /* ===== SIDEBAR ===== */
 .admin-dashboard-sidebar {
   width: 250px;
-  background-image: url("../../../public/bg-pattern.jpg");
+  background-image: url("../../../../../public/bg-pattern.jpg");
   border-right: 1.5px solid #ffa827;
   color: #fff;
   padding: 0;
@@ -51,7 +51,7 @@
 .td-logo-admin {
   display: block;
   height: 59px;
-  background-image: url("../../../public/bg-pattern.jpg");
+  background-image: url("../../../../../public/bg-pattern.jpg");
   margin: 0;
   padding: 10px 10px 0 10px;
   border-bottom: 1.5px solid #FFA827;
@@ -153,7 +153,7 @@
 
 /* ===== HEADER ===== */
 .admin-dashboard-header {
-  background-image: url("../../../public/bg-pattern.jpg");
+  background-image: url("../../../../../public/bg-pattern.jpg");
   padding: 16px 32px;
   display: flex;
   align-items: center;

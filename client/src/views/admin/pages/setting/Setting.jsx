@@ -3,11 +3,11 @@ import { FaStore, FaUtensils, FaListAlt, FaChair, FaThLarge, FaUser } from 'reac
 import './Setting.css';
 
 // Import các component động
-import CrudRestaurants from '../test_api/CrudRestaurants';
-import CrudUsers from '../test_api/CrudUsers';
-import CrudMenus from '../test_api/CrudMenus';
-import CrudMenuItems from '../test_api/CrudMenuItems';
-import CrudTables from '../test_api/CrudTables';
+import CrudRestaurants from '../../test_api/CrudRestaurants';
+import CrudUsers from '../../test_api/CrudUsers';
+import CrudMenus from '../../test_api/CrudMenus';
+import CrudMenuItems from '../../test_api/CrudMenuItems';
+import CrudTables from '../../test_api/CrudTables';
 
 // Danh sách các mục thiết lập dạng lưới, mỗi mục có icon, tiêu đề, mô tả
 const SETTING_SECTIONS = [

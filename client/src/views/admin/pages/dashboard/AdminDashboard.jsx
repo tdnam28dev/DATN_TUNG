@@ -1,22 +1,23 @@
 import React, { useEffect, useState, useRef } from 'react';
-import LogoTudo from '../../components/Logo_td';
-import Icon from '../../components/Icon';
+import { useNavigate, useLocation } from 'react-router-dom';
+import LogoTudo from '../../../../components/Logo_td';
+import Icon from '../../../../components/Icon';
 import './AdminDashboard.css';
-import { getUserById } from '../../api/user';
+import { getUserById } from '../../../../api/user';
 // Import các giao diện sidebar
-import Overview from './sidebar/Overview';
-import Report from './sidebar/Report';
-import Bill from './sidebar/Bill';
-import Product from './sidebar/Product';
-import Schedule from './sidebar/Schedule';
-import Staff from './sidebar/Staff';
-import Customer from './sidebar/Customer';
-import StaffChain from './sidebar/StaffChain';
-import Promotion from './sidebar/Promotion';
-import Warehouse from './sidebar/Warehouse';
-import RevenueExpense from './sidebar/RevenueExpense';
-import Timekeeping from './sidebar/Timekeeping';
-import Settings from './sidebar/Setting';
+import Overview from '../../pages/Overview';
+import Report from '../../pages/Report';
+import Bill from '../../pages/bill/Bill';
+import Product from '../../pages/Product';
+import Schedule from '../../pages/Schedule';
+import Staff from '../../pages/Staff';
+import Customer from '../../pages/Customer';
+import StaffChain from '../../pages/StaffChain';
+import Promotion from '../../pages/Promotion';
+import Warehouse from '../../pages/Warehouse';
+import RevenueExpense from '../../pages/RevenueExpense';
+import Timekeeping from '../../pages/Timekeeping';
+import Settings from '../../pages/setting/Setting';
 
 
 // Dữ liệu sidebar mẫu
@@ -31,6 +32,8 @@ function AdminDashboard({ token, userId }) {
   const [showUserMenu, setShowUserMenu] = useState(false); // Toggle menu user
   const userMenuRef = useRef(null);
   const realUserId = userId || localStorage.getItem('userId');
+  const navigate = useNavigate();
+  const location = useLocation();
   useEffect(() => {
     const fetchUserInfo = async () => {
       const data = await getUserById(realUserId, token);
@@ -52,8 +55,31 @@ function AdminDashboard({ token, userId }) {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [showUserMenu]);
+  // Map sidebar item sang path
+  const itemToPath = {
+    'Tổng quan': '/admin-dashboard',
+    'Báo cáo': '/admin-dashboard/report',
+    'Hóa đơn': '/admin-dashboard/bill',
+    'Mặt hàng': '/admin-dashboard/product',
+    'Đặt lịch': '/admin-dashboard/schedule',
+    'Nhân viên': '/admin-dashboard/staff',
+    'Khách hàng': '/admin-dashboard/customer',
+    'Nhân viên chuỗi': '/admin-dashboard/staff-chain',
+    'Khuyến mại': '/admin-dashboard/promotion',
+    'Kho hàng': '/admin-dashboard/warehouse',
+    'Thu chi': '/admin-dashboard/revenue-expense',
+    'Chấm công': '/admin-dashboard/timekeeping',
+    'Cấu hình': '/admin-dashboard/config'
+  };
+  // Map path sang item
+  const pathToItem = Object.entries(itemToPath).reduce((acc, [k, v]) => { acc[v] = k; return acc; }, {});
   // State lưu item đang chọn
   const [activeItem, setActiveItem] = useState('Tổng quan');
+  // Đồng bộ activeItem với URL
+  useEffect(() => {
+    const found = pathToItem[location.pathname];
+    if (found) setActiveItem(found);
+  }, [location.pathname]);
   const sidebarWidth = collapsed ? 80 : 250;
 
   // Hàm đăng xuất
@@ -103,7 +129,10 @@ function AdminDashboard({ token, userId }) {
                 className={
                   'admin-dashboard-sidebar-item' + (item === activeItem ? ' active' : '') + (collapsed ? ' collapsed' : '')
                 }
-                onClick={() => setActiveItem(item)}
+                onClick={() => {
+                  setActiveItem(item);
+                  navigate(itemToPath[item]);
+                }}
               >
                 <Icon name={iconName} className="sidebar-item-icon" />
                 {!collapsed && (
@@ -122,7 +151,10 @@ function AdminDashboard({ token, userId }) {
                 className={
                   'admin-dashboard-sidebar-item' + ('Cấu hình' === activeItem ? ' active' : '') + (collapsed ? ' collapsed' : '')
                 }
-                onClick={() => setActiveItem('Cấu hình')}
+                onClick={() => {
+                  setActiveItem('Cấu hình');
+                  navigate(itemToPath['Cấu hình']);
+                }}
               >
                 <Icon name={iconName} className="sidebar-item-icon" />
                 {!collapsed && (
@@ -169,19 +201,19 @@ function AdminDashboard({ token, userId }) {
           </div>
         </header>
         <div className="admin-dashboard-content">
-          {activeItem === 'Tổng quan' && <Overview />}
-          {activeItem === 'Báo cáo' && <Report />}
-          {activeItem === 'Hóa đơn' && <Bill token={token} />}
-          {activeItem === 'Mặt hàng' && <Product />}
-          {activeItem === 'Đặt lịch' && <Schedule />}
-          {activeItem === 'Nhân viên' && <Staff />}
-          {activeItem === 'Khách hàng' && <Customer />}
-          {activeItem === 'Nhân viên chuỗi' && <StaffChain />}
-          {activeItem === 'Khuyến mại' && <Promotion />}
-          {activeItem === 'Kho hàng' && <Warehouse />}
-          {activeItem === 'Thu chi' && <RevenueExpense />}
-          {activeItem === 'Chấm công' && <Timekeeping />}
-          {activeItem === 'Cấu hình' && <Settings token={token} />}
+          {location.pathname === '/admin-dashboard' && <Overview />}
+          {location.pathname === '/admin-dashboard/report' && <Report />}
+          {location.pathname === '/admin-dashboard/bill' && <Bill token={token} />}
+          {location.pathname === '/admin-dashboard/product' && <Product />}
+          {location.pathname === '/admin-dashboard/schedule' && <Schedule />}
+          {location.pathname === '/admin-dashboard/staff' && <Staff />}
+          {location.pathname === '/admin-dashboard/customer' && <Customer />}
+          {location.pathname === '/admin-dashboard/staff-chain' && <StaffChain />}
+          {location.pathname === '/admin-dashboard/promotion' && <Promotion />}
+          {location.pathname === '/admin-dashboard/warehouse' && <Warehouse />}
+          {location.pathname === '/admin-dashboard/revenue-expense' && <RevenueExpense />}
+          {location.pathname === '/admin-dashboard/timekeeping' && <Timekeeping />}
+          {location.pathname === '/admin-dashboard/config' && <Settings token={token} />}
         </div>
       </div>
     </div>
