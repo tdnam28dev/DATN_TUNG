@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { FaStore, FaUtensils, FaListAlt, FaChair, FaThLarge, FaUser } from 'react-icons/fa';
-import './Setting.css';
+import './css/Setting.css';
 
 // Import các component động
 import CrudRestaurants from '../../test_api/CrudRestaurants';
-import CrudUsers from '../../test_api/CrudUsers';
+import User from './User';
 import CrudMenus from '../../test_api/CrudMenus';
 import CrudMenuItems from '../../test_api/CrudMenuItems';
 import CrudTables from '../../test_api/CrudTables';
@@ -70,7 +70,7 @@ function Settings({ token }) {
   // Map tiêu đề sang component động
   const componentMap = {
     'Quản lý nhà hàng': <CrudRestaurants token={token} />,
-    'Quản lý người dùng': <CrudUsers token={token} />,
+    'Quản lý người dùng': <User token={token} />,
     'Thiết lập menu': <CrudMenus token={token} />,
     'Thiết lập món ăn': <CrudMenuItems token={token} />,
     'Thiết lập bàn': <CrudTables token={token} />,

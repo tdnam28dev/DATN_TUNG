@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 // Model User hỗ trợ multi-role, actions, phân quyền động
 const UserSchema = new mongoose.Schema({
-  username: { type: String, required: true, unique: true },
+  username: { type: String, required: true, unique: true, index: true },
   password: { type: String, required: true },
   // roles: mảng role, role: role chính (tương thích cũ)
   roles: [{ type: String, enum: ['admin', 'manager', 'staff'] }],

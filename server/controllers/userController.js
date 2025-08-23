@@ -20,13 +20,23 @@ exports.getAll = async (req, res) => {
 // Tạo mới người dùng, mã hóa mật khẩu
 exports.create = async (req, res) => {
   try {
-    const { username, password, role, name, phone } = req.body;
+    const { username, password, role, name, phone, actions, restaurant, isActive } = req.body;
     const hashedPassword = await bcrypt.hash(password, 10);
-    const user = new User({ username, password: hashedPassword, role, name, phone });
+    const user = new User({
+      username,
+      password: hashedPassword,
+      role,
+      name,
+      phone,
+      actions,
+      restaurant,
+      isActive
+    });
     await user.save();
     res.status(201).json(user);
   } catch (err) {
     res.status(400).json({ error: 'Dữ liệu không hợp lệ' });
+    console.error(err);
   }
 };
 // Đăng nhập, trả về access token, hỗ trợ multi-role, kiểm tra trạng thái hoạt động
