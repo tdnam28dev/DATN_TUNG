@@ -11,7 +11,7 @@ router.get('/', auth, role({ roles: ['admin', 'manager'], actions: ['read'] }), 
 // Tạo mới người dùng (admin)
 router.post('/', auth, role({ roles: ['admin'], actions: ['create'] }), userController.create);
 // Lấy thông tin người dùng theo id (admin, manager, chính chủ)
-router.get('/:id', auth, userController.getById, role({ roles: ['admin', 'manager'], actions: ['read'], resource: 'userDoc' }), (req, res) => res.json(req.userDoc));
+router.get('/:id', auth, userController.getById, role({ roles: ['admin', 'manager', 'staff'], actions: ['read'], resource: 'userDoc' }), (req, res) => res.json(req.userDoc));
 // Cập nhật người dùng (admin, chính chủ)
 router.put('/:id', auth, userController.update, role({ roles: ['admin'], actions: ['update'], resource: 'userDoc' }), async (req, res) => {
 	const updated = await require('../models/user').findByIdAndUpdate(req.params.id, req.body, { new: true });

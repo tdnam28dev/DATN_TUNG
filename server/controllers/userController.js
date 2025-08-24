@@ -21,6 +21,11 @@ exports.getAll = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     const { username, password, role, name, phone, actions, restaurant, isActive } = req.body;
+    // Kiểm tra username đã tồn tại chưa
+    const existed = await User.findOne({ username });
+    if (existed) {
+      return res.status(409).json({ error: 'Tên đăng nhập đã tồn tại!' });
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = new User({
       username,
@@ -79,7 +84,10 @@ exports.login = async (req, res) => {
 exports.getById = async (req, res, next) => {
   try {
     const user = await User.findById(req.params.id);
-    if (!user) return res.status(404).json({ error: 'Không tìm thấy người dùng' });
+    if (!user) {
+      req.userDoc = undefined;
+      return res.status(404).json({ error: 'Không tìm thấy người dùng' });
+    }
     req.userDoc = user; // Gán cho middleware phân quyền resource
     if (typeof next === 'function') return next();
     res.json(user);
@@ -113,7 +121,7 @@ exports.delete = async (req, res) => {
   try {
     const user = await User.findByIdAndUpdate(req.params.id, { isActive: false }, { new: true });
     if (!user) return res.status(404).json({ error: 'Không tìm thấy người dùng' });
-    res.json({ message: 'Đã xóa (ẩn) người dùng', user });
+    res.json({ message: 'Đã đóng tài khoản này', user });
   } catch (err) {
     res.status(500).json({ error: 'Lỗi server' });
   }

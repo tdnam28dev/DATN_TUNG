@@ -1,3 +1,11 @@
+// Khôi phục người dùng (restore)
+export async function restoreUser(id, token) {
+  const res = await fetch(`${API_URL}/users/${id}/restore`, {
+    method: 'PATCH',
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return res.json();
+}
 const API_URL = 'http://localhost:8080/api';
 
 export async function createUser(data, token) {

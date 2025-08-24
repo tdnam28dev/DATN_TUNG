@@ -53,10 +53,23 @@ module.exports = (options = {}) => {
       }
 
       // 5. Kiểm tra resource (chỉ cho thao tác trên tài nguyên của mình)
-      if (resource && req[resource]) {
-        // Ví dụ: chỉ cho user sửa thông tin của chính mình
-        if (resource === 'user' && req[resource]._id.toString() !== user._id.toString() && !userRoles.includes('admin')) {
-          return res.status(403).json({ error: 'Bạn chỉ được thao tác trên tài nguyên của mình' });
+      if (resource) {
+        const doc = req[resource];
+        if (!doc || !doc._id) {
+          return res.status(404).json({ error: 'Không tìm thấy tài nguyên hoặc tài nguyên không hợp lệ', detail: { resource, doc } });
+        }
+        // Nếu là admin thì cho phép thao tác trên mọi tài nguyên
+        if (userRoles.includes('admin')) {
+          // admin luôn được phép
+        } else if (resource === 'userDoc') {
+          // Nếu là staff, chỉ cho thao tác trên tài nguyên của chính mình
+          if (userRoles.includes('staff') && doc._id && user.id && doc._id.toString() === user.id.toString()) {
+            // staff thao tác trên chính mình
+          } else if (userRoles.includes('manager')) {
+            // manager có thể thao tác trên mọi user (nếu muốn mở rộng)
+          } else {
+            return res.status(403).json({ error: 'Bạn chỉ được thao tác trên tài nguyên của mình' });
+          }
         }
         // Có thể mở rộng cho các resource khác
       }

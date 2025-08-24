@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
-import { getUsers, createUser, updateUser, deleteUser } from '../../../../api/user';
+import { getUsers, createUser, updateUser, deleteUser, restoreUser } from '../../../../api/user';
 import { getRestaurants } from '../../../../api/restaurant';
 import './css/User.css';
 
@@ -123,6 +123,7 @@ function User({ token }) {
         const updateData = {
             name: editUserDetail.name,
             role: editUserDetail.role,
+            roles: [editUserDetail.role],
             actions: editUserDetail.actions,
             restaurant: editUserDetail.role === 'admin' ? null : editUserDetail.restaurant,
             isActive: editUserDetail.isActive
@@ -140,9 +141,33 @@ function User({ token }) {
         }
     };
 
+    // Hàm xóa user (đóng tài khoản)
     const handleDeleteUser = async (userId) => {
-        await deleteUser(userId, token);
-        fetchData();
+        setLoading(true);
+        const res = await deleteUser(userId, token);
+        setLoading(false);
+        // Kiểm tra message hoặc trạng thái user.isActive
+        if ((res && res.message && res.message.includes('đóng')) || (res && res.user && res.user.isActive === false)) {
+            setShowUserDetail(false);
+            fetchData();
+            alert('Đã đóng tài khoản!');
+        } else {
+            alert(res && res.error ? res.error : 'Lỗi khi đóng tài khoản!');
+        }
+    };
+
+    // Hàm khôi phục user
+    const handleRestoreUser = async (userId) => {
+        setLoading(true);
+        const res = await restoreUser(userId, token);
+        setLoading(false);
+        if ((res && res.message && res.message.includes('khôi phục')) || (res && res.user && res.user.isActive === true)) {
+            setShowUserDetail(false);
+            fetchData();
+            alert('Đã khôi phục tài khoản!');
+        } else {
+            alert(res && res.error ? res.error : 'Lỗi khi khôi phục tài khoản!');
+        }
     };
 
     // State cho form thêm user
@@ -195,20 +220,20 @@ function User({ token }) {
     };
 
     return (
-        <div>
+        <div className="user-setting">
             {/* Nút thêm người dùng và bộ lọc role, nhà hàng */}
-            <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
-                <div>
-                    <button onClick={() => setShowAddUser(true)} style={{ marginRight: 16 }}>Thêm người dùng</button>
+            <div className="user-setting__header">
+                <div className="user-setting__add-btn">
+                    <button className="user-setting__button" onClick={() => setShowAddUser(true)}>Thêm người dùng</button>
                 </div>
-                <div>
-                    <select value={filterRole} onChange={e => setFilterRole(e.target.value)} style={{ marginRight: 8 }}>
+                <div className="user-setting__filters">
+                    <select className="user-setting__filter user-setting__filter--role" value={filterRole} onChange={e => setFilterRole(e.target.value)}>
                         <option value="">Tất cả quyền</option>
                         <option value="admin">admin</option>
                         <option value="manager">manager</option>
                         <option value="staff">staff</option>
                     </select>
-                    <select value={filterRestaurant} onChange={e => setFilterRestaurant(e.target.value)}>
+                    <select className="user-setting__filter user-setting__filter--restaurant" value={filterRestaurant} onChange={e => setFilterRestaurant(e.target.value)}>
                         <option value="">Tất cả nhà hàng</option>
                         {restaurants.map(r => (
                             <option key={r._id} value={r._id}>{r.name}</option>
@@ -216,29 +241,29 @@ function User({ token }) {
                     </select>
                 </div>
             </div>
-            <table>
-                <thead>
+            <table className="user-setting__table">
+                <thead className="user-setting__table-head">
                     <tr>
-                        <th>Tên đăng nhập</th>
-                        <th>Họ tên</th>
-                        <th>Chức vụ</th>
-                        <th>Nhà hàng</th>
-                        <th>Trạng thái</th>
-                        <th>Ngày tạo</th>
-                        <th>Hành động</th>
+                        <th className="user-setting__table-th">Tên đăng nhập</th>
+                        <th className="user-setting__table-th">Họ tên</th>
+                        <th className="user-setting__table-th">Chức vụ</th>
+                        <th className="user-setting__table-th">Nhà hàng</th>
+                        <th className="user-setting__table-th">Trạng thái</th>
+                        <th className="user-setting__table-th">Ngày tạo</th>
+                        <th className="user-setting__table-th">Hành động</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className="user-setting__table-body">
                     {filteredUsers.map(user => (
-                        <tr key={user._id}>
-                            <td>{user.username}</td>
-                            <td>{user.name || '-'}</td>
-                            <td>{user.role || '-'}</td>
-                            <td>{user.restaurantName}</td>
-                            <td>{user.isActive ? 'Đang hoạt động' : 'Đã khóa'}</td>
-                            <td>{user.createdAt ? new Date(user.createdAt).toLocaleString('vi-VN') : '-'}</td>
-                            <td>
-                                <button onClick={() => { setUserDetail(user); setShowUserDetail(true); }}>Chi tiết</button>
+                        <tr className="user-setting__table-row" key={user._id}>
+                            <td className="user-setting__table-td">{user.username}</td>
+                            <td className="user-setting__table-td">{user.name || '-'}</td>
+                            <td className="user-setting__table-td">{user.role || '-'}</td>
+                            <td className="user-setting__table-td">{user.restaurantName}</td>
+                            <td className="user-setting__table-td">{user.isActive ? 'Đang hoạt động' : 'Đã khóa'}</td>
+                            <td className="user-setting__table-td">{user.createdAt ? new Date(user.createdAt).toLocaleString('vi-VN') : '-'}</td>
+                            <td className="user-setting__table-td">
+                                <button className="user-setting__button user-setting__button--detail" onClick={() => { setUserDetail(user); setShowUserDetail(true); }}>Chi tiết</button>
                             </td>
                         </tr>
                     ))}
@@ -247,50 +272,38 @@ function User({ token }) {
 
             {/* Popup chi tiết/sửa user */}
             {showUserDetail && userDetail && (
-                <div style={{ position: 'fixed', left: 0, top: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.2)', zIndex: 1000 }}>
-                    <div style={{ background: '#fff', maxWidth: 400, margin: '60px auto', padding: 24, borderRadius: 8, boxShadow: '0 2px 8px #0002' }}>
-                        <h3>Chi tiết người dùng</h3>
-                        <div><b>Tên đăng nhập:</b> {userDetail.username}</div>
-                        <div><b>Họ tên:</b> {isEditUser ? (
-                            <input
-                                value={editUserDetail?.name || ''}
-                                onChange={e => setEditUserDetail({ ...editUserDetail, name: e.target.value })}
-                                placeholder="Nhập họ tên"
-                            />
+                <div className="user-setting__popup-bg">
+                    <div className="user-setting__popup">
+                        <h3 className="user-setting__popup-title">Chi tiết người dùng</h3>
+                        <div className="user-setting__popup-row"><b>Tên đăng nhập:</b> {userDetail.username}</div>
+                        <div className="user-setting__popup-row"><b>Họ tên:</b> {isEditUser ? (
+                            <input className="user-setting__popup-input" value={editUserDetail?.name || ''} onChange={e => setEditUserDetail({ ...editUserDetail, name: e.target.value })} placeholder="Nhập họ tên" />
                         ) : (userDetail.name || '-')}
                         </div>
-                        <div><b>Chức vụ:</b> {isEditUser ? (
-                            <div>
+                        <div className="user-setting__popup-row"><b>Chức vụ:</b> {isEditUser ? (
+                            <div className="user-setting__popup-group">
                                 {['admin', 'manager', 'staff'].map(role => (
-                                    <label key={role} style={{ marginRight: 12 }}>
-                                        <input
-                                            type="checkbox"
-                                            checked={editUserDetail?.role === role}
-                                            onChange={() => setEditUserDetail({ ...editUserDetail, role })}
-                                        /> {role}
+                                    <label className="user-setting__popup-label" key={role}>
+                                        <input type="checkbox" checked={editUserDetail?.role === role} onChange={() => setEditUserDetail({ ...editUserDetail, role })} /> {role}
                                     </label>
                                 ))}
                                 {editUserDetail?.roleError && <span className="user-popup__error">Chọn 1 chức vụ!</span>}
                             </div>
                         ) : (userDetail.role || '-')}
                         </div>
-                        <div><b>Quyền thao tác:</b> {isEditUser ? (
-                            <div>
+                        <div className="user-setting__popup-row"><b>Quyền thao tác:</b> {isEditUser ? (
+                            <div className="user-setting__popup-group">
                                 {['read', 'create', 'update', 'delete', 'restore'].map(action => (
-                                    <label key={action} style={{ marginRight: 12 }}>
-                                        <input
-                                            type="checkbox"
-                                            checked={Array.isArray(editUserDetail?.actions) && editUserDetail.actions.includes(action)}
-                                            onChange={e => {
-                                                let newActions = Array.isArray(editUserDetail?.actions) ? [...editUserDetail.actions] : [];
-                                                if (e.target.checked) {
-                                                    if (!newActions.includes(action)) newActions.push(action);
-                                                } else {
-                                                    newActions = newActions.filter(a => a !== action);
-                                                }
-                                                setEditUserDetail({ ...editUserDetail, actions: newActions });
-                                            }}
-                                        /> {
+                                    <label className="user-setting__popup-label" key={action}>
+                                        <input type="checkbox" checked={Array.isArray(editUserDetail?.actions) && editUserDetail.actions.includes(action)} onChange={e => {
+                                            let newActions = Array.isArray(editUserDetail?.actions) ? [...editUserDetail.actions] : [];
+                                            if (e.target.checked) {
+                                                if (!newActions.includes(action)) newActions.push(action);
+                                            } else {
+                                                newActions = newActions.filter(a => a !== action);
+                                            }
+                                            setEditUserDetail({ ...editUserDetail, actions: newActions });
+                                        }} /> {
                                             action === 'read' ? 'Xem' :
                                                 action === 'create' ? 'Thêm' :
                                                     action === 'update' ? 'Sửa' :
@@ -316,14 +329,11 @@ function User({ token }) {
                                 : '-'
                         )}
                         </div>
-                        <div><b>Nhà hàng:</b> {isEditUser ? (
+                        <div className="user-setting__popup-row"><b>Nhà hàng:</b> {isEditUser ? (
                             editUserDetail?.role === 'admin' ? (
                                 <span>-</span>
                             ) : (
-                                <select
-                                    value={editUserDetail?.restaurant || ''}
-                                    onChange={e => setEditUserDetail({ ...editUserDetail, restaurant: e.target.value })}
-                                >
+                                <select className="user-setting__popup-select" value={editUserDetail?.restaurant || ''} onChange={e => setEditUserDetail({ ...editUserDetail, restaurant: e.target.value })}>
                                     <option value="">Chọn nhà hàng</option>
                                     {restaurants.map(r => (
                                         <option key={r._id} value={r._id}>{r.name}</option>
@@ -332,104 +342,110 @@ function User({ token }) {
                             )
                         ) : userDetail.restaurantName}
                         </div>
-                        <div><b>Trạng thái:</b> {userDetail.isActive ? 'Đang hoạt động' : 'Đã khóa'}</div>
-                        <div><b>Ngày tạo:</b> {userDetail.createdAt ? new Date(userDetail.createdAt).toLocaleString('vi-VN') : '-'}</div>
-                        <div><b>Ngày cập nhật:</b> {userDetail.updatedAt ? new Date(userDetail.updatedAt).toLocaleString('vi-VN') : '-'}</div>
-                        <div style={{ marginTop: 16, textAlign: 'right' }}>
+                        <div className="user-setting__popup-row"><b>Trạng thái:</b> {userDetail.isActive ? 'Đang hoạt động' : 'Đã khóa'}</div>
+                        <div className="user-setting__popup-row"><b>Ngày tạo:</b> {userDetail.createdAt ? new Date(userDetail.createdAt).toLocaleString('vi-VN') : '-'}</div>
+                        <div className="user-setting__popup-row"><b>Ngày cập nhật:</b> {userDetail.updatedAt ? new Date(userDetail.updatedAt).toLocaleString('vi-VN') : '-'}</div>
+                        <div className="user-setting__popup-actions">
                             {!isEditUser && (
-                                <button onClick={() => {
+                                <button className="user-setting__button" onClick={() => {
                                     setIsEditUser(true);
-                                    // Khởi tạo dữ liệu chỉnh sửa
                                     setEditUserDetail({ ...userDetail });
                                 }}>Sửa</button>
                             )}
                             {isEditUser && (
-                                <button onClick={handleUpdateUser}>Lưu</button>
+                                <button className="user-setting__button" onClick={handleUpdateUser}>Lưu</button>
                             )}
                             {isEditUser && (
-                                <button onClick={() => {
+                                <button className="user-setting__button" onClick={() => {
                                     setIsEditUser(false);
                                     setEditUserDetail(null);
                                 }}>Hủy</button>
                             )}
                             {!isEditUser && (
-                                <button onClick={() => { }}>Xóa</button>
+                                userDetail.isActive ? (
+                                    <button className="user-setting__button" onClick={() => handleDeleteUser(userDetail._id)}>Đóng tài khoản</button>
+                                ) : (
+                                    <button className="user-setting__button" onClick={() => handleRestoreUser(userDetail._id)}>Mở tài khoản</button>
+                                )
                             )}
                             {!isEditUser && (
-                                <button onClick={() => setShowUserDetail(false)}>Đóng</button>
+                                <button className="user-setting__button" onClick={() => setShowUserDetail(false)}>Đóng</button>
                             )}
-
                         </div>
                     </div>
                 </div>
             )}
             {/* Popup thêm user */}
             {showAddUser && (
-                <div style={{ position: 'fixed', left: 0, top: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.2)', zIndex: 1000 }}>
-                    <div style={{ background: '#fff', maxWidth: 400, margin: '60px auto', padding: 24, borderRadius: 8, boxShadow: '0 2px 8px #0002' }}>
-                        <h3>Thêm người dùng</h3>
-                        <div style={{ marginBottom: 8 }}>
+                <div className="user-setting__popup-bg">
+                    <div className="user-setting__popup">
+                        <h3 className="user-setting__popup-title">Thêm người dùng</h3>
+                        <div className="user-setting__popup-row">
                             <b>Tên đăng nhập:</b><br />
-                            <input value={form.username} onChange={e => handleChange('username', e.target.value)} placeholder="Nhập tên đăng nhập" />
-                            {err.username && <span>Bắt buộc!</span>}
+                            <input className="user-setting__popup-input" value={form.username} onChange={e => handleChange('username', e.target.value)} placeholder="Nhập tên đăng nhập" />
+                            {err.username && <span className="user-popup__error">Bắt buộc!</span>}
                         </div>
-                        <div style={{ marginBottom: 8 }}>
+                        <div className="user-setting__popup-row">
                             <b>Mật khẩu:</b><br />
-                            <input type="password" value={form.password} onChange={e => handleChange('password', e.target.value)} placeholder="Nhập mật khẩu" />
-                            {err.password && <span>Bắt buộc!</span>}
+                            <input className="user-setting__popup-input" type="password" value={form.password} onChange={e => handleChange('password', e.target.value)} placeholder="Nhập mật khẩu" />
+                            {err.password && <span className="user-popup__error">Bắt buộc!</span>}
                         </div>
-                        <div style={{ marginBottom: 8 }}>
+                        <div className="user-setting__popup-row">
                             <b>Họ tên:</b><br />
-                            <input value={form.name} onChange={e => handleChange('name', e.target.value)} placeholder="Nhập họ tên" />
-                            {err.name && <span>Bắt buộc!</span>}
+                            <input className="user-setting__popup-input" value={form.name} onChange={e => handleChange('name', e.target.value)} placeholder="Nhập họ tên" />
+                            {err.name && <span className="user-popup__error">Bắt buộc!</span>}
                         </div>
-                        <div style={{ marginBottom: 8 }}>
+                        <div className="user-setting__popup-row">
                             <b>Chức vụ:</b><br />
-                            {['admin', 'manager', 'staff'].map(role => (
-                                <label key={role} style={{ marginRight: 12 }}>
-                                    <input type="checkbox" checked={form.role === role} onChange={() => handleCheckRole(role)} /> {role}
-                                </label>
-                            ))}
-                            {err.role && <span>Chọn 1 chức vụ!</span>}
+                            <div className="user-setting__popup-group">
+                                {['admin', 'manager', 'staff'].map(role => (
+                                    <label className="user-setting__popup-label" key={role}>
+                                        <input type="checkbox" checked={form.role === role} onChange={() => handleCheckRole(role)} /> {role}
+                                    </label>
+                                ))}
+                                {err.role && <span className="user-popup__error">Chọn 1 chức vụ!</span>}
+                            </div>
                         </div>
-                        <div style={{ marginBottom: 8 }}>
+                        <div className="user-setting__popup-row">
                             <b>Quyền thao tác:</b><br />
-                            {['read', 'create', 'update', 'delete', 'restore'].map(action => (
-                                <label key={action} style={{ marginRight: 12 }}>
-                                    <input type="checkbox" checked={form.actions.includes(action)} onChange={e => handleCheckAction(action, e.target.checked)} /> {
-                                        action === 'read' ? 'Xem' :
-                                            action === 'create' ? 'Thêm' :
-                                                action === 'update' ? 'Sửa' :
-                                                    action === 'delete' ? 'Xóa' :
-                                                        action === 'restore' ? 'Khôi phục' : action
-                                    }
-                                </label>
-                            ))}
-                            {err.actions && <span>Chọn ít nhất 1 quyền!</span>}
+                            <div className="user-setting__popup-group">
+                                {['read', 'create', 'update', 'delete', 'restore'].map(action => (
+                                    <label className="user-setting__popup-label" key={action}>
+                                        <input type="checkbox" checked={form.actions.includes(action)} onChange={e => handleCheckAction(action, e.target.checked)} /> {
+                                            action === 'read' ? 'Xem' :
+                                                action === 'create' ? 'Thêm' :
+                                                    action === 'update' ? 'Sửa' :
+                                                        action === 'delete' ? 'Xóa' :
+                                                            action === 'restore' ? 'Khôi phục' : action
+                                        }
+                                    </label>
+                                ))}
+                                {err.actions && <span className="user-popup__error">Chọn ít nhất 1 quyền!</span>}
+                            </div>
                         </div>
-                        <div style={{ marginBottom: 8 }}>
+                        <div className="user-setting__popup-row">
                             <b>Nhà hàng:</b><br />
                             {form.role === 'admin' ? (
                                 <span>-</span>
                             ) : (
-                                <select value={form.restaurant} onChange={e => handleChange('restaurant', e.target.value)}>
+                                <select className="user-setting__popup-select" value={form.restaurant} onChange={e => handleChange('restaurant', e.target.value)}>
                                     <option value="">Chọn nhà hàng</option>
                                     {restaurants.map(r => (
                                         <option key={r._id} value={r._id}>{r.name}</option>
                                     ))}
                                 </select>
                             )}
-                            {err.restaurant && <span>Bắt buộc!</span>}
+                            {err.restaurant && <span className="user-popup__error">Bắt buộc!</span>}
                         </div>
-                        <div style={{ marginBottom: 8 }}>
+                        <div className="user-setting__popup-row">
                             <b>Trạng thái:</b>
-                            <label style={{ marginLeft: 8 }}>
+                            <label className="user-setting__popup-label" style={{ marginLeft: 8 }}>
                                 <input type="checkbox" checked={form.isActive} onChange={e => handleChange('isActive', e.target.checked)} /> Đang hoạt động
                             </label>
                         </div>
-                        <div style={{ marginTop: 16, textAlign: 'right' }}>
-                            <button onClick={handleSubmitAddUser}>Lưu</button>
-                            <button style={{ marginLeft: 8 }} onClick={() => { setShowAddUser(false); setForm({ username: '', password: '', name: '', role: '', actions: [], restaurant: '', isActive: true }); setErr({}); }}>Hủy</button>
+                        <div className="user-setting__popup-actions">
+                            <button className="user-setting__button" onClick={handleSubmitAddUser}>Lưu</button>
+                            <button className="user-setting__button" style={{ marginLeft: 8 }} onClick={() => { setShowAddUser(false); setForm({ username: '', password: '', name: '', role: '', actions: [], restaurant: '', isActive: true }); setErr({}); }}>Hủy</button>
                         </div>
                     </div>
                 </div>
