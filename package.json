@@ -2,6 +2,10 @@
   "name": "concurrently-example",
   "version": "1.0.0",
   "description": "An example project using concurrently to run multiple commands.",
+  "workspaces": [
+    "client",
+    "server"
+  ],
   "scripts": {
     "start": "concurrently \"npm run server\" \"npm run client\"",
     "server": "cd server && node app.js",
