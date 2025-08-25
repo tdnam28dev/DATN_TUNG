@@ -39,7 +39,7 @@ const Login = ({ setToken }) => {
         }
       } else {
         // Nếu không chọn quản trị viên thì luôn cho vào trang order
-        navigate("/order");
+        navigate("/staff-dashboard");
       }
     } else {
       setError(res.error || "Đăng nhập thất bại");

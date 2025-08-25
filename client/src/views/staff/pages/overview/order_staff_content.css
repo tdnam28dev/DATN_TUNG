@@ -6,10 +6,10 @@
 .orderStaff_content{
   display: flex;
   flex-direction: column;
-  position: relative;
-  top: 64px;
+  /* position: relative; */
+  /* top: 64px; */
   bottom: 0;
-  height: calc(100vh - 92px);
+  /* height: calc(100vh - 92px); */
   width: 100%;
   padding: 14px;
   /* background: #fbbf24; */

@@ -1,6 +1,6 @@
-/* Header cho order staff, style riêng biệt */
+/* Header cho order staff */
 .orderStaff__headerBar {
-  background-image: url("../../../public/bg-pattern.jpg");
+  background-image: url("../../../../../public/bg-pattern.jpg");
   padding: 14px 32px 14px 32px;
   display: flex;
   align-items: center;

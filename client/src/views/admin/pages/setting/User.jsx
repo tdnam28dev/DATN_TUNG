@@ -71,8 +71,8 @@ function User({ token }) {
             // Nếu chưa chọn nhà hàng thì không gửi trường restaurant
             if (!user.restaurant) delete submitUser.restaurant;
         }
-        // Bổ sung trường roles (mảng) cho backend
-        submitUser.roles = [user.role];
+        // Luôn tự động thêm trường roles là mảng chứa role
+        submitUser.roles = Array.isArray(user.roles) && user.roles.length > 0 ? user.roles : [user.role];
         // Lọc bỏ các trường có giá trị rỗng, null, undefined
         Object.keys(submitUser).forEach(key => {
             if (submitUser[key] === '' || submitUser[key] === null || submitUser[key] === undefined) {
@@ -176,6 +176,7 @@ function User({ token }) {
         password: '',
         name: '',
         role: '',
+        roles: [],
         actions: [],
         restaurant: '',
         isActive: true
@@ -215,7 +216,7 @@ function User({ token }) {
         if (hasErr) return;
         await handleCreateUser(form);
         setShowAddUser(false);
-        setForm({ username: '', password: '', name: '', role: '', actions: [], restaurant: '', isActive: true });
+        setForm({ username: '', password: '', name: '', role: '', roles: [], actions: [], restaurant: '', isActive: true });
         setErr({});
     };
 
@@ -249,7 +250,6 @@ function User({ token }) {
                         <th className="user-setting__table-th">Chức vụ</th>
                         <th className="user-setting__table-th">Nhà hàng</th>
                         <th className="user-setting__table-th">Trạng thái</th>
-                        <th className="user-setting__table-th">Ngày tạo</th>
                         <th className="user-setting__table-th">Hành động</th>
                     </tr>
                 </thead>
@@ -260,8 +260,13 @@ function User({ token }) {
                             <td className="user-setting__table-td">{user.name || '-'}</td>
                             <td className="user-setting__table-td">{user.role || '-'}</td>
                             <td className="user-setting__table-td">{user.restaurantName}</td>
-                            <td className="user-setting__table-td">{user.isActive ? 'Đang hoạt động' : 'Đã khóa'}</td>
-                            <td className="user-setting__table-td">{user.createdAt ? new Date(user.createdAt).toLocaleString('vi-VN') : '-'}</td>
+                            <td className="user-setting__table-td">
+                                <div className={user.isActive ? 'user-status user-status--active' : 'user-status user-status--locked'}>
+                                    <span >
+                                        {user.isActive ? 'Active' : 'Locked'}
+                                    </span>
+                                </div>
+                            </td>
                             <td className="user-setting__table-td">
                                 <button className="user-setting__button user-setting__button--detail" onClick={() => { setUserDetail(user); setShowUserDetail(true); }}>Chi tiết</button>
                             </td>

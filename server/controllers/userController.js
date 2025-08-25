@@ -20,7 +20,7 @@ exports.getAll = async (req, res) => {
 // Tạo mới người dùng, mã hóa mật khẩu
 exports.create = async (req, res) => {
   try {
-    const { username, password, role, name, phone, actions, restaurant, isActive } = req.body;
+    const { username, password, role, name, phone, roles, actions, restaurant, isActive } = req.body;
     // Kiểm tra username đã tồn tại chưa
     const existed = await User.findOne({ username });
     if (existed) {
@@ -33,6 +33,7 @@ exports.create = async (req, res) => {
       role,
       name,
       phone,
+      roles,
       actions,
       restaurant,
       isActive

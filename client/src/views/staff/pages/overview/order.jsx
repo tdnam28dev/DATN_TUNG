@@ -1,57 +1,20 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import './order_header.css';
 import './order_staff_content.css';
-import LogoTudo from '../../components/Logo_td';
-import { getTables } from '../../api/table';
-import { getMenus } from '../../api/menu';
-import { getMenuItems } from '../../api/menuitem';
-import { getRestaurantById } from '../../api/restaurant';
-import { createOrder, getOrders, updateOrder, payOrder, cancelOrder } from '../../api/order';
+import { getTables } from '../../../../api/table';
+import { getMenus } from '../../../../api/menu';
+import { getMenuItems } from '../../../../api/menuitem';
+import { createOrder, getOrders, updateOrder, payOrder, cancelOrder } from '../../../../api/order';
 
 
 // Giao diện order cho nhân viên quầy
 function OrderStaff({ token, userId }) {
-    // State lưu tên nhà hàng
-    const [restaurantName, setRestaurantName] = useState('');
-    // Lấy thông tin user để hiển thị header
-    const [userInfo, setUserInfo] = useState(null);
-    const [showUserMenu, setShowUserMenu] = useState(false);
-    const userMenuRef = useRef(null);
-    const realUserId = userId || localStorage.getItem('userId');
+    // Đã bỏ lấy thông tin người dùng, chỉ giữ các state liên quan đến order
     // bộ lọc
     const [filterStatus, setFilterStatus] = useState('');
     const [filterSeats, setFilterSeats] = useState('');
     const [filterTypeTable, setFilterTypeTable] = useState('');
-    useEffect(() => {
-        const fetchUserInfo = async () => {
-            try {
-                const res = await import('../../api/user');
-                const data = await res.getUserById(realUserId, token);
-                setUserInfo(data);
-                if (data && data.restaurant && typeof data.restaurant === 'string') {
-                    try {
-                        const res = await getRestaurantById(data.restaurant, token);
-                        if (res && res.name) setRestaurantName(res.name);
-                    } catch { }
-                } else if (data && data.restaurant && typeof data.restaurant === 'object' && data.restaurant.name) {
-                    setRestaurantName(data.restaurant.name);
-                } else {
-                    setRestaurantName('');
-                }
-            } catch { }
-        };
-        fetchUserInfo();
-    }, [realUserId, token]);
-    useEffect(() => {
-        if (!showUserMenu) return;
-        const handleClickOutside = (event) => {
-            if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
-                setShowUserMenu(false);
-            }
-        };
-        document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
-    }, [showUserMenu]);
+    // Đã bỏ useEffect lấy thông tin người dùng
     const [tables, setTables] = useState([]);
     const [menus, setMenus] = useState([]);
     // State cho filter loại món (danh sách loại menu lấy từ menu)
@@ -67,14 +30,16 @@ function OrderStaff({ token, userId }) {
     // Hàm load lại toàn bộ dữ liệu
     const fetchAllData = async () => {
         setLoading(true);
-        const t = await getTables(token);
+        let t = await getTables(token);
+        t = Array.isArray(t) ? t : [];
         setTables(t);
         let allItems = [];
         try {
             const menuItems = await getMenuItems(token);
             allItems = Array.isArray(menuItems) ? menuItems : [];
         } catch (e) { }
-        const m = await getMenus(token);
+        let m = await getMenus(token);
+        m = Array.isArray(m) ? m : [];
         let menuMap = {};
         let menuTypeListTmp = [];
         m.forEach(menu => {
@@ -160,7 +125,7 @@ function OrderStaff({ token, userId }) {
                 items: cart.map(i => ({ menuItem: i.menuItem._id, quantity: i.quantity })),
                 total,
                 status: 'pending',
-                restaurant: (userInfo && userInfo.restaurant) ? (typeof userInfo.restaurant === 'object' ? userInfo.restaurant._id : userInfo.restaurant) : (selectedTable.restaurant || '')
+                restaurant: selectedTable.restaurant || ''
             }, token);
         } else {
             res = await createOrder({
@@ -168,7 +133,7 @@ function OrderStaff({ token, userId }) {
                 items: cart.map(i => ({ menuItem: i.menuItem._id, quantity: i.quantity })),
                 total,
                 status: 'pending',
-                restaurant: (userInfo && userInfo.restaurant) ? (typeof userInfo.restaurant === 'object' ? userInfo.restaurant._id : userInfo.restaurant) : (selectedTable.restaurant || '')
+                restaurant: selectedTable.restaurant || ''
             }, token);
         }
         setMessage(res._id ? 'Đã lưu hóa đơn!' : res.error || 'Lỗi');
@@ -211,61 +176,10 @@ function OrderStaff({ token, userId }) {
         setLoading(false);
     };
 
-    // Hàm đăng xuất
-    const handleLogout = () => {
-        localStorage.removeItem('token');
-        localStorage.removeItem('userId');
-        window.location.href = '/login';
-    };
-
     return (
         <div className="orderStaff">
             {/* Header riêng cho order staff */}
-            <header className="orderStaff__headerBar">
-                <div className="orderStaff__logo"><a href="/order"><LogoTudo height={45} /></a></div>
-                <div className="orderStaff__headerBarTitle">
-                    {userInfo ? (
-                        <>
-                            <span style={{ color: '#ffffffff' }}><b>{userInfo.name || userInfo.username}</b></span>
-                            <span style={{ marginLeft: 16, fontSize: 14, color: '#2563eb' }}>
-                                ({userInfo.role === 'admin' ? 'Quản trị viên' : 'Nhân viên'})
-                            </span>
-                            {restaurantName && (
-                                <span style={{ marginLeft: 16, fontSize: 14, color: '#16a34a' }}>
-                                    Nhà hàng: <b>{restaurantName}</b>
-                                </span>
-                            )}
-
-                        </>
-                    ) : 'Xin chào'}
-                </div>
-                <div className="orderStaff__user" ref={userMenuRef}>
-                    <div
-                        className="orderStaff__userBadge"
-                        style={{ cursor: 'pointer' }}
-                        onClick={() => setShowUserMenu(v => !v)}
-                        title="Tài khoản"
-                    >
-                        {userInfo
-                            ? (userInfo.name || userInfo.username || '')
-                                .split(' ')
-                                .map(word => word[0])
-                                .join('')
-                                .toUpperCase()
-                            : 'TDN'}
-                    </div>
-                    {showUserMenu && (
-                        <div className="orderStaff__userMenu">
-                            <div className="orderStaff__userMenuInfo">
-                                <div><b>{userInfo?.name || userInfo?.username}</b></div>
-                                <div style={{ fontSize: 13, color: '#888' }}>{userInfo?.role === 'admin' ? 'Quản trị viên' : 'Nhân viên'}</div>
-                                {userInfo?.phone && <div style={{ fontSize: 13, color: '#888' }}>SĐT: {userInfo.phone}</div>}
-                            </div>
-                            <button className="orderStaff__userLogout" onClick={handleLogout}>Đăng xuất</button>
-                        </div>
-                    )}
-                </div>
-            </header>
+            
 
             <div className="orderStaff_content">
                 {/* Bộ lọc bàn */}

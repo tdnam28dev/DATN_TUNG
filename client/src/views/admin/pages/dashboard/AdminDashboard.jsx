@@ -18,7 +18,6 @@ import Timekeeping from '../timekeeping/Timekeeping';
 import Settings from '../../pages/setting/Setting';
 
 
-// Dữ liệu sidebar mẫu
 const sidebarItems = [
   'Tổng quan', 'Báo cáo', 'Hóa đơn', 'Mặt hàng', 'Đặt lịch', 'Khách hàng', 'Khuyến mại', 'Kho hàng', 'Thu chi', 'Chấm công', 'Cấu hình'
 ];
@@ -75,7 +74,7 @@ function AdminDashboard({ token, userId }) {
   useEffect(() => {
     const found = pathToItem[location.pathname];
     if (found) setActiveItem(found);
-  }, [location.pathname]);
+  }, [location.pathname, pathToItem]);
   const sidebarWidth = collapsed ? 80 : 250;
 
   // Hàm đăng xuất
