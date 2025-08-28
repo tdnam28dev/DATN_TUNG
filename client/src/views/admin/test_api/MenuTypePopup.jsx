@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import './MenuTypePopup.css';
 import { getMenuTypes, createMenuType, updateMenuType, deleteMenuType } from '../../../api/menutype';
 
@@ -9,15 +9,17 @@ function MenuTypePopup({ token, onClose }) {
   const [msg, setMsg] = useState('');
 
   // Tải danh sách loại menu
-  const fetchTypes = async () => {
+  const fetchTypes = useCallback(async () => {
     try {
       const res = await getMenuTypes(token);
       setTypes(res);
     } catch (err) {
       setMsg('Lỗi tải loại menu!');
     }
-  };
-  useEffect(() => { fetchTypes(); }, [token]);
+  }, [token]);
+  useEffect(() => { 
+    fetchTypes(); 
+  }, [token, fetchTypes]);
 
   // Ẩn thông báo sau 5s
   useEffect(() => {

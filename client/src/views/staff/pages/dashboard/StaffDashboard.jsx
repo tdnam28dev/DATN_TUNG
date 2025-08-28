@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import LogoTudo from '../../../../components/Logo_td';
 import Icon from '../../../../components/Icon';
 import './StaffDashboard.css';
-import OrderStaff from '../overview/order';
+import OrderStaff from '../order/order';
 import { getUserById } from '../../../../api/user';
 import { getRestaurantById } from '../../../../api/restaurant';
 
@@ -188,7 +188,7 @@ function StaffDashboard({ token, userId }) {
           </div>
         </header>
         <div className="staff-dashboard__content">
-          {location.pathname === '/staff-dashboard' && <OrderStaff token={token} />}
+          {location.pathname === '/staff-dashboard' && <OrderStaff token={token} userId={userInfo?._id} />}
           {/* {location.pathname === '/staff-dashboard/bill' && <Bill token={token} />} */}
           {/* {location.pathname === '/staff-dashboard/schedule' && <Schedule />} */}
           {/* {location.pathname === '/staff-dashboard/customer' && <Customer />} */}

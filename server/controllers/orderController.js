@@ -8,7 +8,7 @@ exports.getAll = async (req, res) => {
     if (req.user && req.user.role !== 'admin' && req.user.restaurant) {
       query.restaurant = req.user.restaurant;
     }
-  const orders = await Order.find(query);
+    const orders = await Order.find(query);
     res.json(orders);
   } catch (err) {
     res.status(500).json({ error: 'Lỗi server' });
@@ -19,7 +19,14 @@ exports.getAll = async (req, res) => {
 const Table = require('../models/table');
 exports.create = async (req, res) => {
   try {
-    const order = new Order(req.body);
+    // Luôn lấy người tạo từ user đăng nhập
+    const createdBy = req.user && req.user._id ? req.user._id : undefined;
+    console.log('Creating order with createdBy:', createdBy);
+    if (!createdBy) {
+      return res.status(401).json({ error: 'Bạn chưa đăng nhập hoặc token không hợp lệ!' });
+    }
+    const orderData = { ...req.body, createdBy };
+    const order = new Order(orderData);
     await order.save();
     // Nếu trạng thái là pending thì chuyển trạng thái bàn sang 'occupied'
     if (order.status === 'pending') {
@@ -27,7 +34,8 @@ exports.create = async (req, res) => {
     }
     res.status(201).json(order);
   } catch (err) {
-    res.status(400).json({ error: 'Dữ liệu không hợp lệ' });
+    res.status(400).json({ error: 'Dữ liệu không hợp lệ', detail: err.message });
+    console.error(err);
   }
 };
 
@@ -86,15 +94,23 @@ exports.cancelOrder = async (req, res) => {
   }
 };
 
-// API thanh toán hóa đơn (chuyển trạng thái completed, bàn về available)
+// API thanh toán hóa đơn (chuyển trạng thái completed, bàn về available, lưu người thanh toán từ user đăng nhập)
 exports.payOrder = async (req, res) => {
   try {
-    const order = await Order.findByIdAndUpdate(req.params.id, { status: 'completed' }, { new: true });
+    // Luôn lấy người thanh toán từ user đăng nhập
+    const paidBy = req.user && req.user._id ? req.user._id : undefined;
+    console.log('Paying order with paidBy:', paidBy);
+    if (!paidBy) {
+      return res.status(401).json({ error: 'Bạn chưa đăng nhập hoặc token không hợp lệ!' });
+    }
+    const updateData = { status: 'completed', paidBy };
+    const order = await Order.findByIdAndUpdate(req.params.id, updateData, { new: true });
     if (!order) return res.status(404).json({ error: 'Không tìm thấy đơn hàng' });
     await Table.findByIdAndUpdate(order.table, { status: 'available' });
     res.json(order);
   } catch (err) {
-    res.status(400).json({ error: 'Dữ liệu không hợp lệ' });
+    res.status(400).json({ error: 'Dữ liệu không hợp lệ', detail: err.message });
+    console.error(err);
   }
 };
 

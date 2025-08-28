@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getOrders, updateOrder, deleteOrder } from '../../../../api/order';
+import { getUserById } from '../../../../api/user';
 import { getTables } from '../../../../api/table';
 import { getRestaurants } from '../../../../api/restaurant';
 import './Bill.css';
@@ -8,6 +9,8 @@ function Bill({ token }) {
   // State cho popup chi tiết hóa đơn
   const [showOrderDetail, setShowOrderDetail] = useState(false);
   const [orderDetail, setOrderDetail] = useState(null);
+  const [paidUser, setPaidUser] = useState(null); // Lưu thông tin người thanh toán
+  const [createdUser, setCreatedUser] = useState(null); // Lưu thông tin người tạo hóa đơn
   // State cho hóa đơn
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
@@ -214,7 +217,32 @@ function Bill({ token }) {
                   <td className={`billManager__td billManager__td--status billManager__td--status-${order.status}`}>{order.status}</td>
                   <td className="billManager__td">{new Date(order.createdAt).toLocaleString()}</td>
                   <td className="billManager__td">
-                    <button className="billManager__cardBtn" style={{ background: '#e0e7ff', color: '#2563eb' }} onClick={() => { setOrderDetail(order); setShowOrderDetail(true); }}>Chi tiết</button>
+                    <button className="billManager__cardBtn" style={{ background: '#e0e7ff', color: '#2563eb' }} onClick={async () => {
+                      setOrderDetail(order);
+                      setShowOrderDetail(true);
+                      // Lấy thông tin người thanh toán
+                      if (order.paidBy) {
+                        try {
+                          const user = await getUserById(order.paidBy, token);
+                          setPaidUser(user);
+                        } catch {
+                          setPaidUser(null);
+                        }
+                      } else {
+                        setPaidUser(null);
+                      }
+                      // Lấy thông tin người tạo hóa đơn
+                      if (order.createdBy) {
+                        try {
+                          const user = await getUserById(order.createdBy, token);
+                          setCreatedUser(user);
+                        } catch {
+                          setCreatedUser(null);
+                        }
+                      } else {
+                        setCreatedUser(null);
+                      }
+                    }}>Chi tiết</button>
                   </td>
 
                 </tr>
@@ -248,6 +276,10 @@ function Bill({ token }) {
                   <b>{orderDetail.tableName || orderDetail.table}</b>
                 )}
               </div>
+              {/* Thông tin người tạo hóa đơn */}
+              <div className="billManager__popupInfoRow"><span>Người tạo hóa đơn:</span> <b>{createdUser ? (createdUser.name || createdUser.username || createdUser._id) : '-'}</b></div>
+              {/* Thông tin người thanh toán */}
+              <div className="billManager__popupInfoRow"><span>Người thanh toán:</span> <b>{paidUser ? (paidUser.name || paidUser.username || paidUser._id) : '-'}</b></div>
               <div className="billManager__popupInfoRow">
                 <span>Trạng thái:</span>
                 {isEditOrder ? (

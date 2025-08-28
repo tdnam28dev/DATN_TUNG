@@ -7,7 +7,7 @@ import CrudMenus from './views/admin/test_api/CrudMenus';
 import CrudMenuItems from './views/admin/test_api/CrudMenuItems';
 import CrudOrders from './views/admin/test_api/CrudOrders';
 import CrudUsers from './views/admin/test_api/CrudUsers';
-import OrderStaff from './views/staff/pages/overview/order';
+import OrderStaff from './views/staff/pages/order/order';
 // import AuthPage from './views/admin/test_api/AuthPage';
 import AdminDashboard from './views/admin/pages/dashboard/AdminDashboard';
 import StaffDashboard from './views/staff/pages/dashboard/StaffDashboard';

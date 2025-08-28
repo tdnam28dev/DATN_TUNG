@@ -98,7 +98,7 @@ function CrudUsers({ token }) {
 	const handleDeleteUser = async (id) => {
 		if (!window.confirm('Bạn có chắc muốn xóa người dùng này?')) return;
 		setLoading(true);
-		const res = await deleteUser(id, token);
+		await deleteUser(id, token);
 		setLoading(false);
 		setShowUserDetail(false);
 		setMessage('');

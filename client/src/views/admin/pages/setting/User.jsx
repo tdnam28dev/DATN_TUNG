@@ -25,6 +25,7 @@ function User({ token }) {
 
     // lấy danh sách người dùng và nhà hàng
     const fetchData = useCallback(async () => {
+        setLoading(true); // Bắt đầu loading khi fetch dữ liệu
         const userData = await getUsers(token);
         const restaurantData = await getRestaurants(token);
         const users = Array.isArray(userData) ? userData.map(user => {
@@ -41,6 +42,7 @@ function User({ token }) {
         }) : [];
         setUsers(users);
         setRestaurants(restaurantData);
+        setLoading(false); // Kết thúc loading khi fetch xong
     }, [token]);
 
     useEffect(() => {
@@ -222,6 +224,10 @@ function User({ token }) {
 
     return (
         <div className="user-setting">
+            {/* Hiển thị loading khi đang tải dữ liệu */}
+            {loading && (
+                <div className="user-setting__loading">Đang tải dữ liệu...</div>
+            )}
             {/* Nút thêm người dùng và bộ lọc role, nhà hàng */}
             <div className="user-setting__header">
                 <div className="user-setting__add-btn">
