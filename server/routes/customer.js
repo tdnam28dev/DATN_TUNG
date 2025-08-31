@@ -11,8 +11,8 @@ const role = require('../middlewares/role');
 router.get('/', auth, role(['admin', 'staff']), customerController.getAllCustomers);
 // Lấy chi tiết 1 khách hàng (admin, staff)
 router.get('/:id', auth, role(['admin', 'staff']), customerController.getCustomerById);
-// Thêm khách hàng mới (admin)
-router.post('/', auth, role(['admin']), customerController.createCustomer);
+// Thêm khách hàng mới (admin, staff)
+router.post('/', auth, role(['admin', 'staff']), customerController.createCustomer);
 // Cập nhật khách hàng (admin)
 router.put('/:id', auth, role(['admin']), customerController.updateCustomer);
 // Xóa khách hàng (admin)

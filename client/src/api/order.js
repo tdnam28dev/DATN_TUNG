@@ -19,10 +19,14 @@ export async function cancelOrder(id, token) {
 }
 
 // Thanh toán hóa đơn (completed)
-export async function payOrder(id, token) {
+export async function payOrder(id, token, { paymentMethod, customerId, paymentId }) {
   const res = await fetch(`${API_URL}/orders/${id}/pay`, {
     method: 'PATCH',
-    headers: { 'Authorization': `Bearer ${token}` }
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify({ paymentMethod, customerId, paymentId })
   });
   return res.json();
 }

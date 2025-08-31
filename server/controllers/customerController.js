@@ -1,11 +1,19 @@
-// controllers/customerController.js
-// Controller CRUD cho Customer
 const Customer = require('../models/customer');
 
 // Lấy danh sách khách hàng
 exports.getAllCustomers = async (req, res) => {
   try {
-    const customers = await Customer.find();
+    // Nếu có query ?phone=... hoặc ?id=... thì tìm kiếm
+    const { phone, id } = req.query;
+    let customers = [];
+    if (phone) {
+      customers = await Customer.find({ phone: phone });
+    } else if (id) {
+      const customer = await Customer.findById(id);
+      if (customer) customers = [customer];
+    } else {
+      customers = await Customer.find();
+    }
     res.json(customers);
   } catch (err) {
     res.status(500).json({ error: 'Lỗi server!' });
@@ -26,6 +34,17 @@ exports.getCustomerById = async (req, res) => {
 // Thêm khách hàng mới
 exports.createCustomer = async (req, res) => {
   try {
+    // Kiểm tra khách hàng đã tồn tại theo số điện thoại
+    const { phone } = req.body;
+    let existed = null;
+    if (phone) {
+      existed = await Customer.findOne({ phone: phone });
+    }
+    if (existed) {
+      // Nếu đã có thì trả về dữ liệu khách hàng cũ
+      return res.status(200).json(existed);
+    }
+    // Nếu chưa có thì tạo mới
     const customer = new Customer(req.body);
     await customer.save();
     res.status(201).json(customer);

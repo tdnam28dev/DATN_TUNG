@@ -36,11 +36,6 @@ const customerSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
-  isActive: {
-    type: Boolean,
-    default: true,
-    index: true
-  },
   gender: {
     type: String,
     enum: ['male', 'female', 'other'],

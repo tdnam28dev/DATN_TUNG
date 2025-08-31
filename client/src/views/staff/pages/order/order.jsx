@@ -6,6 +6,8 @@ import { getTables } from '../../../../api/table';
 import { getMenus } from '../../../../api/menu';
 import { getMenuItems } from '../../../../api/menuitem';
 import { getOrders } from '../../../../api/order';
+import { getPaymentMethods } from '../../../../api/payment';
+
 
 
 // Giao diện order cho nhân viên quầy
@@ -21,6 +23,8 @@ function OrderStaff({ token, userId }) {
     const [menus, setMenus] = useState([]);
     const [menuItems, setMenuItems] = useState([]);
     const [orders, setOrders] = useState([]);
+    const [payments, setPayments] = useState([]);
+
 
     // Lấy tất cả dữ liệu khi vào giao diện
     const fetchAllData = async () => {
@@ -40,6 +44,10 @@ function OrderStaff({ token, userId }) {
             const resOrders = await getOrders(token);
             setOrders(Array.isArray(resOrders) ? resOrders : []);
         } catch (e) { setOrders([]); }
+        try {
+            const resPayments = await getPaymentMethods(token);
+            setPayments(Array.isArray(resPayments) ? resPayments : []);
+        } catch (e) { setPayments([]); }
     };
     useEffect(() => {
         fetchAllData();
@@ -69,6 +77,7 @@ function OrderStaff({ token, userId }) {
                     menus={menus}
                     menuItems={menuItems}
                     orders={orders}
+                    payments={payments}
                     reloadData={reloadData}
                 />
             ) : (

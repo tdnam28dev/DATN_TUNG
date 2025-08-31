@@ -15,6 +15,7 @@ const menuTypeRoutes = require('./routes/menuType');
 const customerRoutes = require('./routes/customer');
 const warehouseRoutes = require('./routes/warehouse');
 const preOrderRoutes = require('./routes/preOrder');
+const paymentRoutes = require('./routes/paymentMethod');
 //auth
 const authMiddleware = require('./middlewares/auth');
 //init addmin
@@ -47,6 +48,7 @@ app.use('/api/menutype', authMiddleware, menuTypeRoutes); // API loại menu
 app.use('/api/customers', authMiddleware, customerRoutes); // API quản lý khách hàng
 app.use('/api/warehouses', authMiddleware, warehouseRoutes); // API quản lý kho hàng/nguyên liệu
 app.use('/api/preorders', authMiddleware, preOrderRoutes); // API quản lý đặt bàn/đặt món trước
+app.use('/api/payments', authMiddleware, paymentRoutes); // API quản lý phương thức thanh toán
 app.use('/api/auth', authRoutes); // API đăng ký, đăng nhập
 app.use('/api/users', authMiddleware, userRoutes); // API quản lý người dùng (cần xác thực)
 

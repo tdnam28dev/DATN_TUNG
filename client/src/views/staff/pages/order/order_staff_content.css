@@ -141,6 +141,7 @@
   background: #16a34a;
 }
 .orderStaff__orderBox {
+  width: 100%;
   background: #fff;
   border-radius: 12px;
   box-shadow: 0 2px 12px #0001;
@@ -226,6 +227,13 @@
 .orderStaff__orderCartTr:last-child .orderStaff__orderCartTd {
   border-bottom: none;
 }
+.orderStaff__orderCartActions{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  margin-bottom: 18px;
+}
 .orderStaff__orderCartActionBtn {
   background: #ef4444;
   color: #fff;
@@ -256,7 +264,6 @@
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  margin-top: 18px;
   float: right;
   transition: background 0.2s;
 }
@@ -268,4 +275,118 @@
   color: #2563eb;
   font-size: 15px;
   text-align: center;
+}
+
+/* Popup thanh toán */
+.orderStaff__payPopupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.25);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.orderStaff__payPopup {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 24px #0002;
+  padding: 32px 28px 24px 28px;
+  min-width: 340px;
+  max-width: 95vw;
+  position: relative;
+}
+.orderStaff__payPopupTitle {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2563eb;
+  margin-bottom: 18px;
+  text-align: center;
+}
+.orderStaff__payPopupInfoCustomer{
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+}
+.orderStaff__payPopupRow {
+  display: flex;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.orderStaff__payPopupRow label {
+  font-size: 15px;
+  color: #222;
+  font-weight: 500;
+}
+.orderStaff__payPopupRow input,
+.orderStaff__payPopupRow select {
+  flex: 1;
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
+  margin-left: 8px;
+}
+.orderStaff__payPopupActions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 18px;
+}
+.orderStaff__payPopupBtn {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 9px 22px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.orderStaff__payPopupBtn:hover {
+  background: #1d4ed8;
+}
+.orderStaff__payPopupBtn--cancel {
+  background: #ef4444;
+}
+.orderStaff__payPopupBtn--cancel:hover {
+  background: #dc2626;
+}
+.orderStaff__payPopupMsg {
+  margin-top: 12px;
+  color: #ef4444;
+  font-size: 15px;
+  text-align: center;
+}
+/* Bảng chi tiết hóa đơn trong popup thanh toán */
+.orderStaff__payPopupOrderDetail {
+  margin: 18px 0 10px 0;
+  overflow-x: auto;
+}
+.orderStaff__payPopupOrderTable {
+  width: 100%;
+  border-collapse: collapse;
+  background: #fff;
+  font-size: 15px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+}
+.orderStaff__payPopupOrderTable th,
+.orderStaff__payPopupOrderTable td {
+  border: 1px solid #e5e7eb;
+  padding: 7px 10px;
+  text-align: left;
+}
+.orderStaff__payPopupOrderTable th {
+  background: #f3f4f6;
+  font-weight: 600;
+}
+.orderStaff__payPopupOrderTable tr:nth-child(even) td {
+  background: #fafafa;
+}
+.orderStaff__payPopupOrderTable tr:hover td {
+  background: #e0e7ff;
 }

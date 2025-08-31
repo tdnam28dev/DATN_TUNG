@@ -5,11 +5,11 @@ import './css/Setting.css';
 // Import các component động
 import CrudRestaurants from '../../test_api/CrudRestaurants';
 import User from './User';
+import PaymentMethod from './payment';
 import CrudMenus from '../../test_api/CrudMenus';
 import CrudMenuItems from '../../test_api/CrudMenuItems';
 import CrudTables from '../../test_api/CrudTables';
 
-// Danh sách các mục thiết lập dạng lưới, mỗi mục có icon, tiêu đề, mô tả
 const SETTING_SECTIONS = [
   {
     title: 'Thiết lập thông tin',
@@ -56,8 +56,8 @@ const SETTING_SECTIONS = [
     items: [
       {
         icon: <FaListAlt size={28} color="#FFA827" />,
-        title: 'Thiết lập đối tác',
-        desc: 'Xem và thiết lập các đối tác tích hợp',
+        title: 'Thiết lập thanh toán',
+        desc: 'Xem và thiết lập các phương thức thanh toán',
       },
     ],
   },
@@ -74,6 +74,7 @@ function Settings({ token }) {
     'Thiết lập menu': <CrudMenus token={token} />,
     'Thiết lập món ăn': <CrudMenuItems token={token} />,
     'Thiết lập bàn': <CrudTables token={token} />,
+    'Thiết lập thanh toán': <PaymentMethod token={token} />,
     // ...bổ sung các component khác nếu có
   };
 

@@ -1,5 +1,7 @@
 // Controller quản lý đơn hàng
 const Order = require('../models/order');
+const PaymentMethod = require('../models/paymentMethod');
+
 
 // Lấy danh sách đơn hàng, lọc theo nhà hàng nếu là nhân viên/manager
 exports.getAll = async (req, res) => {
@@ -97,15 +99,24 @@ exports.cancelOrder = async (req, res) => {
 // API thanh toán hóa đơn (chuyển trạng thái completed, bàn về available, lưu người thanh toán từ user đăng nhập)
 exports.payOrder = async (req, res) => {
   try {
-    // Luôn lấy người thanh toán từ user đăng nhập
+    // Lấy người thanh toán từ user đăng nhập
     const paidBy = req.user && req.user._id ? req.user._id : undefined;
-    console.log('Paying order with paidBy:', paidBy);
     if (!paidBy) {
       return res.status(401).json({ error: 'Bạn chưa đăng nhập hoặc token không hợp lệ!' });
     }
-    const updateData = { status: 'completed', paidBy };
-    const order = await Order.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    // Lấy thông tin từ body
+    const { paymentMethod, customerId, paymentId } = req.body;
+    // Tìm đơn hàng
+    const order = await Order.findById(req.params.id);
     if (!order) return res.status(404).json({ error: 'Không tìm thấy đơn hàng' });
+
+    // Lưu thông tin thanh toán
+    order.status = 'completed';
+    order.paidBy = paidBy;
+    order.paymentMethod = paymentMethod;
+    if (paymentId) order.paymentId = paymentId;
+    if (customerId) order.customerId = customerId;
+    await order.save();
     await Table.findByIdAndUpdate(order.table, { status: 'available' });
     res.json(order);
   } catch (err) {

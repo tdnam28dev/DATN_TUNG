@@ -201,6 +201,7 @@ function Bill({ token }) {
                 <th className="billManager__th">Bàn</th>
                 <th className="billManager__th">Số lượng</th>
                 <th className="billManager__th">Tổng tiền</th>
+                <th className="billManager__th">Phương thức thanh toán</th>
                 <th className="billManager__th">Trạng thái</th>
                 <th className="billManager__th">Ngày tạo</th>
                 <th className="billManager__th">Hành động</th>
@@ -214,6 +215,7 @@ function Bill({ token }) {
                   <td className="billManager__td">{order.tableName || order.table}</td>
                   <td className="billManager__td">{order.items ? order.items.reduce((sum, i) => sum + (i.quantity || 0), 0) : 0}</td>
                   <td className="billManager__td">{order.total?.toLocaleString()} đ</td>
+                  <td className="billManager__td">{order.paymentMethod ? (order.paymentMethod === 'cash' ? 'Tiền mặt' : order.paymentMethod === 'card' ? 'Thẻ' : order.paymentMethod === 'bank' ? 'Chuyển khoản' : order.paymentMethod === 'momo' ? 'Momo' : 'Khác') : '-'}</td>
                   <td className={`billManager__td billManager__td--status billManager__td--status-${order.status}`}>{order.status}</td>
                   <td className="billManager__td">{new Date(order.createdAt).toLocaleString()}</td>
                   <td className="billManager__td">
@@ -296,6 +298,7 @@ function Bill({ token }) {
                   <b className={`billManager__popupStatus billManager__td--status billManager__td--status-${orderDetail.status}`}>{orderDetail.status}</b>
                 )}
               </div>
+              <div className="billManager__popupInfoRow"><span>Phương thức thanh toán:</span> <b>{orderDetail.paymentMethod ? (orderDetail.paymentMethod === 'cash' ? 'Tiền mặt' : orderDetail.paymentMethod === 'card' ? 'Thẻ' : orderDetail.paymentMethod === 'bank' ? 'Chuyển khoản' : orderDetail.paymentMethod === 'momo' ? 'Momo' : 'Khác') : '-'}</b></div>
               <div className="billManager__popupInfoRow"><span>Tổng tiền:</span> <b style={{ color: '#2563eb' }}>{isEditOrder ? (editOrderDetail?.total?.toLocaleString() || '0') : (orderDetail.total?.toLocaleString() || '0')} đ</b></div>
               <div className="billManager__popupInfoRow"><span>Ngày tạo:</span> <b>{new Date(orderDetail.createdAt).toLocaleString()}</b></div>
               <div className="billManager__popupInfoRow"><span>Cập nhật gần nhất:</span> <b>{orderDetail.updatedAt ? new Date(orderDetail.updatedAt).toLocaleString() : '--'}</b></div>

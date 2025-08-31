@@ -15,7 +15,10 @@ const OrderSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now },
   restaurant: { type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant', required: true, index: true }, // Nhà hàng của hóa đơn
   paidBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // Người thanh toán (user)
-  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true } // Người tạo hóa đơn
+  createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Người tạo hóa đơn
+  paymentMethod: { type: String, enum: ['cash', 'card', 'bank', 'momo', 'other'], default: 'cash' }, // Phương thức thanh toán
+  paymentId: { type: mongoose.Schema.Types.ObjectId, ref: 'PaymentMethod' }, // Tham chiếu đến bảng phương thức thanh toán
+  customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer' } // Tham chiếu đến bảng khách hàng
 });
 
 // Tự động cập nhật updatedAt khi save
