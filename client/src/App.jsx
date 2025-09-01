@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import Home from './views/admin/test_api/Home';
+import Home from './views/customer/pages/home/home';
 import CrudRestaurants from './views/admin/test_api/CrudRestaurants';
 import CrudTables from './views/admin/test_api/CrudTables';
 import CrudMenus from './views/admin/test_api/CrudMenus';
@@ -30,7 +30,7 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/login" element={<Login setToken={setToken} />} />
-        <Route path="/" element={token ? <Home /> : <Login setToken={setToken} />} />
+        <Route path="/*" element={token ? <Home /> : <Login setToken={setToken} />} />
         <Route path="/crud-restaurants" element={token ? <CrudRestaurants token={token} /> : <Login setToken={setToken} />} />
         <Route path="/crud-tables" element={token ? <CrudTables token={token} /> : <Login setToken={setToken} />} />
         <Route path="/crud-menus" element={token ? <CrudMenus token={token} /> : <Login setToken={setToken} />} />

@@ -1,20 +1,29 @@
 import { exportInvoicePDF } from '../../../../utils/createInvoice';
 import { createCustomer, getCustomers } from '../../../../api/customer';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { createOrder, updateOrder, payOrder, cancelOrder } from '../../../../api/order';
 
 // Giao diện order cho một bàn cụ thể
 function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelectedTable, menus, menuItems, orders, payments, reloadData }) {
-    // State cho popup thanh toán
-    const [showPayPopup, setShowPayPopup] = useState(false);
-    const [customerName, setCustomerName] = useState('');
-    const [customerPhone, setCustomerPhone] = useState('');
-    const [customerGender, setCustomerGender] = useState('');
-    const [customerAddress, setCustomerAddress] = useState('');
-    const [customerId, setCustomerId] = useState(null);
-    const [paymentMethod, setPaymentMethod] = useState('cash');
-    const [paymentId, setPaymentId] = useState('');
-    // Nhận dữ liệu từ props
+    // Gom các state liên quan vào một object
+    const [popup, setPopup] = useState({
+        showPay: false,
+        showQr: false,
+        qrCountdown: 180,
+        qrPaid: false,
+        qrPaidCountdown: 10
+    });
+    const [customer, setCustomer] = useState({
+        name: '',
+        phone: '',
+        gender: '',
+        address: '',
+        id: null
+    });
+    const [payment, setPayment] = useState({
+        method: 'cash',
+        id: ''
+    });
     const [cart, setCart] = useState([]);
     const [filterType, setFilterType] = useState('');
     const [message, setMessage] = useState('');
@@ -22,27 +31,29 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
     const [menuTypeList, setMenuTypeList] = useState([]);
 
     // Khi nhập xong số điện thoại thì kiểm tra khách hàng
+    // Khi nhập xong số điện thoại thì kiểm tra khách hàng
     useEffect(() => {
-        if (!customerPhone || customerPhone.length < 10) return;
+        if (!customer.phone || customer.phone.length < 10) return;
         // Gọi API kiểm tra khách hàng theo số điện thoại
         const fetchCustomer = async () => {
-            const res = await getCustomers(token, { phone: customerPhone });
+            const res = await getCustomers(token, { phone: customer.phone });
             if (Array.isArray(res) && res.length > 0) {
                 const c = res[0];
-                setCustomerId(c._id);
-                setCustomerName(c.name || '');
-                setCustomerGender(c.gender || '');
-                setCustomerAddress(c.address || '');
+                setCustomer(prev => ({
+                    ...prev,
+                    id: c._id,
+                    name: c.name || '',
+                    gender: c.gender || '',
+                    address: c.address || ''
+                }));
             } else {
-                setCustomerId(null);
-                setCustomerName('');
-                setCustomerGender('');
-                setCustomerAddress('');
+                setCustomer(prev => ({ ...prev, id: null, name: '', gender: '', address: '' }));
             }
         };
         fetchCustomer();
-    }, [customerPhone, token]);
+    }, [customer.phone, token]);
 
+    // Khi chọn bàn, nếu có hóa đơn pending thì lấy giỏ hàng từ hóa đơn đó
     // Khi chọn bàn, nếu có hóa đơn pending thì lấy giỏ hàng từ hóa đơn đó
     useEffect(() => {
         if (!selectedTable) return;
@@ -56,9 +67,8 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
     }, [selectedTable, orders, menuItems]);
 
     // Merge thông tin menuId/menuName vào menuItems để hiển thị đúng danh sách món
-    const [mergedMenuItems, setMergedMenuItems] = useState([]);
-    useEffect(() => {
-        // Tạo map từ menu
+    // Tạo danh sách món đã merge thông tin menu
+    const mergedMenuItems = useMemo(() => {
         let menuMap = {};
         menus.forEach(menu => {
             if (Array.isArray(menu.items)) {
@@ -67,17 +77,18 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
                 });
             }
         });
-        // Merge vào menuItems
-        const merged = menuItems.map(item => ({
+        return menuItems.map(item => ({
             ...item,
             menuId: menuMap[item._id]?.menuId || '',
             menuName: menuMap[item._id]?.menuName || '',
             type: menuMap[item._id]?.type || ''
         }));
-        setMergedMenuItems(merged);
-        // Tạo danh sách loại món
+    }, [menus, menuItems]);
+
+    // Tạo danh sách loại món
+    useEffect(() => {
         let menuTypeListTmp = [];
-        merged.forEach(item => {
+        mergedMenuItems.forEach(item => {
             if (item.menuId && item.menuName && item.type) {
                 if (!menuTypeListTmp.find(t => t.menuId === item.menuId)) {
                     menuTypeListTmp.push({ type: item.type, menuId: item.menuId, menuName: item.menuName });
@@ -85,10 +96,10 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
             }
         });
         setMenuTypeList(menuTypeListTmp);
-    }, [menus, menuItems]);
+    }, [mergedMenuItems]);
 
     // Thêm món vào giỏ
-    const addToCart = (item) => {
+    const addToCart = useCallback((item) => {
         setCart(prev => {
             const found = prev.find(i => i.menuItem._id === item._id);
             if (found) {
@@ -96,26 +107,27 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
             }
             return [...prev, { menuItem: item, quantity: 1 }];
         });
-    };
+    }, []);
     // Xóa món khỏi giỏ
-    const removeFromCart = (id) => {
+    const removeFromCart = useCallback((id) => {
         setCart(prev => prev.filter(i => i.menuItem._id !== id));
-    };
+    }, []);
     // Thay đổi số lượng
-    const changeQuantity = (id, qty) => {
+    const changeQuantity = useCallback((id, qty) => {
         setCart(prev => prev.map(i => i.menuItem._id === id ? { ...i, quantity: Math.max(1, qty) } : i));
-    };
+    }, []);
     // Tổng tiền, kiểm tra menuItem tồn tại
-    const total = cart.reduce((sum, i) => {
+    // Tính tổng tiền
+    const total = useMemo(() => cart.reduce((sum, i) => {
         if (!i.menuItem || typeof i.menuItem.price !== 'number') return sum;
         return sum + (i.menuItem.price * i.quantity);
-    }, 0);
+    }, 0), [cart]);
 
     // So sánh giỏ hàng hiện tại với hóa đơn pending ban đầu
-    const existOrder = orders.find(o => o.table === selectedTable?._id && o.status === 'pending');
-    const isCartChanged = (() => {
+    // Kiểm tra giỏ hàng có thay đổi so với hóa đơn pending
+    const existOrder = useMemo(() => orders.find(o => o.table === selectedTable?._id && o.status === 'pending'), [orders, selectedTable]);
+    const isCartChanged = useMemo(() => {
         if (!existOrder) return cart.length > 0;
-        // So sánh số lượng món và từng món
         if (cart.length !== existOrder.items.length) return true;
         for (let i = 0; i < cart.length; i++) {
             const c = cart[i];
@@ -123,10 +135,10 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
             if (!e || e.quantity !== c.quantity) return true;
         }
         return false;
-    })();
+    }, [cart, existOrder]);
 
     // Lưu/tạo hóa đơn (pending)
-    const handleSaveOrder = async () => {
+    const handleSaveOrder = useCallback(async () => {
         if (!selectedTable) {
             setMessage('Vui lòng chọn bàn!');
             return;
@@ -152,45 +164,163 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
         setMessage(res._id ? 'Đã lưu hóa đơn!' : res.error || 'Lỗi');
         if (typeof reloadData === 'function') reloadData();
         setLoading(false);
-    };
+    }, [selectedTable, cart, total, existOrder, token, reloadData]);
+
+    // Hàm kiểm tra trạng thái thanh toán chuyển khoản qua API Google Script
+    const checkBankTransfer = useCallback(async ({ accountNumber, amount, orderId }) => {
+        try {
+            const url = 'https://script.google.com/macros/s/AKfycbyeZBJC4NH5tZ4RbfjQaz_n7uGcKkG0lVUwzYTkT2pQR78PWVdslN3an7xHioqrN3YN/exec';
+            const res = await fetch(url);
+            const data = await res.json();
+            if (data && Array.isArray(data.data)) {
+                const found = data.data.find(tx =>
+                    Number(tx["Tiền nhận"]) === Number(amount) &&
+                    String(tx["Số tài khoản"]) === String(accountNumber) &&
+                    tx["Mô tả"] && tx["Mô tả"].includes(orderId)
+                );
+                return !!found;
+            }
+            return false;
+        } catch (err) {
+            return false;
+        }
+    }, []);
+
+    // Hàm tạo link QR code
+    const getQrUrl = useCallback(() => {
+        const paymentObj = payments.find(p => p._id === payment.id);
+        if (!paymentObj) return '';
+        const bankId = paymentObj.bankCode || '970422';
+        const accountNo = paymentObj.accountNumber || '';
+        const template = paymentObj.template || 'compact';
+        const amount = total || '';
+        const orderId = existOrder?._id || '';
+        const addInfo = encodeURIComponent(`Hoa don ${orderId}`);
+        const accountName = encodeURIComponent(paymentObj.accountHolder || '');
+        return `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?amount=${amount}&addInfo=${addInfo}&accountName=${accountName}`;
+    }, [payments, payment.id, total, existOrder]);
+
+
+    // Đếm ngược thời gian khi mở popup QR
+    useEffect(() => {
+        if (!popup.showQr) return;
+        if (popup.qrCountdown <= 0) return;
+        const timer = setTimeout(() => {
+            setPopup(prev => ({ ...prev, qrCountdown: prev.qrCountdown - 1 }));
+        }, 1000);
+        return () => clearTimeout(timer);
+    }, [popup.showQr, popup.qrCountdown]);
+
+    // Kiểm tra trạng thái chuyển khoản liên tục khi mở popup QR
+    useEffect(() => {
+        let interval;
+        if (popup.showQr && payment.method === 'bank' && payment.id && existOrder && !popup.qrPaid) {
+            let elapsed = 0;
+            let handled = false;
+            interval = setInterval(async () => {
+                const paymentObj = payments.find(p => p._id === payment.id);
+                if (!paymentObj) return;
+                const isPaid = await checkBankTransfer({
+                    accountNumber: paymentObj.accountNumber,
+                    amount: total,
+                    orderId: existOrder._id
+                });
+                elapsed += 3;
+                // Chỉ xử lý xác nhận thanh toán duy nhất một lần
+                if (isPaid && !handled && !popup.qrPaid) {
+                    handled = true;
+                    setPopup(prev => prev.qrPaid ? prev : { ...prev, qrPaid: true, qrPaidCountdown: 10 });
+                    setMessage('Đã nhận được chuyển khoản!');
+                    let finalCustomerId = customer.id;
+                    if (!finalCustomerId) {
+                        const customerData = await createCustomer({
+                            name: customer.name,
+                            phone: customer.phone,
+                            gender: customer.gender,
+                            address: customer.address
+                        }, token);
+                        finalCustomerId = customerData._id;
+                    }
+                    const res = await payOrder(existOrder._id, token, {
+                        paymentMethod: payment.method,
+                        customerId: finalCustomerId,
+                        paymentId: payment.id
+                    });
+                    if (res && res._id) {
+                        setMessage('Đã thanh toán!');
+                        if (typeof reloadData === 'function') reloadData();
+                        setCart([]);
+                    } else {
+                        setMessage(res.error || 'Lỗi xác nhận thanh toán!');
+                    }
+                    clearInterval(interval);
+                } else if (elapsed >= 180) {
+                    setPopup(prev => ({ ...prev, showQr: false }));
+                    setMessage('Hết thời gian chuyển khoản, vui lòng thử lại!');
+                    clearInterval(interval);
+                }
+            }, 3000);
+        }
+        return () => clearInterval(interval);
+    }, [popup.showQr, payment.method, payment.id, existOrder, payments, total, customer, token, reloadData, popup.qrPaid, setSelectedTable, setShowOrderPage, checkBankTransfer]);
+    // Đếm ngược đóng popup QR sau khi đã thanh toán
+    useEffect(() => {
+        let timer;
+        if (popup.showQr && popup.qrPaid) {
+            if (popup.qrPaidCountdown > 0) {
+                timer = setTimeout(() => {
+                    setPopup(prev => ({ ...prev, qrPaidCountdown: prev.qrPaidCountdown - 1 }));
+                }, 1000);
+            } else {
+                setPopup(prev => ({ ...prev, showQr: false, qrPaid: false, showPay: false, qrPaidCountdown: 10 }));
+                setSelectedTable(null);
+                setShowOrderPage(false);
+            }
+        }
+        return () => clearTimeout(timer);
+    }, [popup.showQr, popup.qrPaid, popup.qrPaidCountdown, setShowOrderPage, setSelectedTable]);
+
     // xác nhận thanh toán từ popup
     // Hàm thanh toán: thêm khách hàng, lấy id từ backend, lưu vào hóa đơn và xác nhận khi thành công
     // Hàm xác nhận thanh toán, truyền paymentId nếu là chuyển khoản
-    const handlePayOrder = async () => {
+    // Xác nhận thanh toán từ popup
+    const handlePayOrder = useCallback(async () => {
         if (!selectedTable) return;
-        const existOrder = orders.find(o => o.table === selectedTable._id && o.status === 'pending');
         if (!existOrder) {
             setMessage('Không có hóa đơn chờ thanh toán!');
             return;
         }
         const phoneRegex = /^\d{10}$/;
-        if (!customerPhone.trim()) {
+        if (!customer.phone.trim()) {
             setMessage('Vui lòng nhập số điện thoại khách hàng!');
             return;
         }
-        if (!phoneRegex.test(customerPhone.trim())) {
+        if (!phoneRegex.test(customer.phone.trim())) {
             setMessage('Số điện thoại không hợp lệ!');
             return;
         }
-        if (!customerName.trim()) {
+        if (!customer.name.trim()) {
             setMessage('Vui lòng nhập tên khách hàng!');
             return;
         }
-        // Nếu chọn chuyển khoản mà chưa chọn tài khoản thì báo lỗi
-        if (paymentMethod === 'bank' && !paymentId) {
+        if (payment.method === 'bank' && !payment.id) {
             setMessage('Vui lòng chọn tài khoản ngân hàng!');
             return;
         }
+        // Nếu là chuyển khoản thì chỉ mở popup QR, không gọi API thanh toán
+        if (payment.method === 'bank') {
+            setPopup(prev => ({ ...prev, qrCountdown: 180, showQr: true }));
+            return;
+        }
         setLoading(true);
-        let finalCustomerId = customerId;
-        // Nếu chưa có khách hàng thì tạo mới
+        let finalCustomerId = customer.id;
         if (!finalCustomerId) {
             try {
                 const customerData = await createCustomer({
-                    name: customerName,
-                    phone: customerPhone,
-                    gender: customerGender,
-                    address: customerAddress
+                    name: customer.name,
+                    phone: customer.phone,
+                    gender: customer.gender,
+                    address: customer.address
                 }, token);
                 if (customerData && customerData._id) {
                     finalCustomerId = customerData._id;
@@ -205,11 +335,10 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
                 return;
             }
         }
-        // Gọi API thanh toán, truyền id khách hàng và paymentId nếu là chuyển khoản
         const res = await payOrder(existOrder._id, token, {
-            paymentMethod,
+            paymentMethod: payment.method,
             customerId: finalCustomerId,
-            paymentId: paymentMethod === 'bank' ? paymentId : undefined
+            paymentId: payment.method === 'bank' ? payment.id : undefined
         });
         if (res && res._id) {
             setMessage('Đã thanh toán!');
@@ -217,34 +346,33 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
             setCart([]);
             setSelectedTable(null);
             setShowOrderPage(false);
-            setShowPayPopup(false);
+            setPopup(prev => ({ ...prev, showPay: false }));
         } else {
             setMessage(res.error || 'Lỗi xác nhận thanh toán!');
         }
         setLoading(false);
-    };
+    }, [selectedTable, existOrder, customer, payment, token, reloadData, setSelectedTable, setShowOrderPage]);
+
     // Hàm thanh toán và xuất hóa đơn PDF
-    const handlePayAndPrint = async () => {
-        // await handlePayOrder();
-        // Nếu thanh toán thành công thì xuất PDF hóa đơn
+    const handlePayAndPrint = useCallback(() => {
         setTimeout(() => {
             exportInvoicePDF({
                 customer: {
-                    name: customerName,
-                    phone: customerPhone,
-                    gender: customerGender,
-                    address: customerAddress
+                    name: customer.name,
+                    phone: customer.phone,
+                    gender: customer.gender,
+                    address: customer.address
                 },
                 cart,
                 total,
-                paymentMethod
+                paymentMethod: payment.method
             });
         }, 500);
-    };
+    }, [customer, cart, total, payment.method]);
     // Hủy hóa đơn
-    const handleCancelOrder = async () => {
+    // Hủy hóa đơn
+    const handleCancelOrder = useCallback(async () => {
         if (!selectedTable) return;
-        const existOrder = orders.find(o => o.table === selectedTable._id && o.status === 'pending');
         if (!existOrder) {
             setMessage('Không có hóa đơn chờ hủy!');
             return;
@@ -257,10 +385,11 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
         setSelectedTable(null);
         setShowOrderPage(false);
         setLoading(false);
-    };
+    }, [selectedTable, existOrder, token, reloadData, setSelectedTable, setShowOrderPage]);
 
     return (
         <div className="orderStaff__orderBox">
+            {/* Quay lại chọn bàn */}
             <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
                 <span
                     style={{ color: '#888', fontSize: 15, cursor: 'pointer', display: 'flex', alignItems: 'center' }}
@@ -271,15 +400,11 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
             </div>
             <div className="orderStaff__orderTitle">Order cho bàn {selectedTable.number}</div>
             {/* Thông tin hóa đơn hiện tại nếu có */}
-            {(() => {
-                const order = orders.find(o => o.table === selectedTable._id && o.status === 'pending');
-                if (!order) return null;
-                return (
-                    <div style={{ marginBottom: 8, color: '#2563eb' }}>
-                        Trạng thái hóa đơn: <b>Chờ thanh toán</b>
-                    </div>
-                );
-            })()}
+            {existOrder && (
+                <div style={{ marginBottom: 8, color: '#2563eb' }}>
+                    Trạng thái hóa đơn: <b>Chờ thanh toán</b>
+                </div>
+            )}
             <div style={{ marginBottom: 12 }}>
                 <select
                     style={{ padding: 7, borderRadius: 6, border: '1px solid #d1d5db', minWidth: 160 }}
@@ -325,7 +450,7 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
                                 className="orderStaff__orderPayBtn"
                                 type="button"
                                 disabled={loading}
-                                onClick={() => setShowPayPopup(true)}
+                                onClick={() => setPopup(prev => ({ ...prev, showPay: true }))}
                             >
                                 Thanh toán
                             </button>
@@ -377,30 +502,30 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
                 </tbody>
             </table>
             {/* Popup thanh toán */}
-            {showPayPopup && (
+            {popup.showPay && (
                 <div className="orderStaff__payPopupOverlay">
                     <div className="orderStaff__payPopup">
                         <h3 className="orderStaff__payPopupTitle">Thanh toán hóa đơn</h3>
                         <div className='orderStaff__payPopupInfoCustomer'>
                             <div className="orderStaff__payPopupRow">
                                 <label>Tên khách hàng:</label>
-                                <input type="text" value={customerName} onChange={e => setCustomerName(e.target.value)} placeholder="Nhập tên khách hàng" />
+                                <input type="text" value={customer.name} onChange={e => setCustomer(prev => ({ ...prev, name: e.target.value }))} placeholder="Nhập tên khách hàng" />
                             </div>
                             <div className="orderStaff__payPopupRow">
                                 <label>Số điện thoại:</label>
-                                <input type="text" value={customerPhone} onChange={e => setCustomerPhone(e.target.value)} placeholder="Nhập số điện thoại" />
-                                {customerId && customerPhone.length === 10 && customerPhone === String(customerPhone) && customerPhone === String(customerPhone) && (
+                                <input type="text" value={customer.phone} onChange={e => setCustomer(prev => ({ ...prev, phone: e.target.value }))} placeholder="Nhập số điện thoại" />
+                                {customer.id && customer.phone.length === 10 && (
                                     <span style={{ color: '#059669', marginLeft: 12, fontSize: 18, display: 'inline-flex', alignItems: 'center' }}>
                                         <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <circle cx="10" cy="10" r="10" fill="#059669"/>
-                                            <path d="M6 10.5L9 13.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                                            <circle cx="10" cy="10" r="10" fill="#059669" />
+                                            <path d="M6 10.5L9 13.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                                         </svg>
                                     </span>
                                 )}
                             </div>
                             <div className="orderStaff__payPopupRow">
                                 <label>Giới tính:</label>
-                                <select value={customerGender} onChange={e => setCustomerGender(e.target.value)}>
+                                <select value={customer.gender} onChange={e => setCustomer(prev => ({ ...prev, gender: e.target.value }))}>
                                     <option value="">Chọn giới tính</option>
                                     <option value="male">Nam</option>
                                     <option value="female">Nữ</option>
@@ -409,7 +534,7 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
                             </div>
                             <div className="orderStaff__payPopupRow">
                                 <label>Địa chỉ:</label>
-                                <input type="text" value={customerAddress} onChange={e => setCustomerAddress(e.target.value)} placeholder="Nhập địa chỉ" />
+                                <input type="text" value={customer.address} onChange={e => setCustomer(prev => ({ ...prev, address: e.target.value }))} placeholder="Nhập địa chỉ" />
                             </div>
                         </div>
                         {/* Bảng chi tiết hóa đơn */}
@@ -442,7 +567,7 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
                         </div>
                         <div className="orderStaff__payPopupRow">
                             <label>Hình thức thanh toán:</label>
-                            <select value={paymentMethod} onChange={e => setPaymentMethod(e.target.value)}>
+                            <select value={payment.method} onChange={e => setPayment(prev => ({ ...prev, method: e.target.value }))}>
                                 <option value="cash">Tiền mặt</option>
                                 <option value="card">Thẻ</option>
                                 <option value="bank">Chuyển khoản</option>
@@ -451,10 +576,10 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
                             </select>
                         </div>
                         {/* Nếu chọn chuyển khoản thì hiển thị danh sách tài khoản ngân hàng */}
-                        {paymentMethod === 'bank' && (
+                        {payment.method === 'bank' && (
                             <div className="orderStaff__payPopupRow">
                                 <label>Chọn tài khoản ngân hàng:</label>
-                                <select value={paymentId} onChange={e => setPaymentId(e.target.value)}>
+                                <select value={payment.id} onChange={e => setPayment(prev => ({ ...prev, id: e.target.value }))}>
                                     <option value="">-- Chọn tài khoản --</option>
                                     {Array.isArray(payments) && payments.filter(p => p.name === 'bank').map(p => (
                                         <option key={p._id} value={p._id}>{p.bankName} - {p.accountNumber} ({p.accountHolder})</option>
@@ -464,16 +589,53 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
                         )}
                         <div className="orderStaff__payPopupActions">
                             <button className="orderStaff__payPopupBtn" type="button" onClick={handlePayOrder} disabled={loading}>
-                                {loading ? 'Đang thanh toán...' : 'Xác nhận thanh toán'}
+                                {loading ? 'Đang thanh toán...' : 'Thanh toán'}
                             </button>
                             <button className="orderStaff__payPopupBtn" type="button" onClick={handlePayAndPrint} disabled={loading} style={{ marginLeft: 8, background: '#059669', color: '#fff' }}>
                                 {loading ? 'Đang xử lý...' : 'Thanh toán & In hóa đơn'}
                             </button>
-                            <button className="orderStaff__payPopupBtn orderStaff__payPopupBtn--cancel" type="button" onClick={() => setShowPayPopup(false)} disabled={loading}>
+                            <button className="orderStaff__payPopupBtn orderStaff__payPopupBtn--cancel" type="button" onClick={() => setPopup(prev => ({ ...prev, showPay: false }))} disabled={loading}>
                                 Hủy
                             </button>
                         </div>
                         {message && <div className="orderStaff__payPopupMsg">{message}</div>}
+                    </div>
+                </div>
+            )}
+            {/* Popup QR chuyển khoản */}
+            {popup.showQr && (
+                <div className="orderStaff__qrPopupOverlay">
+                    <div className="orderStaff__qrPopupContent">
+                        {!popup.qrPaid ? (
+                            <>
+                                <h3 style={{ marginBottom: 12 }}>Quét mã QR để thanh toán chuyển khoản</h3>
+                                <div className="orderStaff__qrPopupImg">
+                                    <img className='orderStaff__qrImg' alt="QR Code" src={getQrUrl()} />
+                                </div>
+                                <div style={{ fontSize: 16, color: '#2563eb', margin: '12px 0' }}>
+                                    Thời gian còn lại: <b>{popup.qrCountdown}s</b>
+                                </div>
+                                <button type="button" className="orderStaff__payPopupBtn orderStaff__payPopupBtn--cancel" onClick={() => setPopup(prev => ({ ...prev, showQr: false }))}>
+                                    Đóng
+                                </button>
+                                {popup.qrCountdown <= 0 && <div style={{ color: 'red', marginTop: 8 }}>Hết thời gian chuyển khoản, vui lòng thử lại!</div>}
+                            </>
+                        ) : (
+                            <>
+                                <h3 style={{ marginBottom: 12, color: '#059669' }}>Đã thanh toán thành công!</h3>
+                                <div style={{ fontSize: 16, color: '#2563eb', margin: '12px 0' }}>
+                                    Popup sẽ tự đóng sau <b>{popup.qrPaidCountdown}s</b>
+                                </div>
+                                <button type="button" className="orderStaff__payPopupBtn orderStaff__payPopupBtn--cancel"
+                                    onClick={() => {
+                                        setPopup(prev => ({ ...prev, showQr: false, qrPaid: false, showPay: false, qrPaidCountdown: 10 }));
+                                        setSelectedTable(null);
+                                        setShowOrderPage(false);
+                                    }}>
+                                    Đóng ngay
+                                </button>
+                            </>
+                        )}
                     </div>
                 </div>
             )}

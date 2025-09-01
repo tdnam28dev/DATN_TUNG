@@ -1,9 +1,10 @@
-.orderStaff{
+.orderStaff {
   display: flex;
   height: 100vh;
   flex: 1 1;
 }
-.orderStaff_content{
+
+.orderStaff_content {
   display: flex;
   flex-direction: column;
   /* position: relative; */
@@ -16,6 +17,7 @@
   overflow-y: auto;
   scrollbar-width: none;
 }
+
 .orderStaff_content::-webkit-scrollbar {
   display: none;
 }
@@ -34,6 +36,7 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .orderStaff__orderPayBtn:hover {
   background: #1d4ed8;
 }
@@ -51,9 +54,11 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .orderStaff__orderCancelBtn:hover {
   background: #dc2626;
 }
+
 /* Style cho giao diện order mới dạng thẻ bàn và hóa đơn */
 .orderStaff__tableList {
   display: flex;
@@ -61,6 +66,7 @@
   gap: 18px;
   margin-bottom: 24px;
 }
+
 .orderStaff__tableCard {
   background: #fff;
   border-radius: 12px;
@@ -76,10 +82,12 @@
   transition: border 0.2s, box-shadow 0.2s;
   position: relative;
 }
+
 .orderStaff__tableCard--active {
   border: 2px solid #2563eb;
   box-shadow: 0 4px 16px #2563eb22;
 }
+
 .orderStaff__tableStatus {
   font-size: 13px;
   font-weight: 500;
@@ -90,22 +98,27 @@
   padding: 2px 8px;
   display: inline-block;
 }
+
 .orderStaff__tableStatus.reserved {
   background: #fbbf24;
   color: #222;
 }
+
 .orderStaff__tableStatus.occupied {
   background: #ef4444;
 }
+
 .orderStaff__tableInfo {
   font-size: 15px;
   margin-bottom: 2px;
 }
+
 .orderStaff__tableType {
   font-size: 13px;
   color: #2563eb;
   margin-bottom: 2px;
 }
+
 .orderStaff__tableCard__payBtn {
   position: absolute;
   right: 12px;
@@ -120,9 +133,11 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .orderStaff__tableCard__payBtn:hover {
   background: #1d4ed8;
 }
+
 .orderStaff__tableCard__orderBtn {
   position: absolute;
   right: 12px;
@@ -137,9 +152,11 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .orderStaff__tableCard__orderBtn:hover {
   background: #16a34a;
 }
+
 .orderStaff__orderBox {
   width: 100%;
   background: #fff;
@@ -148,17 +165,20 @@
   padding: 18px 20px;
   margin-top: 18px;
 }
+
 .orderStaff__orderTitle {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 10px;
 }
+
 .orderStaff__orderMenuList {
   display: flex;
   flex-wrap: wrap;
   gap: 18px;
   margin-bottom: 18px;
 }
+
 .orderStaff__orderMenuItem {
   background: #f9fafb;
   border-radius: 10px;
@@ -171,9 +191,11 @@
   cursor: pointer;
   transition: box-shadow 0.2s;
 }
+
 .orderStaff__orderMenuItem:hover {
   box-shadow: 0 4px 16px #0002;
 }
+
 .orderStaff__orderMenuImg {
   width: 60px;
   height: 60px;
@@ -181,16 +203,19 @@
   border-radius: 8px;
   margin-bottom: 6px;
 }
+
 .orderStaff__orderMenuName {
   font-weight: 600;
   font-size: 15px;
   margin-bottom: 2px;
 }
+
 .orderStaff__orderMenuPrice {
   color: #2563eb;
   font-weight: 500;
   margin-bottom: 4px;
 }
+
 .orderStaff__orderAddBtn {
   background: #22c55e;
   color: #fff;
@@ -203,15 +228,18 @@
   margin-top: 4px;
   transition: background 0.2s;
 }
+
 .orderStaff__orderAddBtn:hover {
   background: #16a34a;
 }
+
 .orderStaff__orderCartTable {
   width: 100%;
   border-collapse: separate;
   border-spacing: 0;
   font-size: 15px;
 }
+
 .orderStaff__orderCartTh {
   background: #f3f4f6;
   font-weight: 600;
@@ -219,21 +247,25 @@
   text-align: left;
   border-bottom: 2px solid #e5e7eb;
 }
+
 .orderStaff__orderCartTd {
   padding: 8px 8px;
   border-bottom: 1px solid #f1f1f1;
   vertical-align: middle;
 }
+
 .orderStaff__orderCartTr:last-child .orderStaff__orderCartTd {
   border-bottom: none;
 }
-.orderStaff__orderCartActions{
+
+.orderStaff__orderCartActions {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-top: 12px;
   margin-bottom: 18px;
 }
+
 .orderStaff__orderCartActionBtn {
   background: #ef4444;
   color: #fff;
@@ -245,9 +277,11 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .orderStaff__orderCartActionBtn:hover {
   background: #dc2626;
 }
+
 .orderStaff__orderCartTotal {
   text-align: right;
   font-size: 17px;
@@ -255,6 +289,7 @@
   margin-top: 12px;
   color: #2563eb;
 }
+
 .orderStaff__orderSubmitBtn {
   background: #2563eb;
   color: #fff;
@@ -267,9 +302,11 @@
   float: right;
   transition: background 0.2s;
 }
+
 .orderStaff__orderSubmitBtn:hover {
   background: #1d4ed8;
 }
+
 .orderStaff__orderMsg {
   margin-top: 10px;
   color: #2563eb;
@@ -284,12 +321,13 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0,0,0,0.25);
+  background: rgba(0, 0, 0, 0.25);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .orderStaff__payPopup {
   background: #fff;
   border-radius: 12px;
@@ -299,6 +337,7 @@
   max-width: 95vw;
   position: relative;
 }
+
 .orderStaff__payPopupTitle {
   font-size: 20px;
   font-weight: 700;
@@ -306,21 +345,25 @@
   margin-bottom: 18px;
   text-align: center;
 }
-.orderStaff__payPopupInfoCustomer{
+
+.orderStaff__payPopupInfoCustomer {
   display: flex;
   flex-direction: row;
   gap: 12px;
 }
+
 .orderStaff__payPopupRow {
   display: flex;
   align-items: center;
   margin-bottom: 14px;
 }
+
 .orderStaff__payPopupRow label {
   font-size: 15px;
   color: #222;
   font-weight: 500;
 }
+
 .orderStaff__payPopupRow input,
 .orderStaff__payPopupRow select {
   flex: 1;
@@ -330,12 +373,14 @@
   font-size: 15px;
   margin-left: 8px;
 }
+
 .orderStaff__payPopupActions {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
   margin-top: 18px;
 }
+
 .orderStaff__payPopupBtn {
   background: #2563eb;
   color: #fff;
@@ -347,46 +392,95 @@
   cursor: pointer;
   transition: background 0.2s;
 }
+
 .orderStaff__payPopupBtn:hover {
   background: #1d4ed8;
 }
+
 .orderStaff__payPopupBtn--cancel {
   background: #ef4444;
 }
+
 .orderStaff__payPopupBtn--cancel:hover {
   background: #dc2626;
 }
+
 .orderStaff__payPopupMsg {
   margin-top: 12px;
   color: #ef4444;
   font-size: 15px;
   text-align: center;
 }
+
 /* Bảng chi tiết hóa đơn trong popup thanh toán */
 .orderStaff__payPopupOrderDetail {
   margin: 18px 0 10px 0;
   overflow-x: auto;
 }
+
 .orderStaff__payPopupOrderTable {
   width: 100%;
   border-collapse: collapse;
   background: #fff;
   font-size: 15px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
 }
+
 .orderStaff__payPopupOrderTable th,
 .orderStaff__payPopupOrderTable td {
   border: 1px solid #e5e7eb;
   padding: 7px 10px;
   text-align: left;
 }
+
 .orderStaff__payPopupOrderTable th {
   background: #f3f4f6;
   font-weight: 600;
 }
+
 .orderStaff__payPopupOrderTable tr:nth-child(even) td {
   background: #fafafa;
 }
+
 .orderStaff__payPopupOrderTable tr:hover td {
   background: #e0e7ff;
+}
+
+/* Popup QR chuyển khoản */
+.orderStaff__qrPopupOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orderStaff__qrPopupContent {
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.15);
+  padding: 32px 24px 24px 24px;
+  min-width: 320px;
+  max-width: 90vw;
+  text-align: center;
+  position: relative;
+}
+
+.orderStaff__qrPopupImg {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orderStaff__qrImg {
+  max-width: 380px;
+	border-radius: 8px;
+	border: 1px solid #eee;
+	background: #fff;
 }
