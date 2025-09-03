@@ -23,7 +23,7 @@ function Home() {
             case '/promotion':
                 return <Promotion />;
             default:
-                return <MainContent currentPage={path} />;
+                return <MainContent />;
         }
     };
 
@@ -56,7 +56,7 @@ function Home() {
             </header>
 
             {/* Content */}
-            <main className="homePage__content">
+            <main className="td-main">
                 {renderContent()}
             </main>
 
@@ -98,14 +98,16 @@ function Home() {
                             <div className="td-footer__credit">© 2023 Quán Nhậu Tự Do</div>
                         </div>
                     </div>
-                    <a href="#top" className="td-footer__scrollTop" title="Lên đầu trang">
+                    <div className="td-footer__scrollTop" title="Lên đầu trang" onClick={() => {
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }}>
                         <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="24" cy="24" r="24" fill="#FFA827"></circle>
                             <path d="M24 36V20" stroke="#333333" strokeWidth="2" strokeMiterlimit="10"></path>
                             <path d="M18 26L24 20L30 26" stroke="#333333" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="square"></path>
                             <path d="M14 15H34" stroke="#333333" strokeWidth="2" strokeMiterlimit="10" strokeLinecap="square"></path>
                         </svg>
-                    </a>
+                    </div>
                 </div>
             </footer>
         </div>

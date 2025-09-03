@@ -8,18 +8,16 @@ import { getUserById } from '../../../../api/user';
 import Overview from '../overview/Overview';
 import Report from '../report/Report';
 import Bill from '../../pages/bill/Bill';
-import Product from '../product/Product';
 import Schedule from '../schedule/Schedule';
 import Customer from '../customer/Customer';
 import Promotion from '../promotion/Promotion';
 import Warehouse from '../warehouse/Warehouse';
 import RevenueExpense from '../revenueexpense/RevenueExpense';
-import Timekeeping from '../timekeeping/Timekeeping';
 import Settings from '../../pages/setting/Setting';
 
 
 const sidebarItems = [
-  'Tổng quan', 'Báo cáo', 'Hóa đơn', 'Mặt hàng', 'Đặt lịch', 'Khách hàng', 'Khuyến mại', 'Kho hàng', 'Thu chi', 'Chấm công', 'Cấu hình'
+  'Tổng quan', 'Báo cáo', 'Hóa đơn', 'Đặt lịch', 'Khách hàng', 'Khuyến mại', 'Kho hàng', 'Thu chi', 'Cấu hình'
 ];
 
 function AdminDashboard({ token, userId }) {
@@ -57,13 +55,11 @@ function AdminDashboard({ token, userId }) {
     'Tổng quan': '/admin-dashboard',
     'Báo cáo': '/admin-dashboard/report',
     'Hóa đơn': '/admin-dashboard/bill',
-    'Mặt hàng': '/admin-dashboard/product',
     'Đặt lịch': '/admin-dashboard/schedule',
     'Khách hàng': '/admin-dashboard/customer',
     'Khuyến mại': '/admin-dashboard/promotion',
     'Kho hàng': '/admin-dashboard/warehouse',
     'Thu chi': '/admin-dashboard/revenue-expense',
-    'Chấm công': '/admin-dashboard/timekeeping',
     'Cấu hình': '/admin-dashboard/config'
   };
   // Map path sang item
@@ -107,13 +103,11 @@ function AdminDashboard({ token, userId }) {
               'Tổng quan': 'dashboard',
               'Báo cáo': 'report',
               'Hóa đơn': 'bill',
-              'Mặt hàng': 'product',
               'Đặt lịch': 'calendar',
               'Khách hàng': 'customer',
               'Khuyến mại': 'discount',
               'Kho hàng': 'warehouse',
               'Thu chi': 'money',
-              'Chấm công': 'check',
             };
             const iconName = iconMap[item] || 'dashboard';
             return (
@@ -197,13 +191,11 @@ function AdminDashboard({ token, userId }) {
           {location.pathname === '/admin-dashboard' && <Overview />}
           {location.pathname === '/admin-dashboard/report' && <Report />}
           {location.pathname === '/admin-dashboard/bill' && <Bill token={token} />}
-          {location.pathname === '/admin-dashboard/product' && <Product />}
           {location.pathname === '/admin-dashboard/schedule' && <Schedule />}
           {location.pathname === '/admin-dashboard/customer' && <Customer />}
           {location.pathname === '/admin-dashboard/promotion' && <Promotion />}
           {location.pathname === '/admin-dashboard/warehouse' && <Warehouse />}
           {location.pathname === '/admin-dashboard/revenue-expense' && <RevenueExpense />}
-          {location.pathname === '/admin-dashboard/timekeeping' && <Timekeeping />}
           {location.pathname === '/admin-dashboard/config' && <Settings token={token} />}
         </div>
       </div>

@@ -1,0 +1,202 @@
+/* Vùng nền tổng */
+.td-home__coverWeb {
+	position: relative;
+	width: 100%;
+	min-height: 650px;
+	overflow: hidden;
+	padding-bottom: 80px;
+}
+
+.td-home__coverWeb__box {
+	position: relative;
+	width: 100%;
+	height: 650px;
+}
+
+.td-home__layer {
+	position: absolute;
+	width: 100%;
+	height: 100%;
+}
+
+/* Layer 2 */
+.td-home__layer--2 {
+	left: 0;
+	top: 0;
+	z-index: 5;
+	animation: moveLayer2 2.1s infinite alternate;
+}
+
+@keyframes moveLayer2 {
+	0% {
+		transform: translateX(-34px);
+	}
+
+	100% {
+		transform: translateX(34px);
+	}
+}
+
+/* Layer 1 */
+.td-home__layer--1 {
+	left: 0;
+	top: 0;
+	z-index: 6;
+	animation: moveLayer1 2.1s infinite alternate;
+}
+
+@keyframes moveLayer1 {
+	0% {
+		transform: translateX(34px);
+	}
+
+	100% {
+		transform: translateX(-34px);
+	}
+}
+
+/* Layer 3 */
+.td-home__layer--3 {
+	left: 0;
+	bottom: 3%;
+	z-index: 7;
+}
+
+/* Layer 4 */
+.td-home__layer--4 {
+	left: 0;
+	top: 0;
+	z-index: 8;
+}
+
+/* Layer 5 */
+.td-home__layer--5 {
+	left: 0;
+	top: 0;
+	z-index: 9;
+}
+
+.td-home__layer__img {
+	width: auto;
+	height: 650px;
+	object-fit: cover;
+	display: block;
+}
+
+.td-home__layer__i {
+	width: 100%;
+}
+
+/* TV Box */
+.td-home__tvBox {
+	position: absolute;
+	left: 60%;
+	transform: translateX(-60%);
+    bottom: 21px;
+    width: 332px;
+	z-index: 20;
+}
+
+.td-home__tvBox__bg {
+	width: 332px;
+    height: 232px;
+    background-image: url(../../../../../public/TV.png);
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    display: block;
+    position: relative;
+    z-index: 2
+}
+
+.td-home__tvBox__video {
+	width: 181px;
+    height: 166px;
+    -o-object-fit: cover;
+    object-fit: cover;
+    position: absolute;
+    top: 25px;
+    left: 15px;
+    z-index: 1;
+    display: block;
+}
+
+/* Gạch trái/phải */
+.td-home__brich {
+	position: absolute;
+	z-index: 30;
+	width: 100px;
+}
+
+.td-home__brich--left {
+	left: 30%;
+	bottom: 55px;
+}
+
+.td-home__brich--right {
+	right: -20px;
+	top: 169px;
+}
+
+.td-home__brich__img {
+	width: 100%;
+	display: block;
+}
+
+/* Hiệu ứng chuyển động  */
+.td-home__anirotate {
+	animation: rotateLeft 3s infinite alternate linear;
+}
+
+.td-home__anirotate2 {
+	animation: rotateRight 3s infinite alternate linear;
+}
+
+@keyframes rotateLeft {
+	0% {
+		transform: translateY(24px);
+	}
+
+	100% {
+		transform: translateY(-24px);
+	}
+}
+
+@keyframes rotateRight {
+	0% {
+		transform: translateY(-24px);
+	}
+
+	100% {
+		transform: translateY(24px);
+	}
+}
+
+/* Slogan và các thành phần text */
+.slogan1 {
+	position: absolute;
+	left: 12%;
+	top: 193px;
+	z-index: 40;
+	color: #fff;
+	font-size: 20px;
+	font-family: TrixiPro-Regular;
+	text-shadow: 1px 1px 2px #222;
+	line-height: 1.2;
+	white-space: pre-line;
+	text-align: left;
+}
+
+.slogan2 {
+	position: absolute;
+	left: 60%;
+	top: 156px;
+	z-index: 40;
+	color: #fff;
+	font-size: 20px;
+	font-family: TrixiPro-Regular;
+	text-shadow: 1px 1px 2px #222;
+	line-height: 1.2;
+	white-space: pre-line;
+	text-align: left;
+}
