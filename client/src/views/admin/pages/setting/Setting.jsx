@@ -7,7 +7,7 @@ import CrudRestaurants from '../../test_api/CrudRestaurants';
 import User from './User';
 import PaymentMethod from './payment';
 import CrudMenus from '../../test_api/CrudMenus';
-import CrudMenuItems from '../../test_api/CrudMenuItems';
+import MenuItems from './MenuItems';
 import CrudTables from '../../test_api/CrudTables';
 
 const SETTING_SECTIONS = [
@@ -72,7 +72,7 @@ function Settings({ token }) {
     'Quản lý nhà hàng': <CrudRestaurants token={token} />,
     'Quản lý người dùng': <User token={token} />,
     'Thiết lập menu': <CrudMenus token={token} />,
-    'Thiết lập món ăn': <CrudMenuItems token={token} />,
+    'Thiết lập món ăn': <MenuItems token={token} />,
     'Thiết lập bàn': <CrudTables token={token} />,
     'Thiết lập thanh toán': <PaymentMethod token={token} />,
     // ...bổ sung các component khác nếu có

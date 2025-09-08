@@ -426,15 +426,22 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
                     if (filtered.length === 0) {
                         return <div style={{ color: '#888', padding: '16px 0' }}>Không có món nào thuộc loại này.</div>;
                     }
-                    return filtered.map(item => (
-                        <div className="orderStaff__orderMenuItem" key={item._id} onClick={() => addToCart(item)}>
-                            <img className="orderStaff__orderMenuImg" src={item.image || '/images/default-food.png'} alt={item.name} />
-                            <div className="orderStaff__orderMenuName">{item.name}</div>
-                            <div className="orderStaff__orderMenuPrice">{item.price?.toLocaleString()} đ</div>
-                            <div style={{ fontSize: 13, color: '#888' }}>Menu: {item.menuName}</div>
-                            <button className="orderStaff__orderAddBtn" type="button" disabled={loading}>Thêm</button>
-                        </div>
-                    ));
+                    return filtered.map(item => {
+                        // Lấy đường dẫn ảnh từ imagePath, fallback về ảnh mặc định nếu không có
+                        let imgSrc = '/images/default-food.png';
+                        if (item.imagePath) {
+                            imgSrc = item.imagePath.startsWith('/') ? item.imagePath : `/${item.imagePath}`;
+                        }
+                        return (
+                            <div className="orderStaff__orderMenuItem" key={item._id} onClick={() => addToCart(item)}>
+                                <img className="orderStaff__orderMenuImg" src={imgSrc} alt={item.name} />
+                                <div className="orderStaff__orderMenuName">{item.name}</div>
+                                <div className="orderStaff__orderMenuPrice">{item.price?.toLocaleString()} đ</div>
+                                <div style={{ fontSize: 13, color: '#888' }}>Menu: {item.menuName}</div>
+                                <button className="orderStaff__orderAddBtn" type="button" disabled={loading}>Thêm</button>
+                            </div>
+                        );
+                    });
                 })()}
             </div>
             <div className='orderStaff__orderCartActions'>

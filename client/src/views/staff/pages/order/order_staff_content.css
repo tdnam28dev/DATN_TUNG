@@ -184,7 +184,7 @@
   border-radius: 10px;
   box-shadow: 0 2px 8px #0001;
   padding: 12px 14px;
-  width: 180px;
+  width: 185px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -197,8 +197,8 @@
 }
 
 .orderStaff__orderMenuImg {
-  width: 60px;
-  height: 60px;
+  width: 100px;
+  height: 75px;
   object-fit: cover;
   border-radius: 8px;
   margin-bottom: 6px;

@@ -6,6 +6,7 @@ const MenuItemSchema = new mongoose.Schema({
   price: { type: Number, required: true }, // Giá món ăn
   description: { type: String }, // Mô tả món ăn
   image: { type: String }, // Đường dẫn hoặc URL hình ảnh món ăn
+  imagePath: { type: String }, // Đường dẫn file ảnh trên server
   menu: { type: mongoose.Schema.Types.ObjectId, ref: 'Menu' } // Tham chiếu đến thực đơn
 });
 

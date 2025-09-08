@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8080/api';
+import API_URL from './config';
 
 // Tạm lưu hóa đơn (pending)
 export async function savePendingOrder(id, token) {

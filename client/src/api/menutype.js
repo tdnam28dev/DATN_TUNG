@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8080/api';
+import API_URL from './config';
 
 export async function getMenuTypes(token) {
   const res = await fetch(`${API_URL}/menutype`, {

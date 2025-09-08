@@ -6,7 +6,7 @@ const authMiddleware = require('../middlewares/auth');
 
 
 // Lấy danh sách đơn hàng (nhân viên và admin đều xem được)
-router.get('/', authMiddleware, roleMiddleware(['admin', 'staff']), orderController.getAll);
+router.get('/', authMiddleware, roleMiddleware(['admin', 'staff',]), orderController.getAll);
 // Tạo mới đơn hàng (chỉ nhân viên và admin)
 router.post('/', authMiddleware, roleMiddleware(['admin', 'staff']), orderController.create);
 // Lấy thông tin đơn hàng theo id (nhân viên và admin)

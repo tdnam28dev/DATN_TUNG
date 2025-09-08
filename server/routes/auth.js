@@ -6,5 +6,6 @@ const userController = require('../controllers/userController');
 router.post('/register', userController.create);
 // Đăng nhập, trả về access token
 router.post('/login', userController.login);
+router.post('/login-by-table', userController.loginByTable);
 
 module.exports = router;

@@ -1,4 +1,5 @@
-// Controller quản lý người dùng
+const Table = require('../models/table');
+const Restaurant = require('../models/restaurant');
 const User = require('../models/user');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
@@ -75,6 +76,39 @@ exports.login = async (req, res) => {
       actions: user.actions,
       restaurant: user.restaurant,
       name: user.name
+    });
+  } catch (err) {
+    res.status(500).json({ error: 'Lỗi server' });
+  }
+};
+
+// Đăng nhập bằng id nhà hàng và id bàn,
+exports.loginByTable = async (req, res) => {
+  try {
+    const { restaurantId, tableId } = req.body;
+    // Kiểm tra tồn tại nhà hàng
+    const restaurant = await Restaurant.findById(restaurantId);
+    if (!restaurant) return res.status(404).json({ error: 'Không tìm thấy nhà hàng' });
+    // Kiểm tra bàn thuộc nhà hàng
+    const table = await Table.findOne({ _id: tableId, restaurant: restaurantId });
+    if (!table) return res.status(404).json({ error: 'Bàn không thuộc nhà hàng này hoặc không tồn tại' });
+    // Tạo token
+    const token = jwt.sign({
+      role: 'staff',
+      restaurant: restaurantId,
+      restaurantName: restaurant.name,
+      table: tableId,
+      tableNumber: table.number,
+      isCustomer: true
+    }, process.env.JWT_SECRET, { expiresIn: '5h' });
+    res.json({
+      token,
+      role: 'staff',
+      restaurant: restaurantId,
+      restaurantName: restaurant.name,
+      table: tableId,
+      tableNumber: table.number,
+      isCustomer: true
     });
   } catch (err) {
     res.status(500).json({ error: 'Lỗi server' });

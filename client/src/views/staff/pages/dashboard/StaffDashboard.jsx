@@ -97,7 +97,6 @@ function StaffDashboard({ token, userId }) {
           </button>}
         </div>
         <div className="staff-dashboard__sidebar-menu-scroll">
-          {/* Các item sidebar trừ Cấu hình */}
           {sidebarItems.filter(item => item !== 'Cấu hình').map(item => {
             const iconMap = {
               'Tổng quan': 'dashboard',

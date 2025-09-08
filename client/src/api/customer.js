@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8080/api';
+import API_URL from './config';
 
 // Hàm gọi API lấy danh sách khách hàng
 // Hàm gọi API lấy danh sách khách hàng, có thể truyền phone hoặc id để tìm kiếm

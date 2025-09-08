@@ -21,13 +21,11 @@ exports.getAll = async (req, res) => {
 const Table = require('../models/table');
 exports.create = async (req, res) => {
   try {
-    // Luôn lấy người tạo từ user đăng nhập
-    const createdBy = req.user && req.user._id ? req.user._id : undefined;
-    console.log('Creating order with createdBy:', createdBy);
-    if (!createdBy) {
-      return res.status(401).json({ error: 'Bạn chưa đăng nhập hoặc token không hợp lệ!' });
+    // Nếu là khách (token có isCustomer) thì không gán createdBy
+    let orderData = { ...req.body };
+    if (req.user && req.user._id && !req.user.isCustomer) {
+      orderData.createdBy = req.user._id;
     }
-    const orderData = { ...req.body, createdBy };
     const order = new Order(orderData);
     await order.save();
     // Nếu trạng thái là pending thì chuyển trạng thái bàn sang 'occupied'

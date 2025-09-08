@@ -1,14 +1,41 @@
-// Controller quản lý món ăn
 const MenuItem = require('../models/menuItem');
+const Menu = require('../models/menu');
+const path = require('path');
+const fs = require('fs');
+
+// Multer cấu hình upload file ảnh (chỉ export để dùng ở routes)
+const multer = require('multer');
+const uploadDir = path.join(__dirname, '../../client/public/menuItem');
+if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+const upload = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, uploadDir);
+    },
+    filename: (req, file, cb) => {
+      // Tên file là id của món ăn, phần mở rộng giữ nguyên
+      const ext = path.extname(file.originalname);
+      // Nếu có id thì dùng, nếu chưa có thì dùng Date.now
+      const id = req.params?.id || req.body?._id || Date.now();
+      cb(null, id + ext);
+    }
+  })
+});
+module.exports.upload = upload;
+
 
 // Lấy danh sách món ăn, lọc theo menu thuộc nhà hàng nếu là nhân viên/manager
 exports.getAll = async (req, res) => {
   try {
     let query = {};
-    // Nếu là nhân viên/manager thì chỉ lấy món ăn thuộc menu của nhà hàng đó
-    if (req.user && req.user.role !== 'admin' && req.user.restaurant) {
-      const Menu = require('../models/menu');
+    const restaurantId = req.query.restaurantId;
+    if (restaurantId) {
       // Lấy danh sách menu thuộc nhà hàng
+      const menus = await Menu.find({ restaurant: restaurantId }, '_id');
+      const menuIds = menus.map(m => m._id);
+      query.menu = { $in: menuIds };
+    } else if (req.user && req.user.role !== 'admin' && req.user.restaurant) {
+      // Nếu là nhân viên/manager thì chỉ lấy món ăn thuộc menu của nhà hàng đó
       const menus = await Menu.find({ restaurant: req.user.restaurant }, '_id');
       const menuIds = menus.map(m => m._id);
       query.menu = { $in: menuIds };
@@ -20,11 +47,17 @@ exports.getAll = async (req, res) => {
   }
 };
 
-// Tạo mới món ăn
+
+// Tạo mới món ăn (hỗ trợ upload ảnh)
 exports.create = async (req, res) => {
   try {
     const item = new MenuItem(req.body);
     await item.save();
+    // Nếu có file ảnh thì lưu đường dẫn
+    if (req.file) {
+      item.imagePath = `/menuItem/${req.file.filename}`;
+      await item.save();
+    }
     // Cập nhật trường items của menu tương ứng
     if (item.menu) {
       const Menu = require('../models/menu');
@@ -33,6 +66,7 @@ exports.create = async (req, res) => {
     res.status(201).json(item);
   } catch (err) {
     res.status(400).json({ error: 'Dữ liệu không hợp lệ' });
+    console.error(err);
   }
 };
 
@@ -47,27 +81,35 @@ exports.getById = async (req, res) => {
   }
 };
 
-// Cập nhật món ăn
+
+// Cập nhật món ăn (hỗ trợ upload ảnh mới)
 exports.update = async (req, res) => {
   try {
-    const Menu = require('../models/menu');
     // Lấy thông tin món ăn cũ
     const oldItem = await MenuItem.findById(req.params.id);
     if (!oldItem) return res.status(404).json({ error: 'Không tìm thấy món ăn' });
     const oldMenuId = oldItem.menu ? oldItem.menu.toString() : null;
-    const newMenuId = req.body.menu;
-    // Cập nhật món ăn
-    const item = await MenuItem.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    // Nếu menu thay đổi thì cập nhật lại trường items của menu cũ và menu mới
-    if (oldMenuId && oldMenuId !== newMenuId) {
-      await Menu.findByIdAndUpdate(oldMenuId, { $pull: { items: item._id } });
+    let newMenuId = req.body.menu || req.body['menu'];
+    let updateData = { ...req.body };
+    delete updateData._id;
+    delete updateData.__v;
+    if (req.file) {
+      updateData.imagePath = `/menuItem/${req.file.filename}`;
     }
-    if (newMenuId && oldMenuId !== newMenuId) {
-      await Menu.findByIdAndUpdate(newMenuId, { $addToSet: { items: item._id } });
+    const updatedItem = await MenuItem.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    const MenuModel = require('../models/menu');
+    if (updatedItem) {
+      if (oldMenuId && oldMenuId !== newMenuId) {
+        await MenuModel.findByIdAndUpdate(oldMenuId, { $pull: { items: updatedItem._id } });
+      }
+      if (newMenuId && oldMenuId !== newMenuId) {
+        await MenuModel.findByIdAndUpdate(newMenuId, { $addToSet: { items: updatedItem._id } });
+      }
     }
-    res.json(item);
+    res.json(updatedItem);
   } catch (err) {
     res.status(400).json({ error: 'Dữ liệu không hợp lệ' });
+    console.error(err);
   }
 };
 

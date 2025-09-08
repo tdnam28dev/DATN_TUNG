@@ -34,15 +34,15 @@ mongoose.connect(process.env.MONGODB_URI, {
 
 
 app.use(cors());
+
+app.use('/api/menu-items', authMiddleware, menuItemRoutes); // API quản lý món ăn
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-
 
 app.use('/api/restaurants', authMiddleware, restaurantRoutes); // API quản lý nhà hàng
 app.use('/api/tables', authMiddleware, tableRoutes); // API quản lý bàn
 app.use('/api/menus', authMiddleware, menuRoutes); // API quản lý thực đơn
-app.use('/api/menu-items', authMiddleware, menuItemRoutes); // API quản lý món ăn
 app.use('/api/orders', authMiddleware, orderRoutes); // API quản lý đơn hàng
 app.use('/api/menutype', authMiddleware, menuTypeRoutes); // API loại menu
 app.use('/api/customers', authMiddleware, customerRoutes); // API quản lý khách hàng

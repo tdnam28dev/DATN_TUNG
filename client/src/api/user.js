@@ -1,12 +1,4 @@
-// Khôi phục người dùng (restore)
-export async function restoreUser(id, token) {
-  const res = await fetch(`${API_URL}/users/${id}/restore`, {
-    method: 'PATCH',
-    headers: { 'Authorization': `Bearer ${token}` }
-  });
-  return res.json();
-}
-const API_URL = 'http://localhost:8080/api';
+import API_URL from './config';
 
 export async function createUser(data, token) {
   const res = await fetch(`${API_URL}/users`, {
@@ -40,6 +32,14 @@ export async function getUsers(token) {
 }
 export async function getUserById(id, token) {
   const res = await fetch(`${API_URL}/users/${id}`, {
+    headers: { 'Authorization': `Bearer ${token}` }
+  });
+  return res.json();
+}
+// Khôi phục người dùng (restore)
+export async function restoreUser(id, token) {
+  const res = await fetch(`${API_URL}/users/${id}/restore`, {
+    method: 'PATCH',
     headers: { 'Authorization': `Bearer ${token}` }
   });
   return res.json();
