@@ -1,6 +1,7 @@
 // Controller quản lý đơn hàng
 const Order = require('../models/order');
 const PaymentMethod = require('../models/paymentMethod');
+const Table = require('../models/table');
 
 
 // Lấy danh sách đơn hàng, lọc theo nhà hàng nếu là nhân viên/manager
@@ -18,7 +19,6 @@ exports.getAll = async (req, res) => {
 };
 
 // Tạo mới đơn hàng
-const Table = require('../models/table');
 exports.create = async (req, res) => {
   try {
     // Nếu là khách (token có isCustomer) thì không gán createdBy
@@ -31,6 +31,21 @@ exports.create = async (req, res) => {
     // Nếu trạng thái là pending thì chuyển trạng thái bàn sang 'occupied'
     if (order.status === 'pending') {
       await Table.findByIdAndUpdate(order.table, { status: 'occupied' });
+    }
+    // Nếu là khách hàng thì gửi thông báo đến nhân viên qua socket.io
+    if (req.user && req.user.isCustomer) {
+      const io = req.app.get('io');
+      if (io) {
+        io.to(`restaurant_${order.restaurant}`).emit('customer_order', {
+          type: 'create',
+          table: order.table,
+          restaurant: order.restaurant,
+          orderId: order._id,
+          items: order.items,
+          total: order.total,
+          time: new Date(),
+        });
+      }
     }
     res.status(201).json(order);
   } catch (err) {
@@ -63,6 +78,44 @@ exports.update = async (req, res) => {
     // Nếu chuyển sang pending thì chuyển trạng thái bàn sang 'occupied'
     if (order.status === 'pending') {
       await Table.findByIdAndUpdate(order.table, { status: 'occupied' });
+    }
+    // Nếu là khách hàng thì gửi thông báo đến nhân viên qua socket.io
+    if (req.user && req.user.isCustomer) {
+      // Tìm các món mới hoặc món tăng số lượng
+      const oldItems = Array.isArray(oldOrder.items) ? oldOrder.items : [];
+      const newItems = Array.isArray(order.items) ? order.items : [];
+      // Map món cũ theo menuItem để dễ tra cứu
+      const oldMap = {};
+      oldItems.forEach(i => {
+        oldMap[i.menuItem.toString()] = i.quantity;
+      });
+      // Tìm món mới hoặc tăng số lượng
+      const notifyItems = [];
+      newItems.forEach(i => {
+        const id = i.menuItem.toString();
+        if (!oldMap[id]) {
+          // Món mới
+          notifyItems.push({ menuItem: i.menuItem, quantity: i.quantity, type: 'new' });
+        } else if (i.quantity > oldMap[id]) {
+          // Món gọi thêm
+          notifyItems.push({ menuItem: i.menuItem, quantity: i.quantity - oldMap[id], type: 'add' });
+        }
+      });
+      // Nếu có món mới hoặc gọi thêm thì mới gửi thông báo
+      if (notifyItems.length > 0) {
+        const io = req.app.get('io');
+        if (io) {
+          io.to(`restaurant_${order.restaurant}`).emit('customer_order', {
+            type: 'update',
+            table: order.table,
+            restaurant: order.restaurant,
+            orderId: order._id,
+            items: notifyItems,
+            total: order.total,
+            time: new Date(),
+          });
+        }
+      }
     }
     res.json(order);
   } catch (err) {

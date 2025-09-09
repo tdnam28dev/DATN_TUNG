@@ -1,8 +1,31 @@
 require('dotenv').config(); 
 const express = require('express');
 const mongoose = require('mongoose');
+const http = require('http');
+const socketIo = require('socket.io');
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server, { cors: { origin: '*' } });
 const cors = require('cors');
+app.use(cors());
+
+// Tích hợp socket.io cho nhân viên
+io.on('connection', (socket) => {
+  // Nhân viên gửi restaurantId để join phòng
+  socket.on('joinRoom', (restaurantId) => {
+    socket.join(`restaurant_${restaurantId}`);
+    console.log(`Nhân viên đã vào phòng: restaurant_${restaurantId}`);
+    // Gửi thông báo vào phòng cho nhân viên vừa join
+    socket.emit('notification', {
+      type: 'success',
+      message: `Đã kết nối tới nhà hàng: ${restaurantId}`,
+      time: new Date(),
+    });
+  });
+});
+
+// Cho phép truy cập io từ controller
+app.set('io', io);
 //routes
 const restaurantRoutes = require('./routes/restaurant');
 const tableRoutes = require('./routes/table');
@@ -33,7 +56,6 @@ mongoose.connect(process.env.MONGODB_URI, {
 });
 
 
-app.use(cors());
 
 app.use('/api/menu-items', authMiddleware, menuItemRoutes); // API quản lý món ăn
 
@@ -54,6 +76,6 @@ app.use('/api/users', authMiddleware, userRoutes); // API quản lý người d�
 
 const PORT = process.env.PORT || 8080;
 const HOST = process.env.HOST || '0.0.0.0'; // Cho phép truy cập từ các máy khác trong mạng LAN
-app.listen(PORT, HOST, () => {
+server.listen(PORT, HOST, () => {
   console.log(`Backend server đang chạy tại http://${HOST}:${PORT}`);
 });

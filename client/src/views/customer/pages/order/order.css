@@ -1,3 +1,41 @@
+/* Nhóm nút cộng/trừ và input số lượng trong giỏ hàng */
+.order-page__cart-item-qty-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #f7f7f7;
+    border-radius: 8px;
+    padding: 2px 8px;
+    min-width: 80px;
+}
+.order-page__cart-item-qty-btn {
+    background: #ffb300;
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    width: 24px;
+    height: 24px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s;
+}
+.order-page__cart-item-qty-btn:hover {
+    background: #e09e00;
+}
+.order-page__cart-item-qty-input {
+    border: 1px solid #eee;
+    border-radius: 6px;
+    width: 30px;
+    height: 28px;
+    text-align: center;
+    font-size: 1rem;
+    background: #fff;
+    margin: 0 2px;
+}
 .order-page{
     position: relative;
 }
@@ -245,7 +283,7 @@
 .order-page__cart-popup-content {
     background: #fff;
     border-radius: 16px;
-    padding: 28px 18px 18px 18px;
+    padding: 16px;
     min-width: 320px;
     max-width: 90vw;
     box-shadow: 0 4px 24px rgba(0,0,0,0.13);

@@ -197,7 +197,7 @@ const OrderCustomer = () => {
                             >
                                 Tất cả món
                             </li>
-                            {menus.map(menu => (
+                            {(Array.isArray(menus) ? menus : []).map(menu => (
                                 <li
                                     key={menu._id}
                                     className={`order-sidebar__menu-item${selectedMenuId === menu._id ? ' order-sidebar__menu-item--selected' : ''}`}
@@ -222,9 +222,12 @@ const OrderCustomer = () => {
                         <div className="order-page__menu">
                             <h3 className="order-page__menu-title">Chọn món</h3>
                             <ul className="order-page__menu-list">
-                                {(selectedMenuId
-                                    ? menuItems.filter(item => item.menu === selectedMenuId)
-                                    : menuItems
+                                {(
+                                  Array.isArray(menuItems)
+                                    ? (selectedMenuId
+                                        ? menuItems.filter(item => item.menu === selectedMenuId)
+                                        : menuItems)
+                                    : []
                                 ).map(item => {
                                     // Lấy đường dẫn ảnh từ imagePath, fallback về ảnh mặc định nếu không có
                                     let imgSrc = '/images/default-food.png';
@@ -264,7 +267,29 @@ const OrderCustomer = () => {
                                                 <span className="order-page__cart-item-name">{item.name}</span>
                                                 <span className="order-page__cart-item-price">{item.price}đ</span>
                                             </div>
-                                            <span className="order-page__cart-item-qty">x{item.qty}</span>
+                                            <div className="order-page__cart-item-qty-group">
+                                                <button
+                                                    type="button"
+                                                    className="order-page__cart-item-qty-btn"
+                                                    onClick={() => setCartItems(prev => prev.map(i => i._id === item._id ? { ...i, qty: Math.max(1, i.qty - 1) } : i))}
+                                                >-</button>
+                                                <input
+                                                    type="number"
+                                                    min={1}
+                                                    className="order-page__cart-item-qty-input"
+                                                    value={item.qty}
+                                                    onChange={e => {
+                                                        const qty = Math.max(1, Number(e.target.value));
+                                                        setCartItems(prev => prev.map(i => i._id === item._id ? { ...i, qty } : i));
+                                                    }}
+                                                    style={{ width: 40, textAlign: 'center' }}
+                                                />
+                                                <button
+                                                    type="button"
+                                                    className="order-page__cart-item-qty-btn"
+                                                    onClick={() => setCartItems(prev => prev.map(i => i._id === item._id ? { ...i, qty: i.qty + 1 } : i))}
+                                                >+</button>
+                                            </div>
                                             <button className="order-page__cart-item-remove" onClick={() => handleRemoveFromCart(item._id)}>Xóa</button>
                                         </li>
                                     ))}

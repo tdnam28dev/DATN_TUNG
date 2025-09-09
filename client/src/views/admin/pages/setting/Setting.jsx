@@ -91,7 +91,6 @@ function Settings({ token }) {
           </span>
         </div>
         <h2 style={{ fontWeight: 700, fontSize: 28, marginBottom: 18, color: '#222' }}>{selected}</h2>
-        <div style={{ borderTop: '1px solid #eee', marginBottom: 24 }} />
         {componentMap[selected]}
       </div>
     );

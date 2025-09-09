@@ -2,25 +2,30 @@ import React, { useState, useEffect } from 'react';
 import { getTables, createTable, updateTable, deleteTable } from '../../../api/table';
 import { getRestaurants } from '../../../api/restaurant';
 import './CrudTables.css';
+import Icon from '../../../components/Icon';
+import { QRCodeCanvas } from 'qrcode.react';
 
 const seatOptions = [
-  { value: 2, label: 'Bàn 2', img: '/images/table2.png' },
-  { value: 4, label: 'Bàn 4', img: '/images/table4.png' },
-  { value: 6, label: 'Bàn 6', img: '/images/table6.png' },
+  { value: 2, label: 'Bàn 2' },
+  { value: 4, label: 'Bàn 4' },
+  { value: 6, label: 'Bàn 6' },
 ];
 const typeOptions = [
-  { value: 'round', label: 'Tròn', img: '/images/round.png' },
-  { value: 'square', label: 'Vuông', img: '/images/square.png' },
-  { value: 'family', label: 'Gia đình', img: '/images/family.png' },
+  { value: 'round', label: 'Tròn' },
+  { value: 'square', label: 'Vuông' },
+  { value: 'family', label: 'Gia đình' },
 ];
 
 function CrudTables({ token }) {
   const [tables, setTables] = useState([]);
   const [form, setForm] = useState({ number: '', seats: '', type: '', status: 'available', restaurant: '' });
-  const [editId, setEditId] = useState('');
   const [message, setMessage] = useState('');
   const [restaurants, setRestaurants] = useState([]);
-  const [showPopup, setShowPopup] = useState(false);
+  const [showAddPopup, setShowAddPopup] = useState(false); // popup thêm bàn
+  const [showDetailPopup, setShowDetailPopup] = useState(false); // popup chi tiết/sửa bàn
+  const [detailTable, setDetailTable] = useState(null); // bàn đang xem
+  const [isEditTable, setIsEditTable] = useState(false); // trạng thái sửa bàn
+  const [editTable, setEditTable] = useState(null); // dữ liệu bàn đang sửa
   // Thêm state cho bộ lọc
   const [filter, setFilter] = useState({ restaurant: '', type: '', seats: '' });
 
@@ -43,53 +48,75 @@ function CrudTables({ token }) {
     e.preventDefault();
     const res = await createTable(form, token);
     setMessage(res._id ? 'Thêm thành công!' : res.error || 'Lỗi');
-    setShowPopup(false);
-    fetchData();
-  };
-
-  const handleEdit = (t) => {
-    setEditId(t._id);
-    setForm({ number: t.number, seats: t.seats, type: t.type || '', status: t.status, restaurant: t.restaurant });
-    setShowPopup(true);
-  };
-
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-    const res = await updateTable(editId, form, token);
-    setMessage(res._id ? 'Cập nhật thành công!' : res.error || 'Lỗi');
-    setEditId('');
+    setShowAddPopup(false);
     setForm({ number: '', seats: '', type: '', status: 'available', restaurant: '' });
-    setShowPopup(false);
     fetchData();
+  };
+
+  // Mở popup chi tiết/sửa bàn
+  // Mở popup chi tiết bàn
+  const handleDetail = (t) => {
+    setDetailTable(t);
+    setEditTable(null);
+    setIsEditTable(false);
+    setShowDetailPopup(true);
+  };
+
+  // Lưu bàn khi sửa
+  const handleUpdate = async () => {
+    if (!editTable) return;
+    if (!editTable.number || !editTable.seats || !editTable.type || !editTable.restaurant) {
+      setMessage('Vui lòng nhập đầy đủ thông tin!');
+      return;
+    }
+    const res = await updateTable(editTable._id, editTable, token);
+    setMessage(res._id ? 'Cập nhật thành công!' : res.error || 'Lỗi');
+    setIsEditTable(false);
+    setEditTable(null);
+    setDetailTable(res._id ? res : detailTable); // cập nhật lại chi tiết nếu thành công
+    fetchData();
+    if (res._id) setShowDetailPopup(false);
   };
 
   const handleDelete = async (id) => {
+    if (!window.confirm('Bạn có chắc muốn xóa bàn này?')) return;
     const res = await deleteTable(id, token);
     setMessage(res.message || res.error || 'Lỗi');
+    setShowDetailPopup(false);
+    setDetailTable(null);
+    setEditTable(null);
+    setIsEditTable(false);
     fetchData();
   };
 
-  const openPopup = () => {
-    setEditId('');
+  // Mở popup thêm bàn
+  const openAddPopup = () => {
     setForm({ number: '', seats: '', type: '', status: 'available', restaurant: '' });
-    setShowPopup(true);
+    setShowAddPopup(true);
   };
-  const closePopup = () => {
-    setShowPopup(false);
-    setEditId('');
+  const closeAddPopup = () => {
+    setShowAddPopup(false);
     setForm({ number: '', seats: '', type: '', status: 'available', restaurant: '' });
+  };
+  // Đóng popup chi tiết/sửa
+  const closeDetailPopup = () => {
+    setShowDetailPopup(false);
+    setDetailTable(null);
+    setEditTable(null);
+    setIsEditTable(false);
+    setMessage('');
   };
 
   return (
     <div className="tableCrud">
       <div className="tableCrud__header">
-        <h3 className="tableCrud__title">Quản lý bàn</h3>
-        <button className="btnSubmit tableCrud__add" onClick={openPopup}>
+        <h3 className="tableCrud__title">Danh sách bàn</h3>
+        <button className="btnSubmit tableCrud__add" onClick={openAddPopup}>
           <span className="tableCrud__addIcon">＋</span> Thêm bàn
         </button>
       </div>
       {/* Bộ lọc */}
-      <div className="tableCrud__filters" style={{ display: 'flex', gap: 16, marginBottom: 16 }}>
+      <div className="tableCrud__filters">
         <select
           className="selectCrud tableCrud__filterSelect"
           value={filter.restaurant}
@@ -145,9 +172,32 @@ function CrudTables({ token }) {
                   <td className="tableCrud__td">{t.number}</td>
                   <td className="tableCrud__td">{t.seats}</td>
                   <td className="tableCrud__td">{(() => {
+                    // Hàm xác định tên icon dựa vào kiểu bàn và số ghế
+                    const getTableIconName = (type, seats) => {
+                      if (type === 'round') {
+                        if (seats === 2) return 'table_round_2';
+                        if (seats === 4) return 'table_round_4';
+                        if (seats === 6) return 'table_round_6';
+                      }
+                      if (type === 'square') {
+                        if (seats === 2) return 'table_square_2';
+                        if (seats === 4) return 'table_square_4';
+                        if (seats === 6) return 'table_square_6';
+                      }
+                      if (type === 'family') {
+                        if (seats === 2) return 'table_rect_2';
+                        if (seats === 4) return 'table_rect_4';
+                        if (seats === 6) return 'table_rect_6';
+                      }
+                      return null;
+                    };
                     const found = typeOptions.find(opt => opt.value === t.type);
-                    return found ? (
-                      <span><img src={found.img} alt={found.label} style={{ width: 24, height: 24, verticalAlign: 'middle', marginRight: 4 }} />{found.label}</span>
+                    const iconName = getTableIconName(t.type, Number(t.seats));
+                    return found && iconName ? (
+                      <span className="tableCrud__iconLabel">
+                        <Icon name={iconName} width={24} height={24} />
+                        {found.label}
+                      </span>
                     ) : '-';
                   })()}</td>
                   <td className="tableCrud__td">{t.status === 'available' ? 'Trống' : t.status === 'reserved' ? 'Đã đặt' : 'Đang sử dụng'}</td>
@@ -156,8 +206,8 @@ function CrudTables({ token }) {
                     return found ? found.name : '-';
                   })()}</td>
                   <td className="tableCrud__td tableCrud__td--action">
-                    <button className="btnEdit tableCrud__edit" onClick={() => handleEdit(t)} title="Sửa bàn">
-                      <span className="tableCrud__editIcon">✎</span> Sửa
+                    <button className="btnDetail tableCrud__detail" onClick={() => handleDetail(t)} title="Chi tiết">
+                      <span className="tableCrud__detailIcon"></span> Chi tiết
                     </button>
                   </td>
                 </tr>
@@ -165,12 +215,39 @@ function CrudTables({ token }) {
           </tbody>
         </table>
       </div>
-      {/* Popup thêm/sửa bàn */}
-      {showPopup && (
+      {/* Popup thêm bàn */}
+      {showAddPopup && (
         <div className="popup-restaurant-overlay">
           <div className="popup-restaurant-box tableCrud__popupBox">
-            <div className="popup-restaurant-title tableCrud__popupTitle">{editId ? 'Cập nhật bàn' : 'Thêm mới bàn'}</div>
-            <form className="tableCrud__popupForm" onSubmit={editId ? handleUpdate : handleCreate}>
+            <div className="popup-restaurant-title tableCrud__popupTitle">Thêm mới bàn</div>
+            {/* Hiển thị icon bàn khi đã chọn đủ kiểu và số ghế */}
+            {form.type && form.seats ? (
+              <div className="tableCrud__iconPreview">
+                {(() => {
+                  const getTableIconName = (type, seats) => {
+                    if (type === 'round') {
+                      if (seats === 2) return 'table_round_2';
+                      if (seats === 4) return 'table_round_4';
+                      if (seats === 6) return 'table_round_6';
+                    }
+                    if (type === 'square') {
+                      if (seats === 2) return 'table_square_2';
+                      if (seats === 4) return 'table_square_4';
+                      if (seats === 6) return 'table_square_6';
+                    }
+                    if (type === 'family') {
+                      if (seats === 2) return 'table_rect_2';
+                      if (seats === 4) return 'table_rect_4';
+                      if (seats === 6) return 'table_rect_6';
+                    }
+                    return null;
+                  };
+                  const iconName = getTableIconName(form.type, Number(form.seats));
+                  return iconName ? <Icon name={iconName} width={60} height={60} /> : null;
+                })()}
+              </div>
+            ) : null}
+            <form className="tableCrud__popupForm" onSubmit={handleCreate}>
               <input
                 className="inputCrud popup-restaurant-input tableCrud__input"
                 type="number"
@@ -179,7 +256,7 @@ function CrudTables({ token }) {
                 onChange={e => setForm({ ...form, number: e.target.value })}
                 required
               />
-              {/* Chọn số ghế bằng icon */}
+              {/* Chọn số ghế không có icon */}
               <div className="tableCrud__seatSelect">
                 {seatOptions.map(opt => (
                   <div
@@ -187,12 +264,11 @@ function CrudTables({ token }) {
                     className={`tableCrud__seatOption${form.seats === opt.value ? ' tableCrud__seatOption--active' : ''}`}
                     onClick={() => setForm({ ...form, seats: opt.value })}
                   >
-                    <img src={opt.img} alt={opt.label} />
                     <span>{opt.label}</span>
                   </div>
                 ))}
               </div>
-              {/* Chọn loại bàn bằng icon */}
+              {/* Chọn loại bàn không có icon */}
               <div className="tableCrud__typeSelect">
                 {typeOptions.map(opt => (
                   <div
@@ -200,7 +276,6 @@ function CrudTables({ token }) {
                     className={`tableCrud__typeOption${form.type === opt.value ? ' tableCrud__typeOption--active' : ''}`}
                     onClick={() => setForm({ ...form, type: opt.value })}
                   >
-                    <img src={opt.img} alt={opt.label} />
                     <span>{opt.label}</span>
                   </div>
                 ))}
@@ -227,14 +302,144 @@ function CrudTables({ token }) {
                 ))}
               </select>
               <div className="tableCrud__popupActions">
-                <button className="tableCrud__popupBtn btnSubmit" type="submit">{editId ? 'Cập nhật' : 'Lưu'}</button>
-                <button className="tableCrud__popupBtn btnDelete" type="button" onClick={closePopup}>Hủy</button>
-                {/* Chỉ hiển thị nút Xóa khi đang sửa */}
-                {editId && (
-                  <button className="tableCrud__popupBtn btnDelete" type="button" onClick={() => { if(window.confirm('Bạn có chắc muốn xóa bàn này?')) { handleDelete(editId); setShowPopup(false); } }}>Xóa</button>
-                )}
+                <button className="tableCrud__popupBtn btnSubmit" type="submit">Lưu</button>
+                <button className="tableCrud__popupBtn btnDelete" type="button" onClick={closeAddPopup}>Hủy</button>
               </div>
             </form>
+            <div className="tableCrud__msg">{message}</div>
+          </div>
+        </div>
+      )}
+      {/* Popup chi tiết/sửa bàn */}
+      {showDetailPopup && detailTable && (
+        <div className="popup-restaurant-overlay">
+          <div className="popup-restaurant-box tableCrud__popupBox">
+            <div className="popup-restaurant-title tableCrud__popupTitle">Chi tiết bàn</div>
+            {/* Hiển thị icon bàn */}
+            {detailTable.type && detailTable.seats ? (
+              <div className="tableCrud__iconPreview">
+                {(() => {
+                  const getTableIconName = (type, seats) => {
+                    if (type === 'round') {
+                      if (seats === 2) return 'table_round_2';
+                      if (seats === 4) return 'table_round_4';
+                      if (seats === 6) return 'table_round_6';
+                    }
+                    if (type === 'square') {
+                      if (seats === 2) return 'table_square_2';
+                      if (seats === 4) return 'table_square_4';
+                      if (seats === 6) return 'table_square_6';
+                    }
+                    if (type === 'family') {
+                      if (seats === 2) return 'table_rect_2';
+                      if (seats === 4) return 'table_rect_4';
+                      if (seats === 6) return 'table_rect_6';
+                    }
+                    return null;
+                  };
+                  const iconName = getTableIconName(detailTable.type, Number(detailTable.seats));
+                  return iconName ? <Icon name={iconName} width={60} height={60} /> : null;
+                })()}
+              </div>
+            ) : null}
+            {/* Chế độ xem hoặc sửa */}
+            {!isEditTable ? (
+              <>
+                <div className="tableCrud__popupInfo">
+                  <div className="tableCrud__popupInfoRow"><span>Số bàn:</span> <b>{detailTable.number}</b></div>
+                  <div className="tableCrud__popupInfoRow"><span>Số ghế:</span> <b>{detailTable.seats}</b></div>
+                  <div className="tableCrud__popupInfoRow"><span>Loại bàn:</span> <b>{typeOptions.find(opt => opt.value === detailTable.type)?.label || detailTable.type}</b></div>
+                  <div className="tableCrud__popupInfoRow"><span>Trạng thái:</span> <b>{detailTable.status === 'available' ? 'Trống' : detailTable.status === 'reserved' ? 'Đã đặt' : 'Đang sử dụng'}</b></div>
+                  <div className="tableCrud__popupInfoRow"><span>Nhà hàng:</span> <b>{restaurants.find(r => r._id === (typeof detailTable.restaurant === 'object' ? detailTable.restaurant._id : detailTable.restaurant))?.name || '-'}</b></div>
+                </div>
+                {/* QR code cho bàn */}
+                <div className="tableCrud__qrWrap">
+                  <QRCodeCanvas
+                    id="tableQrCode"
+                    value={`${process.env.REACT_APP_URL || 'http://192.168.1.4:3000'}/order/${typeof detailTable.restaurant === 'object' ? detailTable.restaurant._id : detailTable.restaurant}/${detailTable._id}`}
+                    size={240}
+                    level="H"
+                    includeMargin={true}
+                  />
+                  <button
+                    className="tableCrud__popupBtn btnSubmit"
+                    type="button"
+                    onClick={() => {
+                      const canvas = document.getElementById('tableQrCode');
+                      if (!canvas) return;
+                      const url = canvas.toDataURL('image/png');
+                      const a = document.createElement('a');
+                      a.href = url;
+                      a.download = `table_${detailTable.number || detailTable._id}_qr.png`;
+                      a.click();
+                    }}
+                  >Lưu QR</button>
+                </div>
+                <div className="tableCrud__popupActions">
+                  <button className="tableCrud__popupBtn btnSubmit" type="button" onClick={() => { setIsEditTable(true); setEditTable({ ...detailTable }); }}>Sửa</button>
+                  <button className="tableCrud__popupBtn btnDelete" type="button" onClick={() => handleDelete(detailTable._id)}>Xóa</button>
+                  <button className="tableCrud__popupBtn btnDelete" type="button" onClick={closeDetailPopup}>Đóng</button>
+                </div>
+              </>
+            ) : (
+              <form className="tableCrud__popupForm" onSubmit={e => { e.preventDefault(); handleUpdate(); }}>
+                <input
+                  className="inputCrud popup-restaurant-input tableCrud__input"
+                  type="number"
+                  placeholder="Số bàn"
+                  value={editTable?.number || ''}
+                  onChange={e => setEditTable({ ...editTable, number: e.target.value })}
+                  required
+                />
+                <div className="tableCrud__seatSelect">
+                  {seatOptions.map(opt => (
+                    <div
+                      key={opt.value}
+                      className={`tableCrud__seatOption${editTable?.seats === opt.value ? ' tableCrud__seatOption--active' : ''}`}
+                      onClick={() => setEditTable({ ...editTable, seats: opt.value })}
+                    >
+                      <span>{opt.label}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="tableCrud__typeSelect">
+                  {typeOptions.map(opt => (
+                    <div
+                      key={opt.value}
+                      className={`tableCrud__typeOption${editTable?.type === opt.value ? ' tableCrud__typeOption--active' : ''}`}
+                      onClick={() => setEditTable({ ...editTable, type: opt.value })}
+                    >
+                      <span>{opt.label}</span>
+                    </div>
+                  ))}
+                </div>
+                <select
+                  className="selectCrud popup-restaurant-input tableCrud__input"
+                  value={editTable?.status || ''}
+                  onChange={e => setEditTable({ ...editTable, status: e.target.value })}
+                  required
+                >
+                  <option value="available">Trống</option>
+                  <option value="reserved">Đã đặt</option>
+                  <option value="occupied">Đang sử dụng</option>
+                </select>
+                <select
+                  className="selectCrud popup-restaurant-input tableCrud__input"
+                  value={editTable?.restaurant || ''}
+                  onChange={e => setEditTable({ ...editTable, restaurant: e.target.value })}
+                  required
+                >
+                  <option value="">Chọn nhà hàng</option>
+                  {restaurants.map(r => (
+                    <option key={r._id} value={r._id}>{r.name}</option>
+                  ))}
+                </select>
+                <div className="tableCrud__popupActions">
+                  <button className="tableCrud__popupBtn btnSubmit" type="submit">Lưu</button>
+                  <button className="tableCrud__popupBtn btnDelete" type="button" onClick={() => { setIsEditTable(false); setEditTable(null); }}>Hủy</button>
+                </div>
+              </form>
+            )}
             <div className="tableCrud__msg">{message}</div>
           </div>
         </div>

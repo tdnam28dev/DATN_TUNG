@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import TableOrder from './TableOrder';
+import Icon from '../../../../components/Icon';
 import './order_header.css';
 import './order_staff_content.css';
+import './newOrder_popup.css';
 import { getTables } from '../../../../api/table';
 import { getMenus } from '../../../../api/menu';
 import { getMenuItems } from '../../../../api/menuitem';
@@ -11,7 +13,7 @@ import { getPaymentMethods } from '../../../../api/payment';
 
 
 // Giao diện order cho nhân viên quầy
-function OrderStaff({ token, userId }) {
+function OrderStaff({ token, userId, newOrder }) {
     // State bộ lọc bàn
     const [filterStatus, setFilterStatus] = useState('');
     const [filterSeats, setFilterSeats] = useState('');
@@ -52,7 +54,7 @@ function OrderStaff({ token, userId }) {
     useEffect(() => {
         fetchAllData();
         // eslint-disable-next-line
-    }, [token]);
+    }, [token, newOrder]);
 
     // Hàm reload lại dữ liệu sau khi thao tác
     const reloadData = () => {
@@ -66,7 +68,7 @@ function OrderStaff({ token, userId }) {
     };
 
     return (
-        <div className="orderStaff">
+        <div className="orderStaff">           
             {showOrderPage && selectedTable ? (
                 <TableOrder
                     token={token}
@@ -130,7 +132,31 @@ function OrderStaff({ token, userId }) {
                                     >
                                         <div className={`orderStaff__tableStatus ${tb.status}`}>{tb.status === 'available' ? 'Trống' : tb.status === 'reserved' ? 'Đã đặt' : 'Đang sử dụng'}</div>
                                         <div className="orderStaff__tableInfo">Bàn {tb.number} - {tb.seats} ghế</div>
-                                        <div className="orderStaff__tableType">{tb.type === 'round' ? 'Tròn' : tb.type === 'square' ? 'Vuông' : 'Gia đình'}</div>
+                                        <div className="orderStaff__tableType">
+                                            {(() => {
+                                                // Hàm xác định tên icon dựa vào kiểu bàn và số ghế
+                                                const getTableIconName = (type, seats) => {
+                                                    if (type === 'round') {
+                                                        if (seats === 2) return 'table_round_2';
+                                                        if (seats === 4) return 'table_round_4';
+                                                        if (seats === 6) return 'table_round_6';
+                                                    }
+                                                    if (type === 'square') {
+                                                        if (seats === 2) return 'table_square_2';
+                                                        if (seats === 4) return 'table_square_4';
+                                                        if (seats === 6) return 'table_square_6';
+                                                    }
+                                                    if (type === 'family') {
+                                                        if (seats === 2) return 'table_rect_2';
+                                                        if (seats === 4) return 'table_rect_4';
+                                                        if (seats === 6) return 'table_rect_6';
+                                                    }
+                                                    return null;
+                                                };
+                                                const iconName = getTableIconName(tb.type, Number(tb.seats));
+                                                return iconName ? <Icon name={iconName} width={48} height={48} /> : null;
+                                            })()}
+                                        </div>
                                     </div>
                                 );
                             });

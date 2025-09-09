@@ -70,6 +70,7 @@
 .orderStaff__tableCard {
   background: #fff;
   border-radius: 12px;
+  border: 1px solid #FFA827;
   box-shadow: 0 2px 12px #0001;
   padding: 18px 22px;
   min-width: 180px;
@@ -78,7 +79,6 @@
   flex-direction: column;
   align-items: flex-start;
   cursor: pointer;
-  border: 2px solid transparent;
   transition: border 0.2s, box-shadow 0.2s;
   position: relative;
 }
@@ -114,9 +114,11 @@
 }
 
 .orderStaff__tableType {
-  font-size: 13px;
-  color: #2563eb;
-  margin-bottom: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin-top: 12px;
 }
 
 .orderStaff__tableCard__payBtn {
