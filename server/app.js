@@ -39,6 +39,7 @@ const customerRoutes = require('./routes/customer');
 const warehouseRoutes = require('./routes/warehouse');
 const preOrderRoutes = require('./routes/preOrder');
 const paymentRoutes = require('./routes/paymentMethod');
+const discountRoutes = require('./routes/discount');
 //auth
 const authMiddleware = require('./middlewares/auth');
 //init addmin
@@ -71,6 +72,7 @@ app.use('/api/customers', authMiddleware, customerRoutes); // API quản lý kh�
 app.use('/api/warehouses', authMiddleware, warehouseRoutes); // API quản lý kho hàng/nguyên liệu
 app.use('/api/preorders', authMiddleware, preOrderRoutes); // API quản lý đặt bàn/đặt món trước
 app.use('/api/payments', authMiddleware, paymentRoutes); // API quản lý phương thức thanh toán
+app.use('/api/discounts', authMiddleware, discountRoutes); // API quản lý giảm giá
 app.use('/api/auth', authRoutes); // API đăng ký, đăng nhập
 app.use('/api/users', authMiddleware, userRoutes); // API quản lý người dùng (cần xác thực)
 

@@ -68,6 +68,20 @@ exports.updateCustomer = async (req, res) => {
   }
 };
 
+// Cộng điểm cho khách hàng
+exports.addPoint = async (req, res) => {
+  try {
+    const customer = await Customer.findById(req.params.id);
+    if (!customer) return res.status(404).json({ error: 'Không tìm thấy khách hàng!' });
+    const point = Number(req.body.point) || 0;
+    customer.point = (customer.point || 0) + point;
+    await customer.save();
+    res.json({ success: true, point: customer.point, customer });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+}
+
 // Xóa khách hàng
 exports.deleteCustomer = async (req, res) => {
   try {

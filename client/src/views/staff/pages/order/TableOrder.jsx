@@ -1,10 +1,17 @@
 import { exportInvoicePDF } from '../../../../utils/createInvoice';
-import { createCustomer, getCustomers } from '../../../../api/customer';
+import { createCustomer, getCustomers, updateCustomerPoint } from '../../../../api/customer';
 import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { createOrder, updateOrder, payOrder, cancelOrder } from '../../../../api/order';
 
 // Giao diện order cho một bàn cụ thể
-function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelectedTable, menus, menuItems, orders, payments, reloadData }) {
+// Giao diện order cho một bàn cụ thể
+function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelectedTable, menus, menuItems, orders, payments, promotions = [], reloadData }) {
+    // State cho việc sử dụng điểm đổi giảm giá
+    const [usePoint, setUsePoint] = useState(false);
+    // State chọn mã giảm giá
+    const [selectedPromotionCode, setSelectedPromotionCode] = useState('');
+    const [promotionDiscount, setPromotionDiscount] = useState(0);
+
     // Gom các state liên quan vào một object
     const [popup, setPopup] = useState({
         showPay: false,
@@ -44,10 +51,11 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
                     id: c._id,
                     name: c.name || '',
                     gender: c.gender || '',
-                    address: c.address || ''
+                    address: c.address || '',
+                    point: c.point || 0
                 }));
             } else {
-                setCustomer(prev => ({ ...prev, id: null, name: '', gender: '', address: '' }));
+                setCustomer(prev => ({ ...prev, id: null, name: '', gender: '', address: '', point: 0 }));
             }
         };
         fetchCustomer();
@@ -118,10 +126,55 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
     }, []);
     // Tổng tiền, kiểm tra menuItem tồn tại
     // Tính tổng tiền
+    // Tổng tiền gốc
     const total = useMemo(() => cart.reduce((sum, i) => {
         if (!i.menuItem || typeof i.menuItem.price !== 'number') return sum;
         return sum + (i.menuItem.price * i.quantity);
     }, 0), [cart]);
+
+    // Số điểm tối đa có thể sử dụng
+    const maxPointCanUse = useMemo(() => {
+        if (!customer.point || customer.point <= 0) return 0;
+        // 1 điểm giảm 500đ, không vượt quá tổng tiền
+        return Math.min(customer.point, Math.floor(total / 500));
+    }, [customer.point, total]);
+
+    // Số tiền được giảm khi dùng điểm
+    const discountByPoint = useMemo(() => {
+        return usePoint ? maxPointCanUse * 500 : 0;
+    }, [usePoint, maxPointCanUse]);
+
+    // Tính giảm giá theo mã khuyến mại
+    useEffect(() => {
+        if (!selectedPromotionCode) {
+            setPromotionDiscount(0);
+            return;
+        }
+        const promo = promotions.find(p => p.code === selectedPromotionCode && p.active);
+        if (!promo) {
+            setPromotionDiscount(0);
+            return;
+        }
+        // Kiểm tra điều kiện đơn tối thiểu
+        if (total < (promo.minOrder || 0)) {
+            setPromotionDiscount(0);
+            return;
+        }
+        let discount = 0;
+        if (promo.type === 'percent') {
+            discount = Math.round(total * (promo.value / 100));
+            if (promo.maxDiscount) discount = Math.min(discount, promo.maxDiscount);
+        } else if (promo.type === 'amount') {
+            discount = promo.value;
+            if (promo.maxDiscount) discount = Math.min(discount, promo.maxDiscount);
+        }
+        setPromotionDiscount(Math.min(discount, total));
+    }, [selectedPromotionCode, promotions, total]);
+
+    // Tổng tiền sau khi giảm điểm và mã khuyến mại
+    const finalTotal = useMemo(() => {
+        return Math.max(0, total - discountByPoint - promotionDiscount);
+    }, [total, discountByPoint, promotionDiscount]);
 
     // So sánh giỏ hàng hiện tại với hóa đơn pending ban đầu
     // Kiểm tra giỏ hàng có thay đổi so với hóa đơn pending
@@ -193,12 +246,12 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
         const bankId = paymentObj.bankCode || '970422';
         const accountNo = paymentObj.accountNumber || '';
         const template = paymentObj.template || 'compact';
-        const amount = total || '';
+        const amount = finalTotal || '';
         const orderId = existOrder?._id || '';
         const addInfo = encodeURIComponent(`Hoa don ${orderId}`);
         const accountName = encodeURIComponent(paymentObj.accountHolder || '');
         return `https://img.vietqr.io/image/${bankId}-${accountNo}-${template}.png?amount=${amount}&addInfo=${addInfo}&accountName=${accountName}`;
-    }, [payments, payment.id, total, existOrder]);
+    }, [payments, payment.id, finalTotal, existOrder]);
 
 
     // Đếm ngược thời gian khi mở popup QR
@@ -222,7 +275,7 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
                 if (!paymentObj) return;
                 const isPaid = await checkBankTransfer({
                     accountNumber: paymentObj.accountNumber,
-                    amount: total,
+                    amount: finalTotal,
                     orderId: existOrder._id
                 });
                 elapsed += 3;
@@ -248,6 +301,15 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
                     });
                     if (res && res._id) {
                         setMessage('Đã thanh toán!');
+                        // Tính điểm thưởng cho khách hàng
+                        if (finalCustomerId) {
+                            let pointAdd = Math.floor(finalTotal / 10000);
+                            let pointUsed = usePoint ? maxPointCanUse : 0;
+                            let newPoint = pointAdd - pointUsed;
+                            try {
+                                await updateCustomerPoint(finalCustomerId, newPoint, token);
+                            } catch { }
+                        }
                         if (typeof reloadData === 'function') reloadData();
                         setCart([]);
                     } else {
@@ -262,7 +324,7 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
             }, 3000);
         }
         return () => clearInterval(interval);
-    }, [popup.showQr, payment.method, payment.id, existOrder, payments, total, customer, token, reloadData, popup.qrPaid, setSelectedTable, setShowOrderPage, checkBankTransfer]);
+    }, [popup.showQr, payment.method, payment.id, existOrder, payments, finalTotal, maxPointCanUse, usePoint, customer, token, reloadData, popup.qrPaid, setSelectedTable, setShowOrderPage, checkBankTransfer]);
     // Đếm ngược đóng popup QR sau khi đã thanh toán
     useEffect(() => {
         let timer;
@@ -338,10 +400,24 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
         const res = await payOrder(existOrder._id, token, {
             paymentMethod: payment.method,
             customerId: finalCustomerId,
-            paymentId: payment.method === 'bank' ? payment.id : undefined
+            paymentId: payment.method === 'bank' ? payment.id : undefined,
+            usePoint: usePoint,
+            pointUsed: usePoint ? maxPointCanUse : 0,
+            discount: discountByPoint,
+            finalTotal: finalTotal
         });
         if (res && res._id) {
             setMessage('Đã thanh toán!');
+            // Tính điểm thưởng cho khách hàng
+            if (finalCustomerId) {
+                // Nếu dùng điểm thì trừ điểm, còn lại cộng điểm mới
+                let pointAdd = Math.floor(finalTotal / 10000);
+                let pointUsed = usePoint ? maxPointCanUse : 0;
+                let newPoint = pointAdd - pointUsed;
+                try {
+                    await updateCustomerPoint(finalCustomerId, newPoint, token);
+                } catch { }
+            }
             if (typeof reloadData === 'function') reloadData();
             setCart([]);
             setSelectedTable(null);
@@ -351,7 +427,7 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
             setMessage(res.error || 'Lỗi xác nhận thanh toán!');
         }
         setLoading(false);
-    }, [selectedTable, existOrder, customer, payment, token, reloadData, setSelectedTable, setShowOrderPage]);
+    }, [selectedTable, existOrder, customer, payment, token, reloadData, setSelectedTable, setShowOrderPage, usePoint, maxPointCanUse, discountByPoint, finalTotal]);
 
     // Hàm thanh toán và xuất hóa đơn PDF
     const handlePayAndPrint = useCallback(() => {
@@ -515,20 +591,22 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
                         <h3 className="orderStaff__payPopupTitle">Thanh toán hóa đơn</h3>
                         <div className='orderStaff__payPopupInfoCustomer'>
                             <div className="orderStaff__payPopupRow">
-                                <label>Tên khách hàng:</label>
-                                <input type="text" value={customer.name} onChange={e => setCustomer(prev => ({ ...prev, name: e.target.value }))} placeholder="Nhập tên khách hàng" />
+                                <label>Số điện thoại:</label>
+                                <div>
+                                    <input type="text" value={customer.phone} onChange={e => setCustomer(prev => ({ ...prev, phone: e.target.value }))} placeholder="Nhập số điện thoại" />
+                                    {customer.id && customer.phone.length === 10 && (
+                                        <span style={{ color: '#059669', marginLeft: 12, fontSize: 18, display: 'inline-flex', alignItems: 'center' }}>
+                                            <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <circle cx="10" cy="10" r="10" fill="#059669" />
+                                                <path d="M6 10.5L9 13.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                                            </svg>
+                                        </span>
+                                    )}
+                                </div>
                             </div>
                             <div className="orderStaff__payPopupRow">
-                                <label>Số điện thoại:</label>
-                                <input type="text" value={customer.phone} onChange={e => setCustomer(prev => ({ ...prev, phone: e.target.value }))} placeholder="Nhập số điện thoại" />
-                                {customer.id && customer.phone.length === 10 && (
-                                    <span style={{ color: '#059669', marginLeft: 12, fontSize: 18, display: 'inline-flex', alignItems: 'center' }}>
-                                        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                            <circle cx="10" cy="10" r="10" fill="#059669" />
-                                            <path d="M6 10.5L9 13.5L14 8.5" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                        </svg>
-                                    </span>
-                                )}
+                                <label>Tên khách hàng:</label>
+                                <input type="text" value={customer.name} onChange={e => setCustomer(prev => ({ ...prev, name: e.target.value }))} placeholder="Nhập tên khách hàng" />
                             </div>
                             <div className="orderStaff__payPopupRow">
                                 <label>Giới tính:</label>
@@ -543,6 +621,42 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
                                 <label>Địa chỉ:</label>
                                 <input type="text" value={customer.address} onChange={e => setCustomer(prev => ({ ...prev, address: e.target.value }))} placeholder="Nhập địa chỉ" />
                             </div>
+                            {/* Hiển thị điểm tích lũy của khách hàng nếu có */}
+                            {customer.id && (
+                                <div className="orderStaff__payPopupRow">
+                                    <label>Điểm tích lũy:</label>
+                                    <span style={{ color: '#2563eb', fontWeight: 'bold' }}>{typeof customer.point === 'number' ? customer.point : 0} điểm</span>
+                                    {/* Checkbox đổi điểm */}
+                                    {customer.point > 0 && total > 0 && (
+                                        <label className='orderStaff__payPopupRowCheckbox' >
+                                            <input
+                                                type="checkbox"
+                                                checked={usePoint}
+                                                onChange={e => setUsePoint(e.target.checked)}
+                                                style={{ marginRight: 6 }}
+                                                disabled={loading}
+                                            />
+                                            Đổi điểm (tối đa {maxPointCanUse} điểm, giảm {discountByPoint.toLocaleString()} đ)
+                                        </label>
+                                    )}
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Chọn mã giảm giá */}
+                        <div className="orderStaff__payPopupRow">
+                            <label>Ưu :</label>
+                            <select
+                                value={selectedPromotionCode}
+                                onChange={e => setSelectedPromotionCode(e.target.value)}
+                                disabled={loading || !promotions || promotions.length === 0}
+                                style={{ minWidth: 160 }}
+                            >
+                                <option value="">-- Không áp dụng --</option>
+                                {promotions.filter(p => p.active).map(p => (
+                                    <option key={p.code} value={p.code}>{p.code} - {p.type === 'percent' ? `${p.value}%` : `${p.value.toLocaleString()} đ`} {p.description ? `(${p.description})` : ''}</option>
+                                ))}
+                            </select>
                         </div>
                         {/* Bảng chi tiết hóa đơn */}
                         <div className="orderStaff__payPopupOrderDetail">
@@ -564,10 +678,24 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
                                             <td>{typeof i.menuItem?.price === 'number' ? (i.menuItem.price * i.quantity).toLocaleString() + ' đ' : 'Không xác định'}</td>
                                         </tr>
                                     ))}
+                                    {/* Dòng giảm giá nếu có */}
+                                    {usePoint && discountByPoint > 0 && (
+                                        <tr>
+                                            <td colSpan="3" style={{ textAlign: 'right', color: '#059669' }}>Giảm giá bằng điểm ({maxPointCanUse} điểm):</td>
+                                            <td style={{ color: '#059669', fontWeight: 'bold' }}>- {discountByPoint.toLocaleString()} đ</td>
+                                        </tr>
+                                    )}
+                                    {/* Dòng giảm giá theo mã khuyến mại */}
+                                    {selectedPromotionCode && promotionDiscount > 0 && (
+                                        <tr>
+                                            <td colSpan="3" style={{ textAlign: 'right', color: '#f59e42' }}>Giảm giá mã ({selectedPromotionCode}):</td>
+                                            <td style={{ color: '#f59e42', fontWeight: 'bold' }}>- {promotionDiscount.toLocaleString()} đ</td>
+                                        </tr>
+                                    )}
                                     {/* Dòng tổng tiền */}
                                     <tr>
                                         <td colSpan="3" style={{ textAlign: 'right', fontWeight: 'bold' }}>Tổng tiền thanh toán:</td>
-                                        <td style={{ fontWeight: 'bold', color: '#2563eb' }}>{total.toLocaleString()} đ</td>
+                                        <td style={{ fontWeight: 'bold', color: '#2563eb' }}>{finalTotal.toLocaleString()} đ</td>
                                     </tr>
                                 </tbody>
                             </table>

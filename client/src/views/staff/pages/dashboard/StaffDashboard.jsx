@@ -5,6 +5,9 @@ import LogoTudo from '../../../../components/Logo_td';
 import Icon from '../../../../components/Icon';
 import './StaffDashboard.css';
 import OrderStaff from '../order/order';
+import StaffReport from '../report/report';
+import StaffCustomerList from '../customer/customer';
+import StaffPromotionList from '../promotion/promotion';
 import { getUserById } from '../../../../api/user';
 import { getRestaurantById } from '../../../../api/restaurant';
 import { getTables } from '../../../../api/table';
@@ -169,12 +172,12 @@ function StaffDashboard({ token, userId }) {
   };
 
   const sidebarItems = [
-    'Order', 'Hóa đơn', 'Đặt lịch', 'Khách hàng', 'Khuyến mại'
+    'Order','Báo cáo', 'Đặt lịch', 'Khách hàng', 'Khuyến mại'
   ];
 
   const itemToPath = {
     'Order': '/staff-dashboard',
-    'Hóa đơn': '/staff-dashboard/bill',
+    'Báo cáo': '/staff-dashboard/report',
     'Đặt lịch': '/staff-dashboard/schedule',
     'Khách hàng': '/staff-dashboard/customer',
     'Khuyến mại': '/staff-dashboard/promotion',
@@ -202,7 +205,7 @@ function StaffDashboard({ token, userId }) {
           {sidebarItems.filter(item => item !== 'Cấu hình').map(item => {
             const iconMap = {
               'Order': 'dashboard',
-              'Hóa đơn': 'bill',
+              'Báo cáo': 'report',
               'Đặt lịch': 'calendar',
               'Khách hàng': 'customer',
               'Khuyến mại': 'discount',
@@ -319,10 +322,10 @@ function StaffDashboard({ token, userId }) {
         </header>
         <div className="staff-dashboard__content">
           {location.pathname === '/staff-dashboard' && <OrderStaff token={token} userId={userInfo?._id} newOrder={newOrder} />}
-          {/* {location.pathname === '/staff-dashboard/bill' && <Bill token={token} />} */}
+          {location.pathname === '/staff-dashboard/report' && <StaffReport token={token} userId={userInfo?._id} />}
           {/* {location.pathname === '/staff-dashboard/schedule' && <Schedule />} */}
-          {/* {location.pathname === '/staff-dashboard/customer' && <Customer />} */}
-          {/* {location.pathname === '/staff-dashboard/promotion' && <Promotion />} */}
+          {location.pathname === '/staff-dashboard/customer' && <StaffCustomerList token={token} />}
+          {location.pathname === '/staff-dashboard/promotion' && <StaffPromotionList token={token} />}
         </div>
       </div>
     </div>

@@ -1,0 +1,293 @@
+/* Popup chi tiết khuyến mại */
+.promotionManager__popup--detail {
+    max-width: 480px;
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    padding: 32px 24px 24px 24px;
+    position: relative;
+    margin: 0 auto;
+}
+
+.promotionManager__popupTitle__detail {
+    font-size: 22px;
+    font-weight: 700;
+    color: #2563eb;
+    margin-bottom: 18px;
+    text-align: center;
+}
+
+.promotionManager__popupInfo {
+    margin-bottom: 18px;
+}
+
+.promotionManager__popupInfoRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 16px;
+}
+
+.promotionManager__popupInfoRow span {
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.promotionManager__popupInfoRow b {
+    color: #111827;
+    font-weight: 600;
+}
+
+.promotionManager__popupFooter {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    margin-top: 18px;
+}
+
+.promotionManager__popupBtn {
+    padding: 7px 18px;
+    border-radius: 6px;
+    border: none;
+    background: #2563eb;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.promotionManager__popupBtn:disabled {
+    background: #a5b4fc;
+    cursor: not-allowed;
+}
+
+.promotionManager__popupBtn--cancel {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.promotionManager__popupBtn--danger {
+    background: #ef4444;
+    color: #fff;
+}
+
+/* Trạng thái khuyến mại */
+.promotionManager__td--status-active {
+    color: #2563eb;
+    font-weight: 700;
+}
+
+.promotionManager__td--status-inactive {
+    color: #ef4444;
+    font-weight: 700;
+}
+
+.promotionManager {
+    padding: 24px;
+    background: #f3f4f6;
+    min-height: 100vh;
+}
+
+.promotionManager__title {
+    font-size: 2rem;
+    color: #f59e42;
+    margin: 0 0 24px 0;
+}
+
+.promotionManager__actions {
+    margin-bottom: 16px;
+}
+
+.promotionManager__addBtn {
+    background: #059669;
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.promotionManager__addBtn:hover {
+    background: #047857;
+}
+
+.promotionManager__list {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    padding: 0;
+    overflow: hidden;
+}
+
+.promotionManager__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+}
+
+.promotionManager__th {
+    background: #f3f4f6;
+    color: #f59e42;
+    font-weight: 700;
+    padding: 12px 8px;
+    border-bottom: 2px solid #f59e42;
+    text-align: left;
+    font-size: 16px;
+}
+
+.promotionManager__td {
+    padding: 10px 8px;
+    border-bottom: 1px solid #f3f4f6;
+    text-align: left;
+    background: #fff;
+    font-size: 15px;
+}
+
+.promotionManager__tr {
+    transition: background 0.2s;
+}
+
+.promotionManager__tr:hover {
+    background: #f9fafb;
+}
+
+.promotionManager__detailBtn {
+    background: #e0e7ff;
+    color: #2563eb;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 15px;
+    transition: background 0.2s;
+}
+
+.promotionManager__detailBtn:hover {
+    background: #c7d2fe;
+}
+
+.promotionManager__loading,
+.promotionManager__empty {
+    text-align: center;
+    color: #888;
+    padding: 32px 0;
+    font-size: 17px;
+}
+
+.promotionManager__td--status-active {
+    color: #059669;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.promotionManager__td--status-inactive {
+    color: #ef4444;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.promotionManager__popupOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.promotionManager__popup {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    padding: 28px 32px;
+    min-width: 380px;
+    max-width: 95vw;
+}
+
+.promotionManager__popupTitle {
+    font-size: 1.3rem;
+    color: #2563eb;
+    margin-bottom: 18px;
+}
+
+.promotionManager__popupForm {
+    margin-bottom: 18px;
+}
+
+.promotionManager__popupRow {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.promotionManager__popupRow label {
+    min-width: 120px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.promotionManager__popupRow input,
+.promotionManager__popupRow select,
+.promotionManager__popupRow textarea {
+    flex: 1;
+    padding: 7px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    font-size: 1rem;
+}
+
+.promotionManager__popupRow textarea {
+    min-height: 40px;
+    resize: vertical;
+}
+
+.promotionManager__popupInfoRow {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.promotionManager__popupActions {
+    display: flex;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.promotionManager__popupBtn {
+    background: #2563eb;
+    color: #fff;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.promotionManager__popupBtn--cancel {
+    background: #e5e7eb;
+    color: #2563eb;
+}
+
+.promotionManager__popupBtn--danger {
+    background: #ef4444;
+    color: #fff;
+}
+
+.promotionManager__popupBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.promotionManager__popupFormEdit {
+    margin-top: 18px;
+    padding-top: 12px;
+    border-top: 1px solid #e5e7eb;
+}

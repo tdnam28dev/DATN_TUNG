@@ -56,3 +56,16 @@ export async function deleteCustomer(id, token) {
 	});
 	return await res.json();
 }
+
+// Hàm gọi API cộng điểm cho khách hàng
+export async function updateCustomerPoint(id, point, token) {
+	const res = await fetch(`${API_URL}/customers/${id}/point`, {
+		method: 'PUT',
+		headers: {
+			'Content-Type': 'application/json',
+			'Authorization': `Bearer ${token}`
+		},
+		body: JSON.stringify({ point })
+	});
+	return await res.json();
+}

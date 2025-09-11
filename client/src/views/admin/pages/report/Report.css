@@ -1,0 +1,168 @@
+/* BEM CSS cho báo cáo */
+.adminReport {
+    padding: 32px;
+    background: #f3f4f6;
+    min-height: 100vh;
+}
+
+.adminReport__title {
+    font-size: 2rem;
+    color: #f59e42;
+    margin: 0px 0px 18px 0px;
+}
+
+.adminReport__summary {
+    display: flex;
+    gap: 32px;
+    margin-bottom: 24px;
+}
+
+.adminReport__item {
+    background: #fff;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    padding: 18px 28px;
+    min-width: 180px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.adminReport__label {
+    color: #374151;
+    font-weight: 500;
+    margin-bottom: 6px;
+}
+
+.adminReport__value {
+    font-size: 1.3rem;
+    font-weight: 700;
+}
+
+.adminReport__value--cash {
+    color: #059669;
+}
+
+.adminReport__value--bank {
+    color: #f59e42;
+}
+
+.adminReport__value--revenue {
+    color: #2563eb;
+}
+
+.adminReport__item--revenue {
+    border-left: 4px solid #2563eb;
+}
+.adminReport__item--cash {
+    border-left: 4px solid #059669;
+}
+.adminReport__item--bank {
+    border-left: 4px solid #f59e42;
+}
+
+/* Bộ lọc thời gian cho báo cáo admin */
+.adminReport__filter {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 18px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    padding: 12px 20px;
+    width: fit-content;
+}
+
+.adminReport__filter label {
+    font-weight: 500;
+    color: #2563eb;
+    font-size: 1.05rem;
+}
+
+.adminReport__filter select {
+    padding: 6px 14px;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+    font-size: 1rem;
+    background: #f3f4f6;
+    color: #374151;
+    outline: none;
+    transition: border 0.2s;
+}
+
+.adminReport__filter select:focus {
+    border-color: #2563eb;
+}
+
+@media (max-width: 700px) {
+    .adminReport__filter {
+        flex-direction: column;
+        gap: 8px;
+        padding: 8px 6px;
+        width: 100%;
+    }
+}
+
+
+.adminReport__list {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    padding: 18px;
+}
+
+.adminReport__subtitle {
+    font-size: 1.1rem;
+    color: #2563eb;
+    margin-bottom: 12px;
+}
+
+.adminReport__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 15px;
+}
+
+.adminReport__table-header {
+    background: #f3f4f6;
+    color: #f59e42;
+    font-weight: 700;
+    padding: 10px 8px;
+    border-bottom: 2px solid #f59e42;
+    text-align: left;
+}
+
+.adminReport__table-cell {
+    padding: 10px 8px;
+    border-bottom: 1px solid #f3f4f6;
+    background: #fff;
+    color: #374151;
+    font-size: 1rem;
+}
+
+.adminReport__loading,
+.adminReport__error,
+.adminReport__empty {
+    text-align: center;
+    color: #888;
+    padding: 32px 0;
+    font-size: 17px;
+    background: #f5f7fa;
+    border-radius: 8px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    margin-top: 24px;
+}
+
+@media (max-width: 900px) {
+    .adminReport__summary {
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .adminReport__item {
+        min-width: unset;
+        width: 100%;
+        align-items: stretch;
+    }
+}

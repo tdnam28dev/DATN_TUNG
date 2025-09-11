@@ -15,6 +15,8 @@ router.get('/:id', auth, role(['admin', 'staff']), customerController.getCustome
 router.post('/', auth, role(['admin', 'staff']), customerController.createCustomer);
 // Cập nhật khách hàng (admin)
 router.put('/:id', auth, role(['admin']), customerController.updateCustomer);
+// Cộng điểm cho khách hàng (staff, admin)
+router.put('/:id/point', auth, role(['admin', 'staff']), customerController.addPoint);
 // Xóa khách hàng (admin)
 router.delete('/:id', auth, role(['admin']), customerController.deleteCustomer);
 

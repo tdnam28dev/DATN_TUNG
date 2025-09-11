@@ -1,0 +1,206 @@
+/* Giao diện báo cáo doanh thu nhân viên */
+.staffReport {
+	padding: 32px;
+	background: #f3f4f6;
+	min-height: 100vh;
+}
+.staffReport__title {
+	font-size: 2rem;
+	color: #f59e42;
+	margin: 0px 0px 18px 0px;
+}
+.staffReport__filter {
+	display: flex;
+	gap: 16px;
+	align-items: center;
+	margin-bottom: 18px;
+}
+.staffReport__filter label {
+	font-weight: 500;
+	color: #2563eb;
+}
+.staffReport__summary {
+	display: flex;
+	gap: 32px;
+	margin-bottom: 24px;
+}
+.staffReport__item {
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+	padding: 18px 28px;
+	min-width: 180px;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+.staffReport__label {
+	color: #374151;
+	font-weight: 500;
+	margin-bottom: 6px;
+}
+.staffReport__value {
+	font-size: 1.3rem;
+	font-weight: 700;
+	color: #2563eb;
+}
+.staffReport__value--cash {
+	color: #059669;
+}
+.staffReport__value--bank {
+	color: #f59e42;
+}
+.staffReport__list {
+	background: #fff;
+	border-radius: 8px;
+	box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+	padding: 18px;
+}
+.staffReport__subtitle {
+	font-size: 1.1rem;
+	color: #2563eb;
+	margin-bottom: 12px;
+}
+.staffReport__table {
+	width: 100%;
+	border-collapse: collapse;
+	font-size: 15px;
+}
+.staffReport__table th {
+	background: #f3f4f6;
+	color: #f59e42;
+	font-weight: 700;
+	padding: 10px 8px;
+	border-bottom: 2px solid #f59e42;
+	text-align: left;
+}
+.staffReport__table td {
+	padding: 10px 8px;
+	border-bottom: 1px solid #f3f4f6;
+	background: #fff;
+}
+.staffReport__detailBtn {
+	background: #e0e7ff;
+	color: #2528eb;
+	border: none;
+	padding: 6px 14px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-weight: 500;
+	font-size: 15px;
+	transition: background 0.2s;
+}
+.staffReport__detailBtn:hover {
+	background: #c7d2fe;
+}
+.staffReport__loading, .staffReport__empty {
+	text-align: center;
+	color: #888;
+	padding: 32px 0;
+	font-size: 17px;
+}
+@media (max-width: 900px) {
+	.staffReport__summary {
+		flex-direction: column;
+		gap: 18px;
+	}
+	.staffReport__item {
+		min-width: unset;
+		width: 100%;
+		align-items: stretch;
+	}
+}
+
+/* Popup chi tiết hóa đơn */
+.staffReport__popupOverlay {
+	position: fixed;
+	top: 0; left: 0; right: 0; bottom: 0;
+	background: rgba(0,0,0,0.15);
+	z-index: 1000;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.staffReport__popup {
+	background: #fff;
+	border-radius: 12px;
+	box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+	padding: 32px 24px 24px 24px;
+	max-width: 480px;
+	min-width: 340px;
+	position: relative;
+}
+.staffReport__popupTitle__detail {
+	font-size: 22px;
+	font-weight: 700;
+	color: #2563eb;
+	margin-bottom: 18px;
+	text-align: center;
+}
+.staffReport__popupInfo {
+	margin-bottom: 18px;
+}
+.staffReport__popupInfoRow {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	padding: 7px 0;
+	border-bottom: 1px solid #f3f4f6;
+	font-size: 16px;
+}
+.staffReport__popupInfoRow span {
+	color: #6b7280;
+	font-weight: 500;
+}
+.staffReport__popupInfoRow b {
+	color: #111827;
+	font-weight: 600;
+}
+.staffReport__popupListTitle {
+	font-size: 16px;
+	color: #2563eb;
+	font-weight: 600;
+	margin-bottom: 8px;
+}
+.staffReport__popupTableFood {
+	width: 100%;
+	border-collapse: collapse;
+	margin-bottom: 10px;
+}
+.staffReport__popupTableFood th {
+	background: #f3f4f6;
+	color: #f59e42;
+	font-weight: 700;
+	padding: 8px;
+	border-bottom: 2px solid #f59e42;
+	text-align: left;
+}
+.staffReport__popupTableFood td {
+	padding: 8px;
+	border-bottom: 1px solid #f3f4f6;
+	background: #fff;
+}
+.staffReport__popupFooter {
+	display: flex;
+	justify-content: flex-end;
+	gap: 12px;
+	margin-top: 18px;
+}
+.staffReport__popupBtn {
+	padding: 7px 18px;
+	border-radius: 6px;
+	border: none;
+	background: #2563eb;
+	color: #fff;
+	font-weight: 600;
+	cursor: pointer;
+	transition: background 0.2s;
+}
+.staffReport__popupBtn--cancel {
+	background: #e5e7eb;
+	color: #374151;
+}
+.staffReport__popupBtn:disabled {
+	background: #a5b4fc;
+	cursor: not-allowed;
+}

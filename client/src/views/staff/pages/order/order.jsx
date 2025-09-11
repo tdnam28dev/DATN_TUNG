@@ -9,6 +9,7 @@ import { getMenus } from '../../../../api/menu';
 import { getMenuItems } from '../../../../api/menuitem';
 import { getOrders } from '../../../../api/order';
 import { getPaymentMethods } from '../../../../api/payment';
+import { getPromotions } from '../../../../api/promotion';
 
 
 
@@ -26,6 +27,7 @@ function OrderStaff({ token, userId, newOrder }) {
     const [menuItems, setMenuItems] = useState([]);
     const [orders, setOrders] = useState([]);
     const [payments, setPayments] = useState([]);
+    const [promotions, setPromotions] = useState([]);
 
 
     // Lấy tất cả dữ liệu khi vào giao diện
@@ -50,6 +52,10 @@ function OrderStaff({ token, userId, newOrder }) {
             const resPayments = await getPaymentMethods(token);
             setPayments(Array.isArray(resPayments) ? resPayments : []);
         } catch (e) { setPayments([]); }
+        try {
+            const resPromotions = await getPromotions(token);
+            setPromotions(Array.isArray(resPromotions) ? resPromotions : []);
+        } catch (e) { setPromotions([]); }
     };
     useEffect(() => {
         fetchAllData();
@@ -80,12 +86,13 @@ function OrderStaff({ token, userId, newOrder }) {
                     menuItems={menuItems}
                     orders={orders}
                     payments={payments}
+                    promotions={promotions}
                     reloadData={reloadData}
                 />
             ) : (
                 <div className="orderStaff_content">
                     {/* Bộ lọc bàn */}
-                    <div className="orderStaff__tableFilter" style={{ display: 'flex', gap: 16, marginBottom: 16 }}>
+                    <div className="orderStaff__tableFilter" >
                         <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={{ padding: 6, borderRadius: 6 }}>
                             <option value="">Tất cả trạng thái</option>
                             <option value="available">Trống</option>

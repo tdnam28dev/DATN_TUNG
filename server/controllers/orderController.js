@@ -5,13 +5,36 @@ const Table = require('../models/table');
 
 
 // Lấy danh sách đơn hàng, lọc theo nhà hàng nếu là nhân viên/manager
+// Lấy danh sách đơn hàng, có thể lọc theo paidBy qua query (?paidBy=...)
 exports.getAll = async (req, res) => {
   try {
     let query = {};
-    if (req.user && req.user.role !== 'admin' && req.user.restaurant) {
+    // Lọc theo nhà hàng nếu truyền restaurant hoặc là nhân viên/manager
+    if (req.query.restaurant) {
+      query.restaurant = req.query.restaurant;
+    } else if (req.user && req.user.role !== 'admin' && req.user.restaurant) {
       query.restaurant = req.user.restaurant;
     }
-    const orders = await Order.find(query);
+    // Lọc theo người thanh toán nếu truyền paidBy
+    if (req.query.paidBy) {
+      query.paidBy = req.query.paidBy;
+    }
+    // Lọc theo trạng thái nếu truyền status
+    if (req.query.status) {
+      query.status = req.query.status;
+    }
+    // Lọc theo thời gian nếu truyền startDate/endDate
+    let timeFilter = {};
+    if (req.query.startDate || req.query.endDate) {
+      timeFilter.createdAt = {};
+      if (req.query.startDate) {
+        timeFilter.createdAt.$gte = new Date(req.query.startDate);
+      }
+      if (req.query.endDate) {
+        timeFilter.createdAt.$lt = new Date(req.query.endDate);
+      }
+    }
+    const orders = await Order.find({ ...query, ...timeFilter });
     res.json(orders);
   } catch (err) {
     res.status(500).json({ error: 'Lỗi server' });

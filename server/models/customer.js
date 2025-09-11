@@ -36,6 +36,12 @@ const customerSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  point: {
+    type: Number,
+    default: 0,
+    min: 0,
+    comment: 'Điểm tích lũy của khách hàng',
+  },
   gender: {
     type: String,
     enum: ['male', 'female', 'other'],

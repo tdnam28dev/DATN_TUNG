@@ -55,8 +55,15 @@ export async function deleteOrder(id, token) {
   return res.json();
 }
 
-export async function getOrders(token) {
-  const res = await fetch(`${API_URL}/orders`, {
+// Hàm lấy danh sách hóa đơn, có thể truyền params để lọc (ví dụ: { paidBy })
+export async function getOrders(token, params = {}) {
+  let url = `${API_URL}/orders`;
+  const query = Object.entries(params)
+    .filter(([_, v]) => v !== undefined && v !== null && v !== '')
+    .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
+    .join('&');
+  if (query) url += `?${query}`;
+  const res = await fetch(url, {
     method: 'GET',
     headers: { 'Authorization': `Bearer ${token}` }
   });

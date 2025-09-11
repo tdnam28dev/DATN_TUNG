@@ -43,8 +43,6 @@ const OrderCustomer = () => {
                         setTable(loginRes.tableNumber);
                         localStorage.setItem('token_customer', currentToken);
                         setToken(currentToken);
-                        console.log(table);
-                        console.log(restaurant);
                     }
                 }
                 const menuRes = await getMenus(currentToken, restaurantId);
