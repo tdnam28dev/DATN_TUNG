@@ -1,0 +1,32 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam sequenceDiagramWidth 900
+skinparam sequenceParticipantPadding 10
+skinparam sequenceParticipantFontSize 18
+skinparam sequenceActorFontSize 20
+skinparam sequenceMessageFontSize 18
+skinparam sequenceNoteFontSize 16
+
+actor User
+participant "React UI" as UI
+participant "API Backend (Node.js)" as API
+participant "User Model (MongoDB)" as UserModel
+
+User -> UI : Nhập thông tin đăng nhập
+UI -> API : POST /auth/login (dữ liệu)
+API -> UserModel : Tìm user theo username
+alt Không tìm thấy user
+	API -> UI : Trả về lỗi\n"Không tìm thấy người dùng"
+else Tìm thấy user
+	API -> API : Kiểm tra mật khẩu, trạng thái
+	alt Sai mật khẩu
+		API -> UI : Trả về lỗi\n"Sai mật khẩu"
+	else Tài khoản bị khóa
+		API -> UI : Trả về lỗi\n"Tài khoản đã bị khóa hoặc vô hiệu hóa"
+	else Đăng nhập thành công
+		API -> API : Tạo JWT token
+		API -> UI : Trả về token và thông tin user
+		UI -> User : Lưu token, chuyển trang
+	end
+end
+@enduml

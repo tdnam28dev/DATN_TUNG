@@ -1,0 +1,83 @@
+@startuml
+left to right direction
+skinparam packageStyle rectangle
+skinparam usecaseFontSize 18
+skinparam actorFontSize 20
+skinparam usecaseBorderThickness 2
+skinparam usecaseBackgroundColor #F8F8F8
+skinparam usecaseBorderColor #333
+skinparam usecaseArrowColor #333
+skinparam usecaseActorBorderColor #333
+skinparam usecaseActorBackgroundColor #F8F8F8
+
+actor Admin as "Admin\n(Chủ nhà hàng)"
+actor Manager as "Manager"
+actor Staff as "Staff"
+actor Customer as "Customer"
+
+rectangle "Nhóm chức năng Quản trị" {
+  (Quản lý nhà hàng) as UC1
+  (Quản lý user) as UC2
+  (Quản lý menu) as UC3
+  (Quản lý loại menu) as UC4
+  (Quản lý món ăn) as UC5
+  (Quản lý hóa đơn) as UC6
+  (Quản lý thanh toán) as UC7
+  (Quản lý khuyến mãi) as UC8
+  (Quản lý khách hàng) as UC9
+  (Quản lý bàn) as UC10
+  (Báo cáo, thống kê) as UC11
+  (Quản lý đặt bàn) as UC12
+}
+
+rectangle "Nhóm chức năng Nghiệp vụ" {
+  (Order/Gọi món) as UC13
+  (Thanh toán hóa đơn) as UC14
+  (Đăng nhập/Đăng xuất) as UC15
+  (Đặt bàn) as UC16
+}
+
+' Nhóm actor bên trái
+Admin -- UC1
+Admin -- UC2
+Admin -- UC3
+Admin -- UC4
+Admin -- UC5
+Admin -- UC6
+Admin -- UC7
+Admin -- UC8
+Admin -- UC9
+Admin -- UC10
+Admin -- UC11
+Admin -- UC12
+Admin -- UC13
+Admin -- UC14
+Admin -- UC15
+
+Manager -- UC1
+Manager -- UC2
+Manager -- UC3
+Manager -- UC4
+Manager -- UC5
+Manager -- UC6
+Manager -- UC7
+Manager -- UC8
+Manager -- UC9
+Manager -- UC10
+Manager -- UC11
+Manager -- UC12
+Manager -- UC13
+Manager -- UC14
+Manager -- UC15
+
+' Nhóm actor bên phải
+Staff -- UC13
+Staff -- UC12
+Staff -- UC14
+Staff -- UC11
+Staff -- UC15
+
+Customer -- UC13
+Customer -- UC16
+
+@enduml

@@ -2,7 +2,7 @@
 const mongoose = require('mongoose');
 
 const PaymentMethodSchema = new mongoose.Schema({
-  name: { type: String, required: true, unique: true }, // Tên phương thức (card, bank, momo, ...)
+  name: { type: String, required: true}, // Tên phương thức (card, bank, momo, ...)
   description: { type: String }, // Nội dung chuyển khoản hoặc thông tin thêm
   accountNumber: { type: String }, // Số tài khoản ngân hàng
   bankName: { type: String }, // Tên ngân hàng

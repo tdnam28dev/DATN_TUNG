@@ -1,0 +1,38 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam sequenceDiagramWidth 900
+skinparam sequenceParticipantPadding 10
+skinparam sequenceParticipantFontSize 18
+skinparam sequenceActorFontSize 20
+skinparam sequenceMessageFontSize 18
+skinparam sequenceNoteFontSize 16
+
+actor Admin
+participant "React UI" as UI
+participant "API Backend\n(Node.js)" as API
+participant "Auth\nMiddleware" as Auth
+participant "Role\nMiddleware" as Role
+participant "Restaurant Model\n(MongoDB)" as RestaurantModel
+
+Admin -> UI : Chọn nhà hàng cần sửa
+UI -> API : PUT /restaurants/{id}\n(dữ liệu mới, token)
+API -> Auth : Kiểm tra middleware\nxác thực (auth)
+alt Token không hợp lệ
+	API -> UI : Trả về lỗi\n"Không xác thực"
+else Token hợp lệ
+	API -> Role : Kiểm tra quyền truy cập\nresource (admin)
+	alt Không đủ quyền
+		API -> UI : Trả về lỗi\n"Không đủ quyền"
+	else Đủ quyền
+		API -> RestaurantModel : Lấy nhà hàng theo id
+		alt Không tìm thấy nhà hàng
+			API -> UI : Trả về lỗi\n"Không tìm thấy nhà hàng"
+		else Tìm thấy nhà hàng
+			API -> RestaurantModel : Cập nhật thông tin nhà hàng
+			RestaurantModel --> API : Trả về nhà hàng đã cập nhật
+			API -> UI : Trả về kết quả\n(nhà hàng đã cập nhật)
+			UI -> Admin : Hiển thị thông báo\nthành công
+		end
+	end
+end
+@enduml

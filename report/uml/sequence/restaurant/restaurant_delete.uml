@@ -1,0 +1,37 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam sequenceDiagramWidth 900
+skinparam sequenceParticipantPadding 10
+skinparam sequenceParticipantFontSize 18
+skinparam sequenceActorFontSize 20
+skinparam sequenceMessageFontSize 18
+skinparam sequenceNoteFontSize 16
+
+actor Admin
+participant "React UI" as UI
+participant "API Backend\n(Node.js)" as API
+participant "Auth\nMiddleware" as Auth
+participant "Role\nMiddleware" as Role
+participant "Restaurant Model\n(MongoDB)" as RestaurantModel
+
+Admin -> UI : Chọn nhà hàng cần xóa
+UI -> API : DELETE /restaurants/{id} \n(kèm token)
+API -> Auth : Kiểm tra middleware \nxác thực (auth)
+alt Token không hợp lệ
+	API -> UI : Trả về lỗi\n"Không xác thực"
+else Token hợp lệ
+	API -> Role : Kiểm tra middleware \nphân quyền (admin)
+	alt Không đủ quyền
+		API -> UI : Trả về lỗi\n"Không đủ quyền"
+	else Đủ quyền
+		API -> RestaurantModel : Xóa nhà hàng
+		alt Không tìm thấy nhà hàng
+			API -> UI : Trả về lỗi\n"Không tìm thấy nhà hàng"
+		else Tìm thấy nhà hàng
+			RestaurantModel --> API : Trả về kết quả xóa
+			API -> UI : Trả về kết quả
+			UI -> Admin : Hiển thị thông báo \nthành công/thất bại
+		end
+	end
+end
+@enduml

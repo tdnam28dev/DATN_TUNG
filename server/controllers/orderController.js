@@ -178,21 +178,23 @@ exports.payOrder = async (req, res) => {
     if (!paidBy) {
       return res.status(401).json({ error: 'Bạn chưa đăng nhập hoặc token không hợp lệ!' });
     }
-    // Lấy thông tin từ body
-    const { paymentMethod, customerId, paymentId } = req.body;
+  // Lấy thông tin từ body
+  const { paymentMethod, customerId, paymentId, total, discount } = req.body;
     // Tìm đơn hàng
     const order = await Order.findById(req.params.id);
     if (!order) return res.status(404).json({ error: 'Không tìm thấy đơn hàng' });
 
-    // Lưu thông tin thanh toán
-    order.status = 'completed';
-    order.paidBy = paidBy;
-    order.paymentMethod = paymentMethod;
-    if (paymentId) order.paymentId = paymentId;
-    if (customerId) order.customerId = customerId;
-    await order.save();
-    await Table.findByIdAndUpdate(order.table, { status: 'available' });
-    res.json(order);
+  // Lưu thông tin thanh toán
+  order.status = 'completed';
+  order.paidBy = paidBy;
+  order.paymentMethod = paymentMethod;
+  if (paymentId) order.paymentId = paymentId;
+  if (customerId) order.customerId = customerId;
+  if (typeof total === 'number') order.total = total;
+  if (discount !== undefined) order.discount = discount;
+  await order.save();
+  await Table.findByIdAndUpdate(order.table, { status: 'available' });
+  res.json(order);
   } catch (err) {
     res.status(400).json({ error: 'Dữ liệu không hợp lệ', detail: err.message });
     console.error(err);

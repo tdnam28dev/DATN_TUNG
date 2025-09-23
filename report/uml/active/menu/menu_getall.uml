@@ -1,0 +1,23 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activityFontSize 18
+skinparam activityDiamondFontSize 16
+skinparam activityArrowFontSize 16
+skinparam activityBackgroundColor #bce8f5ff
+skinparam activityDiamondBackgroundColor #bce8f5ff
+skinparam activityStartColor #4CAF50
+skinparam activityStopColor #F44336
+
+|Admin|
+start
+:Chọn chức năng\nquản lý menu;
+|Hệ thống|
+:Lấy danh sách menu;
+if (Có dữ liệu) then (Không)
+    :Thông báo lỗi "Không có dữ liệu";
+    stop
+else (Có)
+    :Hiển thị danh sách menu;
+    stop
+endif
+@enduml

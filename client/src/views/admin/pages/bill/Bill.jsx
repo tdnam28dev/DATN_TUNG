@@ -4,8 +4,11 @@ import { getUserById } from '../../../../api/user';
 import { getTables } from '../../../../api/table';
 import { getRestaurants } from '../../../../api/restaurant';
 import './Bill.css';
+import Icon from '../../../../components/Icon';
 
 function Bill({ token }) {
+  // State cho tìm kiếm theo mã hóa đơn
+  const [searchOrderId, setSearchOrderId] = useState('');
   // State cho popup chi tiết hóa đơn
   const [showOrderDetail, setShowOrderDetail] = useState(false);
   const [orderDetail, setOrderDetail] = useState(null);
@@ -131,6 +134,8 @@ function Bill({ token }) {
 
   // Lọc hóa đơn
   const filteredOrders = orders.filter(order => {
+    // Lọc theo mã hóa đơn nếu có nhập
+    if (searchOrderId && !order._id?.toLowerCase().includes(searchOrderId.trim().toLowerCase())) return false;
     // Lọc theo nhà hàng
     if (filterRestaurant && order.restaurant !== filterRestaurant && order.restaurantName !== filterRestaurant) return false;
     if (filterType === 'all') return true;
@@ -168,6 +173,20 @@ function Bill({ token }) {
       <h2 className="billManager__title">Quản lý hóa đơn</h2>
       {/* Bộ lọc hóa đơn */}
       <div className="billManager__filter">
+        {/* Tìm kiếm theo mã hóa đơn */}
+        <div style={{ position: 'relative', display: 'inline-block' }}>
+          <input
+            className="billManager__filterInput"
+            type="text"
+            placeholder="Tìm theo mã hóa đơn..."
+            value={searchOrderId}
+            onChange={e => setSearchOrderId(e.target.value)}
+            style={{ minWidth: 180, paddingLeft: 34 }}
+          />
+          <span style={{ position: 'absolute', left: 8, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }}>
+            <Icon name="search" width={20} height={20} />
+          </span>
+        </div>
         {/* Bộ lọc nhà hàng */}
         <select className="billManager__filterSelect" value={filterRestaurant} onChange={e => setFilterRestaurant(e.target.value)}>
           <option value="">Tất cả nhà hàng</option>
@@ -300,6 +319,26 @@ function Bill({ token }) {
               </div>
               <div className="billManager__popupInfoRow"><span>Phương thức thanh toán:</span> <b>{orderDetail.paymentMethod ? (orderDetail.paymentMethod === 'cash' ? 'Tiền mặt' : orderDetail.paymentMethod === 'card' ? 'Thẻ' : orderDetail.paymentMethod === 'bank' ? 'Chuyển khoản' : orderDetail.paymentMethod === 'momo' ? 'Momo' : 'Khác') : '-'}</b></div>
               <div className="billManager__popupInfoRow"><span>Tổng tiền:</span> <b style={{ color: '#2563eb' }}>{isEditOrder ? (editOrderDetail?.total?.toLocaleString() || '0') : (orderDetail.total?.toLocaleString() || '0')} đ</b></div>
+              {Array.isArray(orderDetail.discount) && orderDetail.discount.length > 0 && (
+                <div className="billManager__popupInfoRow">
+                  <span>Giảm giá:</span>
+                  <div className="billManager__popupDiscount">
+                    {orderDetail.discount.map((d, idx) => (
+                      <div
+                        key={idx}
+                        className={`billManager__popupDiscountItem billManager__popupDiscountItem--${d.type}`}
+                      >
+                        {d.type === 'point' && (
+                          <span>Đổi điểm: -{d.value?.toLocaleString()} đ ({d.pointUsed} điểm)</span>
+                        )}
+                        {d.type === 'promotion' && (
+                          <span>Mã khuyến mại ({d.code}): -{d.value?.toLocaleString()} đ</span>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div className="billManager__popupInfoRow"><span>Ngày tạo:</span> <b>{new Date(orderDetail.createdAt).toLocaleString()}</b></div>
               <div className="billManager__popupInfoRow"><span>Cập nhật gần nhất:</span> <b>{orderDetail.updatedAt ? new Date(orderDetail.updatedAt).toLocaleString() : '--'}</b></div>
             </div>

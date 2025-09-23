@@ -1,0 +1,24 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activityFontSize 18
+skinparam activityDiamondFontSize 16
+skinparam activityArrowFontSize 16
+skinparam activityBackgroundColor #bce8f5ff
+skinparam activityDiamondBackgroundColor #bce8f5ff
+skinparam activityStartColor #4CAF50
+skinparam activityStopColor #F44336
+
+|Admin|
+start
+:Chọn quản\nlý user;
+|Hệ thống|
+:Lấy danh\nsách user;
+if (Kiểm tra\ndữ liệu) then (Không)
+    :Thông báo lỗi\n"Không có dữ liệu";
+    :Hiển thị\nthông báo lỗi;
+    stop
+else (Có)
+    :Hiển thị danh\nsách user;
+    stop
+endif
+@enduml

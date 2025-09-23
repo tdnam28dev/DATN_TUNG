@@ -1,3 +1,5 @@
+@import url(../../../../fonts/fonts.css);
+
 /* ===== SIDEBAR ===== */
 .admin-dashboard-sidebar {
   width: 250px;
@@ -133,6 +135,7 @@
 .admin-dashboard-root {
   display: flex;
   min-height: 100vh;
+  font-family: PlusJaS-Medium;
 }
 
 .admin-dashboard-main {

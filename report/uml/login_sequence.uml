@@ -1,0 +1,40 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam sequenceDiagramWidth 500
+skinparam sequenceParticipantPadding 10
+skinparam sequenceParticipantFontSize 18
+skinparam sequenceActorFontSize 20
+skinparam sequenceMessageFontSize 18
+skinparam sequenceNoteFontSize 16
+actor User
+participant "React UI" as UI
+participant "API Backend\n(Node.js)" as API
+participant "User Model\n(MongoDB)" as UserModel
+participant "bcryptjs"
+participant "jsonwebtoken"
+
+User -> UI : Nhập username, password,\nchọn vai trò
+UI -> API : POST /auth/login\n{username, password, role}
+API -> UserModel : Tìm user theo username
+UserModel --> API : Trả về user hoặc null
+API -> API : Kiểm tra user tồn tại?
+alt Không tìm thấy user
+    API -> UI : Trả về lỗi \"Không tìm thấy người dùng\"
+else Tìm thấy user
+    API -> API : Kiểm tra user.isActive?
+    alt Tài khoản bị khóa
+        API -> UI : Trả về lỗi\n"Tài khoản đã bị khóa hoặc vô hiệu hóa"
+    else Tài khoản hoạt động
+        API -> bcryptjs : So sánh password nhập\nvới password đã mã hóa
+        bcryptjs --> API : Trả về true/false
+        alt Sai mật khẩu
+            API -> UI : Trả về lỗi\n"Sai mật khẩu"
+        else Đúng mật khẩu
+            API -> jsonwebtoken : Tạo access token (JWT) với thông tin user
+            jsonwebtoken --> API : Trả về token
+            API -> UI : Trả về token, thông tin user\n(id, role, roles, actions, restaurant, name)
+            UI -> User : Đăng nhập\nthành công
+        end
+    end
+end
+@enduml

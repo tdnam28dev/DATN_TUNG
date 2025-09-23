@@ -1,0 +1,36 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam sequenceDiagramWidth 900
+skinparam sequenceParticipantPadding 10
+skinparam sequenceParticipantFontSize 18
+skinparam sequenceActorFontSize 20
+skinparam sequenceMessageFontSize 18
+skinparam sequenceNoteFontSize 16
+
+actor User
+participant "React UI" as UI
+participant "API Backend\n(Node.js)" as API
+participant "Auth\nMiddleware" as Auth
+participant "Role\nMiddleware" as Role
+participant "User Model\n(MongoDB)" as UserModel
+
+User -> UI : Xem chi tiết\nngười dùng
+UI -> API : GET /user/:id\n(kèm token)
+API -> Auth : Kiểm tra middleware\nxác thực (auth)
+alt Token không hợp lệ
+	API -> UI : Trả về lỗi\n"Không xác thực"
+else Token hợp lệ
+	API -> Role : Kiểm tra quyền truy cập\nresource (admin, manager, chính chủ)
+	alt Không đủ quyền
+		API -> UI : Trả về lỗi\n"Không đủ quyền"
+	else Đủ quyền
+		API -> UserModel : Lấy user theo id
+		alt Không tìm thấy user
+			API -> UI : Trả về lỗi\n"Không tìm thấy người dùng"
+		else Tìm thấy user
+			API -> UI : Trả về thông tin user
+			UI -> User : Hiển thị chi\ntiết user
+		end
+	end
+end
+@enduml

@@ -15,6 +15,8 @@ import { getPromotions } from '../../../../api/promotion';
 
 // Giao diện order cho nhân viên quầy
 function OrderStaff({ token, userId, newOrder }) {
+    // State tìm kiếm số bàn
+    const [searchTableNumber, setSearchTableNumber] = useState('');
     // State bộ lọc bàn
     const [filterStatus, setFilterStatus] = useState('');
     const [filterSeats, setFilterSeats] = useState('');
@@ -74,7 +76,7 @@ function OrderStaff({ token, userId, newOrder }) {
     };
 
     return (
-        <div className="orderStaff">           
+        <div className="orderStaff">
             {showOrderPage && selectedTable ? (
                 <TableOrder
                     token={token}
@@ -93,19 +95,32 @@ function OrderStaff({ token, userId, newOrder }) {
                 <div className="orderStaff_content">
                     {/* Bộ lọc bàn */}
                     <div className="orderStaff__tableFilter" >
-                        <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} style={{ padding: 6, borderRadius: 6 }}>
+                        {/* Tìm kiếm số bàn */}
+                        <div className="orderStaff__tableSearch">
+                            <span className="orderStaff__tableSearchIcon">
+                                <Icon name="search" width={20} height={20} />
+                            </span>
+                            <input
+                                className="orderStaff__tableSearchInput"
+                                type="text"
+                                placeholder="Tìm theo số bàn..."
+                                value={searchTableNumber}
+                                onChange={e => setSearchTableNumber(e.target.value)}
+                            />
+                        </div>
+                        <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} >
                             <option value="">Tất cả trạng thái</option>
                             <option value="available">Trống</option>
                             <option value="reserved">Đã đặt</option>
                             <option value="occupied">Đang sử dụng</option>
                         </select>
-                        <select value={filterSeats} onChange={e => setFilterSeats(e.target.value)} style={{ padding: 6, borderRadius: 6 }}>
+                        <select value={filterSeats} onChange={e => setFilterSeats(e.target.value)} >
                             <option value="">Tất cả số ghế</option>
                             {[...new Set(tables.map(tb => tb.seats))].sort((a, b) => a - b).map(seat => (
                                 <option key={seat} value={seat}>{seat} ghế</option>
                             ))}
                         </select>
-                        <select value={filterTypeTable} onChange={e => setFilterTypeTable(e.target.value)} style={{ padding: 6, borderRadius: 6 }}>
+                        <select value={filterTypeTable} onChange={e => setFilterTypeTable(e.target.value)} >
                             <option value="">Tất cả kiểu bàn</option>
                             <option value="round">Tròn</option>
                             <option value="square">Vuông</option>
@@ -115,8 +130,11 @@ function OrderStaff({ token, userId, newOrder }) {
                     {/* Danh sách bàn dạng thẻ */}
                     <div className="orderStaff__tableList">
                         {(() => {
-                            // Lọc bàn theo trạng thái, số ghế, kiểu bàn
+                            // Lọc bàn theo trạng thái, số ghế, kiểu bàn, số bàn
                             let filtered = tables;
+                            if (searchTableNumber) {
+                                filtered = filtered.filter(item => String(item.number).toLowerCase().includes(searchTableNumber.trim().toLowerCase()));
+                            }
                             if (filterStatus) {
                                 filtered = filtered.filter(item => item.status === filterStatus);
                             }

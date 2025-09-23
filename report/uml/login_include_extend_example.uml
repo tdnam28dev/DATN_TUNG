@@ -1,0 +1,16 @@
+@startuml
+' Ví dụ về include và extend trong sơ đồ Use Case đăng nhập
+
+actor User
+
+User --> (Đăng nhập)
+User --> (Đăng ký)
+
+' include: Nhập thông tin người dùng là hành vi dùng chung
+(Đăng nhập) ..> (Nhập thông tin người dùng) : <<include>>
+(Đăng ký) ..> (Nhập thông tin người dùng) : <<include>>
+
+' extend: Quên mật khẩu là hành vi mở rộng của Đăng nhập
+(Quên mật khẩu) ..> (Đăng nhập) : <<extend>>
+
+@enduml

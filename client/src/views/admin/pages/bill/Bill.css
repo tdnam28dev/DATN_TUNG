@@ -1,3 +1,4 @@
+
 /* Màu trạng thái hóa đơn */
 .billManager__td--status {
   font-weight: 700;
@@ -66,10 +67,31 @@
   margin-bottom: 16px;
 }
 .billManager__popupInfoRow {
+  display: flex
+;
+    justify-content: space-between;
+    align-items: center;
+    padding: 7px 0;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 16px;
+}
+/* Discount trong popup chi tiết hóa đơn */
+.billManager__popupDiscount {
+  margin-left: 8px;
+}
+.billManager__popupDiscountItem {
+  font-weight: bold;
+  margin-bottom: 2px;
+}
+.billManager__popupDiscountItem--point {
   display: flex;
-  justify-content: space-between;
-  font-size: 15px;
-  margin-bottom: 6px;
+  justify-content: end;
+  color: #059669;
+}
+.billManager__popupDiscountItem--promotion {
+  display: flex;
+  justify-content: end;
+  color: #f59e42;
 }
 .billManager__popupStatus{
     text-align: end;
@@ -249,7 +271,7 @@
 .billManager__popupOverlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(168, 168, 168, 0.08);
+  background: rgba(0, 0, 0, 0.151);
   display: flex;
   align-items: center;
   justify-content: center;

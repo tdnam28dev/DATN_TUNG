@@ -1,0 +1,37 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam sequenceDiagramWidth 900
+skinparam sequenceParticipantPadding 10
+skinparam sequenceParticipantFontSize 18
+skinparam sequenceActorFontSize 20
+skinparam sequenceMessageFontSize 18
+skinparam sequenceNoteFontSize 16
+
+actor Admin
+participant "React UI" as UI
+participant "API Backend\n(Node.js)" as API
+participant "Auth\nMiddleware" as Auth
+participant "Role\nMiddleware" as Role
+participant "Customer Model\n(MongoDB)" as CustomerModel
+
+Admin -> UI : Sửa thông tin\nkhách hàng
+UI -> API : PUT /customer/:id\n(dữ liệu, token)
+API -> Auth : Kiểm tra middleware\nxác thực (auth)
+alt Token không hợp lệ
+    API -> UI : Trả về lỗi\n"Không xác thực"
+else Token hợp lệ
+    API -> Role : Kiểm tra middleware\nphân quyền (admin)
+    alt Không đủ quyền
+        API -> UI : Trả về lỗi\n"Không đủ quyền"
+    else Đủ quyền
+        API -> CustomerModel : Cập nhật khách hàng
+        alt Không tìm thấy khách hàng
+            API -> UI : Trả về lỗi\n"Không tìm thấy khách hàng"
+        else Tìm thấy khách hàng
+            CustomerModel --> API : Trả về khách hàng đã cập nhật
+            API -> UI : Trả về khách hàng\nđã cập nhật
+            UI -> Admin : Hiển thị kết quả
+        end
+    end
+end
+@enduml

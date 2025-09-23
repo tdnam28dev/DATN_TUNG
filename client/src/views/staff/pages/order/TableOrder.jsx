@@ -202,10 +202,28 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
         }
         setLoading(true);
         let res;
+        // Tạo danh sách discount
+        const discountList = [];
+        if (usePoint && discountByPoint > 0) {
+            discountList.push({
+                type: 'point',
+                value: discountByPoint,
+                pointUsed: maxPointCanUse
+            });
+        }
+        if (selectedPromotionCode && promotionDiscount > 0) {
+            discountList.push({
+                type: 'promotion',
+                code: selectedPromotionCode,
+                value: promotionDiscount
+            });
+        }
         const orderData = {
             table: selectedTable._id,
             items: cart.map(i => ({ menuItem: i.menuItem._id, quantity: i.quantity })),
             total,
+            finalTotal,
+            discounts: discountList,
             status: 'pending',
             restaurant: selectedTable.restaurant || ''
         };
@@ -217,7 +235,7 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
         setMessage(res._id ? 'Đã lưu hóa đơn!' : res.error || 'Lỗi');
         if (typeof reloadData === 'function') reloadData();
         setLoading(false);
-    }, [selectedTable, cart, total, existOrder, token, reloadData]);
+    }, [selectedTable, cart, total, existOrder, token, reloadData, discountByPoint, finalTotal, maxPointCanUse, usePoint, selectedPromotionCode, promotionDiscount]);
 
     // Hàm kiểm tra trạng thái thanh toán chuyển khoản qua API Google Script
     const checkBankTransfer = useCallback(async ({ accountNumber, amount, orderId }) => {
@@ -294,10 +312,28 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
                         }, token);
                         finalCustomerId = customerData._id;
                     }
+                    // Tạo danh sách discount
+                    const discountList = [];
+                    if (usePoint && discountByPoint > 0) {
+                        discountList.push({
+                            type: 'point',
+                            value: discountByPoint,
+                            pointUsed: maxPointCanUse
+                        });
+                    }
+                    if (selectedPromotionCode && promotionDiscount > 0) {
+                        discountList.push({
+                            type: 'promotion',
+                            code: selectedPromotionCode,
+                            value: promotionDiscount
+                        });
+                    }
                     const res = await payOrder(existOrder._id, token, {
                         paymentMethod: payment.method,
                         customerId: finalCustomerId,
-                        paymentId: payment.id
+                        paymentId: payment.id,
+                        total: finalTotal,
+                        discount: discountList
                     });
                     if (res && res._id) {
                         setMessage('Đã thanh toán!');
@@ -324,7 +360,7 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
             }, 3000);
         }
         return () => clearInterval(interval);
-    }, [popup.showQr, payment.method, payment.id, existOrder, payments, finalTotal, maxPointCanUse, usePoint, customer, token, reloadData, popup.qrPaid, setSelectedTable, setShowOrderPage, checkBankTransfer]);
+    }, [popup.showQr, payment.method, payment.id, existOrder, payments, finalTotal, maxPointCanUse, usePoint, customer, token, reloadData, popup.qrPaid, setSelectedTable, setShowOrderPage, checkBankTransfer, discountByPoint, selectedPromotionCode, promotionDiscount]);
     // Đếm ngược đóng popup QR sau khi đã thanh toán
     useEffect(() => {
         let timer;
@@ -397,14 +433,28 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
                 return;
             }
         }
+        // Tạo danh sách discount
+        const discountList = [];
+        if (usePoint && discountByPoint > 0) {
+            discountList.push({
+                type: 'point',
+                value: discountByPoint,
+                pointUsed: maxPointCanUse
+            });
+        }
+        if (selectedPromotionCode && promotionDiscount > 0) {
+            discountList.push({
+                type: 'promotion',
+                code: selectedPromotionCode,
+                value: promotionDiscount
+            });
+        }
         const res = await payOrder(existOrder._id, token, {
             paymentMethod: payment.method,
             customerId: finalCustomerId,
             paymentId: payment.method === 'bank' ? payment.id : undefined,
-            usePoint: usePoint,
-            pointUsed: usePoint ? maxPointCanUse : 0,
-            discount: discountByPoint,
-            finalTotal: finalTotal
+            total: finalTotal,
+            discount: discountList
         });
         if (res && res._id) {
             setMessage('Đã thanh toán!');
@@ -427,7 +477,7 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
             setMessage(res.error || 'Lỗi xác nhận thanh toán!');
         }
         setLoading(false);
-    }, [selectedTable, existOrder, customer, payment, token, reloadData, setSelectedTable, setShowOrderPage, usePoint, maxPointCanUse, discountByPoint, finalTotal]);
+    }, [selectedTable, existOrder, customer, payment, token, reloadData, setSelectedTable, setShowOrderPage, usePoint, maxPointCanUse, discountByPoint, finalTotal, selectedPromotionCode, promotionDiscount]);
 
     // Hàm thanh toán và xuất hóa đơn PDF
     const handlePayAndPrint = useCallback(() => {
@@ -645,7 +695,7 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
 
                         {/* Chọn mã giảm giá */}
                         <div className="orderStaff__payPopupRow">
-                            <label>Ưu :</label>
+                            <label>Ưu đãi:</label>
                             <select
                                 value={selectedPromotionCode}
                                 onChange={e => setSelectedPromotionCode(e.target.value)}

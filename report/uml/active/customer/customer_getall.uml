@@ -1,0 +1,23 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activityFontSize 18
+skinparam activityDiamondFontSize 16
+skinparam activityArrowFontSize 16
+skinparam activityBackgroundColor #bce8f5ff
+skinparam activityDiamondBackgroundColor #bce8f5ff
+skinparam activityStartColor #4CAF50
+skinparam activityStopColor #F44336
+
+|Admin|
+start
+:Chọn chức năng\nquản lý khách hàng;
+|Hệ thống|
+:Lấy danh sách khách hàng;
+if (Có dữ liệu) then (Không)
+    :Thông báo lỗi\n"Không có dữ liệu";
+    stop
+else (Có)
+    :Hiển thị danh\nsách khách hàng;
+    stop
+endif
+@enduml

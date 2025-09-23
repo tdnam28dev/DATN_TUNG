@@ -1,0 +1,37 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activityFontSize 18
+skinparam activityDiamondFontSize 16
+skinparam activityArrowFontSize 16
+skinparam activityBackgroundColor #bce8f5ff
+skinparam activityDiamondBackgroundColor #bce8f5ff
+skinparam activityStartColor #4CAF50
+skinparam activityStopColor #F44336
+
+|Admin|
+start
+:Chọn chức năng\nquản lý nhà hàng;
+|Hệ thống|
+:Hiển thị giao diện\nquản lý nhà hàng;
+|Admin|
+:Chọn nhà hàng cần xóa;
+|Hệ thống|
+:Hiển thị form\nthông tin nhà hàng;
+|Admin|
+:Chọn xóa nhà hàng;
+|Hệ thống|
+:Xác nhận xóa\nnhà hàng;
+|Admin|
+:Đồng ý xóa;
+|Hệ thống|
+:Xóa nhà hàng;
+if (Kết quả xóa) then (Thất bại)
+    :Thông báo lỗi\nxóa thất bại;
+    :Hiển thị thông báo lỗi;
+    stop
+else (Thành công)
+    :Thông báo xóa thành công;
+    :Cập nhật giao diện;
+    stop
+endif
+@enduml

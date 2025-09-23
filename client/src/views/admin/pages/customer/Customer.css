@@ -1,0 +1,178 @@
+/* Quản lý khách hàng */
+.customerManager {
+	padding: 24px;
+	min-height: 100vh;
+}
+.customerManager__title {
+	color: #FFA827;
+	margin: 0 0 24px 0;
+	font-size: 2rem;
+	font-weight: 700;
+	letter-spacing: 1px;
+}
+.customerManager__filter {
+	margin-bottom: 24px;
+	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+.customerManager__filterSearch {
+	position: relative;
+	display: inline-block;
+}
+.customerManager__filterSearchIcon {
+	position: absolute;
+	left: 8px;
+	top: 50%;
+	transform: translateY(-50%);
+	pointer-events: none;
+	color: #2563eb;
+}
+.customerManager__filterInput {
+	min-width: 180px;
+	padding: 9px 14px 9px 32px;
+	border-radius: 8px;
+	border: 1px solid #d1d5db;
+	font-size: 15px;
+	background: #fff;
+	box-shadow: 0 1px 4px rgba(37,99,235,0.04);
+}
+.customerManager__list {
+	margin-top: 8px;
+}
+.customerManager__table {
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+	background: #fff;
+	margin-top: 16px;
+	font-size: 16px;
+	box-shadow: 0 2px 12px rgba(37,99,235,0.08);
+	border-radius: 12px;
+	overflow: hidden;
+}
+.customerManager__th {
+	background:#fdeed1;
+	color: #FFA827;
+	font-weight: 700;
+	padding: 14px 10px;
+	border-bottom: 2px solid #e5e7eb;
+	text-align: left;
+	font-size: 16px;
+}
+.customerManager__td {
+	padding: 12px 10px;
+	border-bottom: 1px solid #e5e7eb;
+	vertical-align: middle;
+	font-size: 15px;
+}
+.customerManager__tr:hover {
+	background: #e0f2fe;
+	transition: background 0.2s;
+}
+.customerManager__cardBtn {
+	padding: 7px 16px;
+	border-radius: 6px;
+	border: none;
+	background: #f3f4f6;
+	cursor: pointer;
+	margin-right: 8px;
+	font-size: 15px;
+	font-weight: 500;
+	transition: background 0.2s, color 0.2s;
+	box-shadow: 0 1px 4px rgba(37,99,235,0.06);
+}
+.customerManager__cardBtn:hover {
+	background: #dbeafe;
+	color: #2563eb;
+}
+.customerManager__cardBtn--danger {
+	background: #fee2e2;
+	color: #dc2626;
+}
+.customerManager__cardBtn--danger:hover {
+	background: #fecaca;
+	color: #b91c1c;
+}
+.customerManager__loading {
+	color: #2563eb;
+	font-size: 18px;
+	padding: 24px;
+	text-align: center;
+}
+.customerManager__empty {
+	color: #6b7280;
+	font-size: 18px;
+	padding: 24px;
+	text-align: center;
+}
+.customerManager__popupOverlay {
+	position: fixed;
+	top: 0; left: 0; right: 0; bottom: 0;
+	background: rgba(168, 168, 168, 0.08);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	z-index: 1000;
+}
+.customerManager__popup {
+	background: #fff;
+	padding: 32px 28px;
+	border-radius: 16px;
+	min-width: 340px;
+	box-shadow: 0 4px 24px rgba(85, 85, 85, 0.2);
+}
+.customerManager__popupTitle__detail {
+	color: #FFA827;
+	font-size: 1.5rem;
+	font-weight: 700;
+	margin: 0px 0px 18px 0px;
+	text-align: center;
+}
+.customerManager__popupInfo {
+	margin-bottom: 16px;
+}
+.customerManager__popupInfoRow {
+	display: flex;
+	justify-content: space-between;
+	font-size: 15px;
+	margin-bottom: 6px;
+	align-items: center;
+}
+.customerManager__popupFooter {
+	display: flex;
+	justify-content: flex-end;
+	gap: 8px;
+	margin-top: 18px;
+}
+.customerManager__popupBtn__detail__close {
+	padding: 9px 22px;
+	border-radius: 7px;
+	border: none;
+	background: #f3f4f6;
+	cursor: pointer;
+	font-size: 15px;
+	font-weight: 500;
+	box-shadow: 0 1px 4px rgba(37,99,235,0.06);
+	transition: background 0.2s, color 0.2s;
+}
+.customerManager__popupBtn__detail__close:hover {
+	background: #dbeafe;
+	color: #2563eb;
+}
+.customerManager__popupBtn {
+	padding: 9px 22px;
+	border-radius: 7px;
+	border: none;
+	background: #f3f4f6;
+	cursor: pointer;
+	font-size: 15px;
+	margin-right: 10px;
+	font-weight: 500;
+	box-shadow: 0 1px 4px rgba(37,99,235,0.06);
+	transition: background 0.2s, color 0.2s;
+}
+.customerManager__popupBtn:hover {
+	background: #dbeafe;
+	color: #2563eb;
+}

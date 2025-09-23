@@ -182,11 +182,11 @@ function AdminDashboard({ token, userId }) {
           </div>
         </header>
         <div className="admin-dashboard-content">
-          {location.pathname === '/admin-dashboard' && <Overview />}
+          {location.pathname === '/admin-dashboard' && <Overview token={token} />}
           {location.pathname === '/admin-dashboard/report' && <Report token={token} />}
           {location.pathname === '/admin-dashboard/bill' && <Bill token={token} />}
           {location.pathname === '/admin-dashboard/schedule' && <Schedule />}
-          {location.pathname === '/admin-dashboard/customer' && <Customer />}
+          {location.pathname === '/admin-dashboard/customer' && <Customer token={token} />}
           {location.pathname === '/admin-dashboard/promotion' && <Promotion token={token} />}
           {location.pathname === '/admin-dashboard/config' && <Settings token={token} />}
         </div>

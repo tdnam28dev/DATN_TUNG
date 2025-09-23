@@ -1,0 +1,23 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activityFontSize 18
+skinparam activityDiamondFontSize 16
+skinparam activityArrowFontSize 16
+skinparam activityBackgroundColor #bce8f5ff
+skinparam activityDiamondBackgroundColor #bce8f5ff
+skinparam activityStartColor #4CAF50
+skinparam activityStopColor #F44336
+
+|Admin|
+start
+:Chọn chức năngquản lý\nphương thức thanh toán;
+|Hệ thống|
+:Lấy danh sách phương\nthức thanh toán;
+if (Có dữ liệu) then (Không)
+    :Thông báo lỗi\n"Không có dữ liệu";
+    stop
+else (Có)
+    :Hiển thị danh sách\nphương thức thanh toán;
+    stop
+endif
+@enduml

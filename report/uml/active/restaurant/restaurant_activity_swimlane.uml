@@ -1,0 +1,35 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activityFontSize 18
+skinparam activityDiamondFontSize 16
+skinparam activityArrowFontSize 16
+skinparam activityBackgroundColor #bce8f5ff
+skinparam activityDiamondBackgroundColor #bce8f5ff
+skinparam activityStartColor #4CAF50
+skinparam activityStopColor #F44336
+
+|Admin|
+start
+:Chọn chức năng\nquản lý nhà hàng;
+|Hệ thống|
+:Hiển thị giao diện\nquản lý nhà hàng;
+|Admin|
+:Chọn thêm\nnhà hàng;
+|Hệ thống|
+:Hiển thị form nhập\nthông tin nhà hàng;
+|Admin|
+:Nhập thông\ntin nhà hàng;
+:Gửi thông\ntin nhà hàng;
+|Hệ thống|
+:Nhận thông\ntin nhà hàng;
+if (Kiểm tra\nthông tin) then (Lỗi)
+    :Thông báo lỗi,\nyêu cầu nhập lại;
+    :Hiển thị\nthông báo lỗi;
+    stop
+else (Hợp lệ)
+    :Lưu thông\ntin nhà hàng;
+    :Trả về kết\nquả thành công;
+    :Cập nhật\ngiao diện;
+    stop
+endif
+@enduml

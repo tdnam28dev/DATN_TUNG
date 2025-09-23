@@ -1,0 +1,19 @@
+@startuml
+left to right direction
+skinparam usecaseFontSize 18
+skinparam actorFontSize 18
+skinparam usecaseBackgroundColor #bce8f5ff
+skinparam usecaseBorderColor #4CAF50
+skinparam actorBorderColor #4CAF50
+skinparam actorBackgroundColor #F9F9F9
+
+actor User as "Người dùng"
+actor Admin as "Quản trị viên"
+
+rectangle "Hệ thống quản lý nhà hàng" {
+  usecase "Đăng nhập hệ thống" as UC_Login
+}
+
+User --> UC_Login
+Admin --> UC_Login
+@enduml

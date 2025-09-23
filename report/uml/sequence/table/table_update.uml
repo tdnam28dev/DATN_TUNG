@@ -1,0 +1,37 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam sequenceDiagramWidth 900
+skinparam sequenceParticipantPadding 10
+skinparam sequenceParticipantFontSize 18
+skinparam sequenceActorFontSize 20
+skinparam sequenceMessageFontSize 18
+skinparam sequenceNoteFontSize 16
+
+actor Admin
+participant "React UI" as UI
+participant "API Backend\n(Node.js)" as API
+participant "Auth\nMiddleware" as Auth
+participant "Role\nMiddleware" as Role
+participant "Table Model\n(MongoDB)" as TableModel
+
+Admin -> UI : Sửa thông tin bàn
+UI -> API : PUT /table/:id\n(dữ liệu, token)
+API -> Auth : Kiểm tra middleware\nxác thực (auth)
+alt Token không hợp lệ
+    API -> UI : Trả về lỗi\n"Không xác thực"
+else Token hợp lệ
+    API -> Role : Kiểm tra middleware\nphân quyền (admin)
+    alt Không đủ quyền
+        API -> UI : Trả về lỗi\n"Không đủ quyền"
+    else Đủ quyền
+        API -> TableModel : Cập nhật bàn
+        alt Không tìm thấy bàn
+            API -> UI : Trả về lỗi\n"Không tìm thấy bàn"
+        else Tìm thấy bàn
+            TableModel --> API : Trả về bàn đã cập nhật
+            API -> UI : Trả về bàn\nđã cập nhật
+            UI -> Admin : Hiển thị kết quả
+        end
+    end
+end
+@enduml

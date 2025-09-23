@@ -1,0 +1,40 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activityFontSize 18
+skinparam activityDiamondFontSize 16
+skinparam activityArrowFontSize 16
+skinparam activityBackgroundColor #bce8f5ff
+skinparam activityDiamondBackgroundColor #bce8f5ff
+skinparam activityStartColor #4CAF50
+skinparam activityStopColor #F44336
+
+|Staff|
+start
+:Chọn bàn cần\nthanh toán;
+|Hệ thống|
+:Hiển thị thông tin\nbàn và hóa đơn;
+|Staff|
+:Nhập số điện\nthoại khách hàng;
+|Hệ thống|
+:Kiểm tra khách hàng\ntheo số điện thoại;
+if (Khách hàng\nđã tồn tại?) then (Có)
+    :Hiển thị thông\ntin khách hàng;
+else (Không)
+    :Lưu khách hàng mới;
+endif
+|Staff|
+:Chọn mã giảm giá (nếu có);
+:Chọn phương thức thanh toán;
+:Gửi yêu cầu thanh toán;
+|Hệ thống|
+:Kiểm tra thông\ntin thanh toán;
+if (Thông tin\nkhông hợp lệ) then (Lỗi)
+    :Thông báo lỗi;
+    stop
+else (Hợp lệ)
+    :Xử lý thanh toán;
+    :Cập nhật trạng\nthái hóa đơn;
+    :Trả về kết quả\nthành công;
+    stop
+endif
+@enduml

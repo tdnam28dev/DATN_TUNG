@@ -56,11 +56,49 @@
   background: #dc2626;
 }
 
-.orderStaff__tableFilter{
+
+/* Bộ lọc bàn */
+.orderStaff__tableFilter {
   display: flex;
   gap: 16px;
   margin-bottom: 16px;
   z-index: 10;
+  align-items: center;
+}
+.orderStaff__tableSearch {
+  position: relative;
+  display: inline-block;
+}
+.orderStaff__tableSearchIcon {
+  position: absolute;
+  left: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  pointer-events: none;
+  color: #2563eb;
+}
+.orderStaff__tableSearchInput {
+  min-width: 180px;
+  padding: 7px 10px 7px 32px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
+  margin-right: 2px;
+}
+.orderStaff__tableFilter select {
+  padding: 7px 10px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 15px;
+  background: #fff;
+  color: #222;
+  font-family: inherit;
+  font-weight: 500;
+  transition: border-color 0.2s;
+}
+.orderStaff__tableFilter select:focus {
+  border-color: #2563eb;
+  outline: none;
 }
 .orderStaff__tableList {
   display: flex;

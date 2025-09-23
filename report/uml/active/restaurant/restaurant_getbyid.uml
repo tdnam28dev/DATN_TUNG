@@ -1,0 +1,31 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activityFontSize 18
+skinparam activityDiamondFontSize 16
+skinparam activityArrowFontSize 16
+skinparam activityBackgroundColor #bce8f5ff
+skinparam activityDiamondBackgroundColor #bce8f5ff
+skinparam activityStartColor #4CAF50
+skinparam activityStopColor #F44336
+
+|Admin|
+start
+:Chọn chức năng\nquản lý nhà hàng;
+|Hệ thống|
+:Hiển thị giao diện\nquản lý nhà hàng;
+|Admin|
+:Chọn xem chi tiết\nnhà hàng;
+|Hệ thống|
+:Lấy thông tin chi tiết\nnhà hàng;
+if (Tìm thấy) then (Không)
+    :Thông báo lỗi\n"Không tìm thấy nhà hàng";
+    |Admin|
+    :Hiển thị thông báo lỗi;
+    stop
+else (Có)
+    :Hiển thị thông tin\nchi tiết nhà hàng;
+    |Admin|
+    :Xem thông tin chi tiết;
+    stop
+endif
+@enduml

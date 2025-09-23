@@ -1,0 +1,19 @@
+@startuml
+' Sơ đồ Use Case chi tiết cho Customer
+
+actor Customer
+
+' Các use case chính
+Customer --> (Xem thông tin)
+Customer --> (Gọi món)
+Customer --> (Xem giỏ hàng)
+Customer --> (Chỉnh sửa giỏ hàng)
+Customer --> (Gửi order)
+
+(Chỉnh sửa giỏ hàng) ..> (Xóa món khỏi giỏ) : <<include>>
+(Chỉnh sửa giỏ hàng) ..> (Thay đổi số lượng món) : <<include>>
+(Gọi món) ..> (Xem menu) : <<include>>
+(Gửi order) ..> (Kiểm tra thông tin order) : <<include>>
+(Thanh toán) ..> (Áp dụng mã giảm giá) : <<extend>>
+
+@enduml

@@ -1,0 +1,37 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam sequenceDiagramWidth 900
+skinparam sequenceParticipantPadding 10
+skinparam sequenceParticipantFontSize 18
+skinparam sequenceActorFontSize 20
+skinparam sequenceMessageFontSize 18
+skinparam sequenceNoteFontSize 16
+
+actor User
+participant "React UI" as UI
+participant "API Backend\n(Node.js)" as API
+participant "Auth\nMiddleware" as Auth
+participant "Role\nMiddleware" as Role
+participant "MenuItem Model\n(MongoDB)" as MenuItemModel
+
+User -> UI : Xem chi tiết\nmón ăn
+UI -> API : GET /menuitem/:id\n(kèm token)
+API -> Auth : Kiểm tra middleware\nxác thực (auth)
+alt Token không hợp lệ
+    API -> UI : Trả về lỗi\n"Không xác thực"
+else Token hợp lệ
+    API -> Role : Kiểm tra middleware\nphân quyền (admin, staff, manager)
+    alt Không đủ quyền
+        API -> UI : Trả về lỗi\n"Không đủ quyền"
+    else Đủ quyền
+        API -> MenuItemModel : Lấy món ăn theo id
+        alt Không tìm thấy món ăn
+            API -> UI : Trả về lỗi\n"Không tìm thấy món ăn"
+        else Tìm thấy món ăn
+            MenuItemModel --> API : Trả về món ăn
+            API -> UI : Trả về thông tin\nmón ăn
+            UI -> User : Hiển thị chi\ntiết món ăn
+        end
+    end
+end
+@enduml

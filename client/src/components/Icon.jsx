@@ -2,6 +2,13 @@ import React from 'react';
 
 // Định nghĩa các icon SVG (có thể mở rộng thêm)
 const ICONS = {
+  // Icon tìm kiếm
+  search: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="11" cy="11" r="7" stroke="#FFA827" strokeWidth="2" fill="none" />
+      <line x1="16.5" y1="16.5" x2="21" y2="21" stroke="#FFA827" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  ),
   // Icon bàn vuông 2 ghế
   table_square_2: (
     <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">

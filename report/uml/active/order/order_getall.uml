@@ -1,0 +1,23 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activityFontSize 18
+skinparam activityDiamondFontSize 16
+skinparam activityArrowFontSize 16
+skinparam activityBackgroundColor #bce8f5ff
+skinparam activityDiamondBackgroundColor #bce8f5ff
+skinparam activityStartColor #4CAF50
+skinparam activityStopColor #F44336
+
+|Admin/Manager/Staff|
+start
+:Chọn chức năng\nquản lý order;
+|Hệ thống|
+:Lấy danh sách order;
+if (kiểm tra\ndữ liệu) then (Không)
+    :Thông báo lỗi\n"Không có dữ liệu";
+    stop
+else (Có)
+    :Hiển thị danh\nsách order;
+    stop
+endif
+@enduml

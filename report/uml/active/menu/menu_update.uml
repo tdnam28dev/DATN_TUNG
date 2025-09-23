@@ -1,0 +1,30 @@
+@startuml
+skinparam defaultTextAlignment center
+skinparam activityFontSize 18
+skinparam activityDiamondFontSize 16
+skinparam activityArrowFontSize 16
+skinparam activityBackgroundColor #bce8f5ff
+skinparam activityDiamondBackgroundColor #bce8f5ff
+skinparam activityStartColor #4CAF50
+skinparam activityStopColor #F44336
+
+|Admin|
+start
+:Chọn chức năng\nsửa menu;
+|Hệ thống|
+:Hiển thị form\nsửa menu;
+|Admin|
+:Chỉnh sửa thông\ntin menu;
+:Gửi thông tin\nđã sửa;
+|Hệ thống|
+:Nhận thông tin\nđã sửa;
+if (Kiểm tra\nthông tin) then (Lỗi)
+    :Thông báo lỗi,\nyêu cầu nhập lại;
+    stop
+else (Hợp lệ)
+    :Cập nhật menu;
+    :Trả về kết quả\nthành công;
+    :Cập nhật giao diện;
+    stop
+endif
+@enduml

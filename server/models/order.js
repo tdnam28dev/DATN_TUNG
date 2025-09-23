@@ -28,7 +28,11 @@ const OrderSchema = new mongoose.Schema({
   }, // Người tạo hóa đơn
   paymentMethod: { type: String, enum: ['cash', 'card', 'bank', 'momo', 'other'], default: 'cash' }, // Phương thức thanh toán
   paymentId: { type: mongoose.Schema.Types.ObjectId, ref: 'PaymentMethod' }, // Tham chiếu đến bảng phương thức thanh toán
-  customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer' } // Tham chiếu đến bảng khách hàng
+  customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'Customer' }, // Tham chiếu đến bảng khách hàng
+  discount: {
+    type: Object,
+    default: null,
+  }
 });
 
 // Tự động cập nhật updatedAt khi save
