@@ -1,20 +1,17 @@
-/* Biểu đồ ngang doanh thu từng nhà hàng */
 /* Biểu đồ ngang doanh thu từng nhà hàng - bố cục đẹp hơn */
 .overview__chart-block--horizontal {
 	margin-top: 28px;
-	background: #f9fafb;
-	border-radius: 10px;
-	box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-	padding: 14px 18px 8px 18px;
-	max-width: 480px;
+	max-width: 100%;
 }
 .overview__chart--horizontal {
 	display: flex;
 	justify-content: flex-start;
 	align-items: flex-start;
 	min-height: 180px;
-	max-height: 420px;
-	overflow-x: auto;
+	max-height: none;
+	overflow-x: unset;
+	width: 100%;
+	border: 1px solid #e5e7eb;
 }
 .overview__chart-title {
 	font-size: 16px;
@@ -34,7 +31,7 @@
 .overview {
 	background: #f7f8fa;
 	min-height: 100vh;
-	padding: 24px 0;
+	padding: 24px;
 }
 .overview__header {
 	display: flex;
@@ -143,7 +140,7 @@
 	background: #fff;
 	border-radius: 8px;
 	box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-	padding: 18px 24px;
+	padding: 14px;
 	margin-bottom: 18px;
 }
 .overview__chart-title {

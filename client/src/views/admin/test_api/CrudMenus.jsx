@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+// import { useNavigate } from 'react-router-dom';
 import { getMenus, createMenu, updateMenu, deleteMenu } from '../../../api/menu';
 import { getRestaurants } from '../../../api/restaurant';
 import { getMenuTypes } from '../../../api/menutype';
@@ -6,6 +7,7 @@ import './CurdMenus.css';
 import MenuTypePopup from './MenuTypePopup';
 
 function CrudMenus({ token }) {
+  // const navigate = useNavigate(); // hook chuyển trang
   const [menus, setMenus] = useState([]);
   const [restaurants, setRestaurants] = useState([]);
   const [message, setMessage] = useState('');
@@ -186,18 +188,15 @@ function CrudMenus({ token }) {
                     <span className="menuCrud__editIcon">✎</span> Sửa
                   </button>
                   {/* Nút thêm món */}
-                  <button
+                  {/* <button
                     className="btnSubmit menuCrud__add"
                     style={{ marginLeft: 6, padding: '6px 12px', fontSize: 14 }}
                     onClick={() => {
-                      // Mở popup và tự động thêm 1 dòng món mới
-                      openPopup({
-                        ...m,
-                        items: Array.isArray(m.items) ? [...m.items, { name: '', quantity: 1 }] : [{ name: '', quantity: 1 }]
-                      });
+                      // Chuyển sang trang thêm món, truyền id menu
+                      navigate(`/admin/menu/${m._id}/add-item`);
                     }}
                     title="Thêm món vào menu"
-                  >+ Thêm món</button>
+                  >+ Thêm món</button> */}
                 </td>
               </tr>
             ))}

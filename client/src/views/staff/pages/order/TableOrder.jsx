@@ -38,7 +38,6 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
     const [menuTypeList, setMenuTypeList] = useState([]);
 
     // Khi nhập xong số điện thoại thì kiểm tra khách hàng
-    // Khi nhập xong số điện thoại thì kiểm tra khách hàng
     useEffect(() => {
         if (!customer.phone || customer.phone.length < 10) return;
         // Gọi API kiểm tra khách hàng theo số điện thoại
@@ -61,7 +60,6 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
         fetchCustomer();
     }, [customer.phone, token]);
 
-    // Khi chọn bàn, nếu có hóa đơn pending thì lấy giỏ hàng từ hóa đơn đó
     // Khi chọn bàn, nếu có hóa đơn pending thì lấy giỏ hàng từ hóa đơn đó
     useEffect(() => {
         if (!selectedTable) return;
@@ -388,18 +386,43 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
             setMessage('Không có hóa đơn chờ thanh toán!');
             return;
         }
+        // Nếu không nhập thông tin khách hàng thì bỏ qua, không lưu khách hàng vào hóa đơn
+        let finalCustomerId = null;
         const phoneRegex = /^\d{10}$/;
-        if (!customer.phone.trim()) {
-            setMessage('Vui lòng nhập số điện thoại khách hàng!');
-            return;
-        }
-        if (!phoneRegex.test(customer.phone.trim())) {
-            setMessage('Số điện thoại không hợp lệ!');
-            return;
-        }
-        if (!customer.name.trim()) {
-            setMessage('Vui lòng nhập tên khách hàng!');
-            return;
+        const hasCustomerInfo = customer.phone.trim() || customer.name.trim() || customer.gender.trim() || customer.address.trim();
+        if (hasCustomerInfo) {
+            // Nếu có nhập thông tin thì kiểm tra hợp lệ và tạo/lấy id
+            if (customer.phone.trim() && !phoneRegex.test(customer.phone.trim())) {
+                setMessage('Số điện thoại không hợp lệ!');
+                return;
+            }
+            if (payment.method === 'bank' && !payment.id) {
+                setMessage('Vui lòng chọn tài khoản ngân hàng!');
+                return;
+            }
+            if (!customer.id) {
+                try {
+                    const customerData = await createCustomer({
+                        name: customer.name,
+                        phone: customer.phone,
+                        gender: customer.gender,
+                        address: customer.address
+                    }, token);
+                    if (customerData && customerData._id) {
+                        finalCustomerId = customerData._id;
+                    } else {
+                        setMessage(customerData.error || 'Không thể tạo khách hàng!');
+                        setLoading(false);
+                        return;
+                    }
+                } catch (err) {
+                    setMessage('Lỗi tạo khách hàng!');
+                    setLoading(false);
+                    return;
+                }
+            } else {
+                finalCustomerId = customer.id;
+            }
         }
         if (payment.method === 'bank' && !payment.id) {
             setMessage('Vui lòng chọn tài khoản ngân hàng!');
@@ -411,28 +434,6 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
             return;
         }
         setLoading(true);
-        let finalCustomerId = customer.id;
-        if (!finalCustomerId) {
-            try {
-                const customerData = await createCustomer({
-                    name: customer.name,
-                    phone: customer.phone,
-                    gender: customer.gender,
-                    address: customer.address
-                }, token);
-                if (customerData && customerData._id) {
-                    finalCustomerId = customerData._id;
-                } else {
-                    setMessage(customerData.error || 'Không thể tạo khách hàng!');
-                    setLoading(false);
-                    return;
-                }
-            } catch (err) {
-                setMessage('Lỗi tạo khách hàng!');
-                setLoading(false);
-                return;
-            }
-        }
         // Tạo danh sách discount
         const discountList = [];
         if (usePoint && discountByPoint > 0) {
@@ -451,7 +452,7 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
         }
         const res = await payOrder(existOrder._id, token, {
             paymentMethod: payment.method,
-            customerId: finalCustomerId,
+            customerId: finalCustomerId || undefined,
             paymentId: payment.method === 'bank' ? payment.id : undefined,
             total: finalTotal,
             discount: discountList

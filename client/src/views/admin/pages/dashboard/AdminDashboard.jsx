@@ -8,14 +8,13 @@ import { getUserById } from '../../../../api/user';
 import Overview from '../overview/Overview';
 import Report from '../report/Report';
 import Bill from '../../pages/bill/Bill';
-import Schedule from '../schedule/Schedule';
 import Customer from '../customer/Customer';
 import Promotion from '../promotion/Promotion';
 import Settings from '../../pages/setting/Setting';
 
 
 const sidebarItems = [
-  'Tổng quan', 'Báo cáo', 'Hóa đơn', 'Đặt lịch', 'Khách hàng', 'Khuyến mại', 'Cấu hình'
+  'Tổng quan', 'Báo cáo', 'Hóa đơn', 'Khách hàng', 'Khuyến mại', 'Cấu hình'
 ];
 
 function AdminDashboard({ token, userId }) {
@@ -53,7 +52,6 @@ function AdminDashboard({ token, userId }) {
     'Tổng quan': '/admin-dashboard',
     'Báo cáo': '/admin-dashboard/report',
     'Hóa đơn': '/admin-dashboard/bill',
-    'Đặt lịch': '/admin-dashboard/schedule',
     'Khách hàng': '/admin-dashboard/customer',
     'Khuyến mại': '/admin-dashboard/promotion',
     'Cấu hình': '/admin-dashboard/config'
@@ -99,7 +97,6 @@ function AdminDashboard({ token, userId }) {
               'Tổng quan': 'dashboard',
               'Báo cáo': 'report',
               'Hóa đơn': 'bill',
-              'Đặt lịch': 'calendar',
               'Khách hàng': 'customer',
               'Khuyến mại': 'discount',
             };
@@ -185,7 +182,6 @@ function AdminDashboard({ token, userId }) {
           {location.pathname === '/admin-dashboard' && <Overview token={token} />}
           {location.pathname === '/admin-dashboard/report' && <Report token={token} />}
           {location.pathname === '/admin-dashboard/bill' && <Bill token={token} />}
-          {location.pathname === '/admin-dashboard/schedule' && <Schedule />}
           {location.pathname === '/admin-dashboard/customer' && <Customer token={token} />}
           {location.pathname === '/admin-dashboard/promotion' && <Promotion token={token} />}
           {location.pathname === '/admin-dashboard/config' && <Settings token={token} />}
