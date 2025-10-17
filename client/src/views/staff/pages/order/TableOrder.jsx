@@ -238,18 +238,24 @@ function TableOrder({ token, userId, selectedTable, setShowOrderPage, setSelecte
     // Hàm kiểm tra trạng thái thanh toán chuyển khoản qua API Google Script
     const checkBankTransfer = useCallback(async ({ accountNumber, amount, orderId }) => {
         try {
-            const url = 'https://script.google.com/macros/s/AKfycbyeZBJC4NH5tZ4RbfjQaz_n7uGcKkG0lVUwzYTkT2pQR78PWVdslN3an7xHioqrN3YN/exec';
+            const url = 'https://script.google.com/macros/s/AKfycbyex87RFVTxjN-WBuTE176taL-GXXHNJ4z-aKHoAJwdTldO9Ty-y2ayvJQqf5mOq1uB/exec';
             const res = await fetch(url);
             const data = await res.json();
-            if (data && Array.isArray(data.data)) {
-                const found = data.data.find(tx =>
-                    Number(tx["Tiền nhận"]) === Number(amount) &&
-                    String(tx["Số tài khoản"]) === String(accountNumber) &&
-                    tx["Mô tả"] && tx["Mô tả"].includes(orderId)
-                );
-                return !!found;
+            console.log('Bank transfer data:', data.data);
+            console.log('Checking transfer for account:', accountNumber, 'amount:', amount, 'orderId:', orderId);
+            let transactions = [];
+            if (Array.isArray(data.data)) {
+                transactions = data.data;
+            } else if (data.data && typeof data.data === 'object') {
+                transactions = [data.data];
             }
-            return false;
+            const found = transactions.find(tx =>
+                Number(tx["Tiền nhận"]) === Number(amount) &&
+                String(tx["Số tài khoản"]) === String(accountNumber) &&
+                tx["Mô tả"] && tx["Mô tả"].includes(orderId)
+            );
+            console.log('Found bank transfer:', !!found);
+            return !!found;
         } catch (err) {
             return false;
         }
