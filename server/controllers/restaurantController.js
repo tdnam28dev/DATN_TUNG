@@ -33,12 +33,26 @@ exports.getById = async (req, res) => {
   }
 };
 
-// Cập nhật nhà hàng
+// Cập nhật nhà hàng (tham khảo userController)
 exports.update = async (req, res) => {
   try {
-    const restaurant = await Restaurant.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!restaurant) return res.status(404).json({ error: 'Không tìm thấy nhà hàng' });
-    res.json(restaurant);
+    // Nếu đã qua middleware kiểm tra resource, có thể dùng req.restaurantDoc
+    if (req.restaurantDoc) {
+      const user = req.user;
+      const isManager = Array.isArray(user.roles) ? user.roles.includes('manager') : user.role === 'manager';
+      if (isManager) {
+        // Cho phép manager sửa tất cả các trường của nhà hàng mình quản lý
+        const updateData = { ...req.body };
+        const updated = await Restaurant.findByIdAndUpdate(req.params.id, updateData, { new: true });
+        if (!updated) return res.status(404).json({ error: 'Không tìm thấy nhà hàng' });
+        return res.json(updated);
+      }
+      // Nếu là admin thì cho sửa toàn bộ
+    }
+    // Trường hợp không qua kiểm tra resource (admin), cho sửa toàn bộ
+    const updated = await Restaurant.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    if (!updated) return res.status(404).json({ error: 'Không tìm thấy nhà hàng' });
+    res.json(updated);
   } catch (err) {
     res.status(400).json({ error: 'Dữ liệu không hợp lệ' });
   }

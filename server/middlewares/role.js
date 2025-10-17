@@ -52,7 +52,7 @@ module.exports = (options = {}) => {
         }
       }
 
-      // 5. Kiểm tra resource (chỉ cho thao tác trên tài nguyên của mình)
+      // 5. Kiểm tra resource (chỉ cho thao tác trên tài nguyên của mình hoặc nhà hàng mình quản lý)
       if (resource) {
         const doc = req[resource];
         if (!doc || !doc._id) {
@@ -69,6 +69,18 @@ module.exports = (options = {}) => {
             // manager có thể thao tác trên mọi user (nếu muốn mở rộng)
           } else {
             return res.status(403).json({ error: 'Bạn chỉ được thao tác trên tài nguyên của mình' });
+          }
+        } else if (resource === 'restaurantDoc') {
+          // Nếu là manager, chỉ cho sửa nhà hàng mình thuộc về (dựa vào restaurantId của user)
+          if (userRoles.includes('manager')) {
+            const userRestaurantIds = Array.isArray(user.restaurant) ? user.restaurant.map(rid => rid.toString()) : [user.restaurant?.toString()];
+            if (doc._id && userRestaurantIds.includes(doc._id.toString())) {
+              // manager thao tác trên nhà hàng mình quản lý
+            } else {
+              return res.status(403).json({ error: 'Bạn chỉ được sửa thông tin nhà hàng mình quản lý' });
+            }
+          } else {
+            return res.status(403).json({ error: 'Bạn không có quyền sửa thông tin nhà hàng này' });
           }
         }
         // Có thể mở rộng cho các resource khác
